@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen Team
+ * Copyright 2025 Claudex CLI contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -12,8 +12,8 @@ import {
 } from '../test-helper.js';
 
 const IS_SANDBOX =
-  process.env['QWEN_SANDBOX'] &&
-  process.env['QWEN_SANDBOX']!.toLowerCase() !== 'false';
+  process.env['CLAUDEX_SANDBOX'] &&
+  process.env['CLAUDEX_SANDBOX']!.toLowerCase() !== 'false';
 
 describe('cron-tools', () => {
   let rig: TestRig;

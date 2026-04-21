@@ -11,7 +11,7 @@ import * as dotenv from 'dotenv';
 import process from 'node:process';
 import {
   FatalConfigError,
-  QWEN_DIR,
+  CLAUDEX_DIR,
   getErrorMessage,
   Storage,
   createDebugLogger,
@@ -59,7 +59,7 @@ function getMergeStrategyForPath(path: string[]): MergeStrategy | undefined {
 
 export type { Settings, MemoryImportFormat };
 
-export const SETTINGS_DIRECTORY_NAME = '.qwen';
+export const SETTINGS_DIRECTORY_NAME = '.claudex';
 export const USER_SETTINGS_PATH = Storage.getGlobalSettingsPath();
 export const USER_SETTINGS_DIR = path.dirname(USER_SETTINGS_PATH);
 export const DEFAULT_EXCLUDED_ENV_VARS = ['DEBUG', 'DEBUG_MODE'];
@@ -137,22 +137,24 @@ export function migrateLegacyPermissions(
 }
 
 export function getSystemSettingsPath(): string {
-  if (process.env['QWEN_CODE_SYSTEM_SETTINGS_PATH']) {
-    return process.env['QWEN_CODE_SYSTEM_SETTINGS_PATH'];
-  }
+  const envPath =
+    process.env['CLAUDEX_SYSTEM_SETTINGS_PATH'] ??
+    process.env['QWEN_CODE_SYSTEM_SETTINGS_PATH'];
+  if (envPath) return envPath;
   if (platform() === 'darwin') {
-    return '/Library/Application Support/QwenCode/settings.json';
+    return '/Library/Application Support/Claudex/settings.json';
   } else if (platform() === 'win32') {
-    return 'C:\\ProgramData\\qwen-code\\settings.json';
+    return 'C:\\ProgramData\\claudex\\settings.json';
   } else {
-    return '/etc/qwen-code/settings.json';
+    return '/etc/claudex/settings.json';
   }
 }
 
 export function getSystemDefaultsPath(): string {
-  if (process.env['QWEN_CODE_SYSTEM_DEFAULTS_PATH']) {
-    return process.env['QWEN_CODE_SYSTEM_DEFAULTS_PATH'];
-  }
+  const envPath =
+    process.env['CLAUDEX_SYSTEM_DEFAULTS_PATH'] ??
+    process.env['QWEN_CODE_SYSTEM_DEFAULTS_PATH'];
+  if (envPath) return envPath;
   return path.join(
     path.dirname(getSystemSettingsPath()),
     'system-defaults.json',
@@ -485,7 +487,7 @@ export function createMinimalSettings(): LoadedSettings {
  * Finds the .env file to load, respecting workspace trust settings.
  *
  * When workspace is untrusted, only allow user-level .env files at:
- * - ~/.qwen/.env
+ * - ~/.claudex/.env
  * - ~/.env
  */
 function findEnvFile(settings: Settings, startDir: string): string | null {
@@ -495,7 +497,7 @@ function findEnvFile(settings: Settings, startDir: string): string | null {
   // Pre-compute user-level .env paths for fast comparison
   const userLevelPaths = new Set([
     path.normalize(path.join(homeDir, '.env')),
-    path.normalize(path.join(homeDir, QWEN_DIR, '.env')),
+    path.normalize(path.join(homeDir, CLAUDEX_DIR, '.env')),
   ]);
 
   // Determine if we can use this .env file based on trust settings
@@ -504,8 +506,8 @@ function findEnvFile(settings: Settings, startDir: string): string | null {
 
   let currentDir = path.resolve(startDir);
   while (true) {
-    // Prefer gemini-specific .env under QWEN_DIR
-    const geminiEnvPath = path.join(currentDir, QWEN_DIR, '.env');
+    // Prefer gemini-specific .env under CLAUDEX_DIR
+    const geminiEnvPath = path.join(currentDir, CLAUDEX_DIR, '.env');
     if (fs.existsSync(geminiEnvPath) && canUseEnvFile(geminiEnvPath)) {
       return geminiEnvPath;
     }
@@ -518,7 +520,7 @@ function findEnvFile(settings: Settings, startDir: string): string | null {
     const parentDir = path.dirname(currentDir);
     if (parentDir === currentDir || !parentDir) {
       // At home directory - check fallback .env files
-      const homeGeminiEnvPath = path.join(homeDir, QWEN_DIR, '.env');
+      const homeGeminiEnvPath = path.join(homeDir, CLAUDEX_DIR, '.env');
       if (fs.existsSync(homeGeminiEnvPath)) {
         return homeGeminiEnvPath;
       }
@@ -580,7 +582,7 @@ export function loadEnvironment(settings: Settings): void {
 
       const excludedVars =
         settings?.advanced?.excludedEnvVars || DEFAULT_EXCLUDED_ENV_VARS;
-      const isProjectEnvFile = !envFilePath.includes(QWEN_DIR);
+      const isProjectEnvFile = !envFilePath.includes(CLAUDEX_DIR);
 
       for (const key in parsedEnv) {
         if (Object.hasOwn(parsedEnv, key)) {

@@ -184,7 +184,7 @@ export async function runNonInteractive(
       }
     };
 
-    const geminiClient = config.getGeminiClient();
+    const llmClient = config.getGeminiClient();
     const abortController = options.abortController ?? new AbortController();
 
     // Setup signal handlers for graceful shutdown
@@ -350,7 +350,7 @@ export async function runNonInteractive(
 
         const toolCallRequests: ToolCallRequestInfo[] = [];
         const apiStartTime = Date.now();
-        const responseStream = geminiClient.sendMessageStream(
+        const responseStream = llmClient.sendMessageStream(
           currentMessages[0]?.parts || [],
           abortController.signal,
           prompt_id,
@@ -515,7 +515,7 @@ export async function runNonInteractive(
             while (true) {
               const itemToolCallRequests: ToolCallRequestInfo[] = [];
               const itemApiStartTime = Date.now();
-              const itemStream = geminiClient.sendMessageStream(
+              const itemStream = llmClient.sendMessageStream(
                 itemMessages[0]?.parts || [],
                 abortController.signal,
                 prompt_id,

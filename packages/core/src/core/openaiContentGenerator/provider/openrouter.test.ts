@@ -104,8 +104,8 @@ describe('OpenRouterOpenAICompatibleProvider', () => {
 
       expect(headers).toEqual({
         'User-Agent': `QwenCode/1.0.0 (${process.platform}; ${process.arch})`,
-        'HTTP-Referer': 'https://github.com/QwenLM/qwen-code.git',
-        'X-OpenRouter-Title': 'Qwen Code',
+        'HTTP-Referer': 'https://github.com/claudex/claudex.git',
+        'X-OpenRouter-Title': 'Claudex',
       });
     });
 
@@ -124,8 +124,8 @@ describe('OpenRouterOpenAICompatibleProvider', () => {
 
       expect(headers).toEqual({
         'User-Agent': 'ParentAgent/1.0.0',
-        'HTTP-Referer': 'https://github.com/QwenLM/qwen-code.git', // OpenRouter-specific value should override
-        'X-OpenRouter-Title': 'Qwen Code',
+        'HTTP-Referer': 'https://github.com/claudex/claudex.git', // OpenRouter-specific value should override
+        'X-OpenRouter-Title': 'Claudex',
       });
 
       parentBuildHeaders.mockRestore();
@@ -140,9 +140,9 @@ describe('OpenRouterOpenAICompatibleProvider', () => {
         `QwenCode/unknown (${process.platform}; ${process.arch})`,
       );
       expect(headers['HTTP-Referer']).toBe(
-        'https://github.com/QwenLM/qwen-code.git',
+        'https://github.com/claudex/claudex.git',
       );
-      expect(headers['X-OpenRouter-Title']).toBe('Qwen Code');
+      expect(headers['X-OpenRouter-Title']).toBe('Claudex');
     });
   });
 
@@ -213,9 +213,9 @@ describe('OpenRouterOpenAICompatibleProvider', () => {
       // Should have both parent and OpenRouter-specific headers
       expect(headers['User-Agent']).toBeDefined(); // From parent
       expect(headers['HTTP-Referer']).toBe(
-        'https://github.com/QwenLM/qwen-code.git',
+        'https://github.com/claudex/claudex.git',
       ); // OpenRouter-specific
-      expect(headers['X-OpenRouter-Title']).toBe('Qwen Code'); // OpenRouter-specific
+      expect(headers['X-OpenRouter-Title']).toBe('Claudex'); // OpenRouter-specific
     });
   });
 });

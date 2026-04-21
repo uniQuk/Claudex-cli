@@ -105,7 +105,7 @@ Found 3 issues with auto-fixable suggestions. Apply auto-fixes? (y/n)
 
 ## Worktree Isolation
 
-When reviewing a PR, `/review` creates a temporary git worktree (`.qwen/tmp/review-pr-<number>`) instead of switching your current branch. This means:
+When reviewing a PR, `/review` creates a temporary git worktree (`.claudex/tmp/review-pr-<number>`) instead of switching your current branch. This means:
 
 - Your working tree, staged changes, and current branch are **never touched**
 - Dependencies are installed in the worktree (`npm ci`, etc.) so linting and build/test work
@@ -150,7 +150,7 @@ Or, after running `/review 123`, type `post comments` to publish findings withou
 - High-confidence Critical and Suggestion findings as inline comments on specific lines
 - For Approve/Request changes verdicts: a review summary with the verdict
 - For Comment verdict with all inline comments posted: no separate summary (inline comments are sufficient)
-- Model attribution footer on each comment (e.g., _— qwen3-coder via Qwen Code /review_)
+- Model attribution footer on each comment (e.g., _— claudex3-coder via Claudex /review_)
 
 **What stays terminal-only:**
 
@@ -174,14 +174,14 @@ Note: `fix these issues` is only available for local reviews. For PR reviews, us
 
 You can customize review criteria per project. `/review` reads rules from these files (in order):
 
-1. `.qwen/review-rules.md` (Qwen Code native)
+1. `.claudex/review-rules.md` (Claudex native)
 2. `.github/copilot-instructions.md` (preferred) or `copilot-instructions.md` (fallback — only one is loaded, not both)
 3. `AGENTS.md` — `## Code Review` section
 4. `QWEN.md` — `## Code Review` section
 
 Rules are injected into the LLM review agents (1-4) as additional criteria. For PR reviews, rules are read from the **base branch** to prevent a malicious PR from injecting bypass rules.
 
-Example `.qwen/review-rules.md`:
+Example `.claudex/review-rules.md`:
 
 ```markdown
 # Review Rules
@@ -217,18 +217,18 @@ If you switch models (via `/model`) and re-review the same PR, `/review` detects
 
 # Review again — full review with model B (not skipped)
 /review 123
-# → "Previous review used qwen3-coder. Running full review with gpt-4o for a second opinion."
+# → "Previous review used claudex3-coder. Running full review with gpt-4o for a second opinion."
 ```
 
-Cache is stored in `.qwen/review-cache/` and tracks both the commit SHA and model ID. Make sure this directory is in your `.gitignore` (a broader rule like `.qwen/*` also works). If the cached commit was rebased away, it falls back to a full review.
+Cache is stored in `.claudex/review-cache/` and tracks both the commit SHA and model ID. Make sure this directory is in your `.gitignore` (a broader rule like `.claudex/*` also works). If the cached commit was rebased away, it falls back to a full review.
 
 ## Review Reports
 
-For same-repo reviews, results are saved as a Markdown file in your project's `.qwen/reviews/` directory (cross-repo lightweight reviews skip report persistence):
+For same-repo reviews, results are saved as a Markdown file in your project's `.claudex/reviews/` directory (cross-repo lightweight reviews skip report persistence):
 
 ```
-.qwen/reviews/2026-04-06-143022-pr-123.md
-.qwen/reviews/2026-04-06-150510-local.md
+.claudex/reviews/2026-04-06-143022-pr-123.md
+.claudex/reviews/2026-04-06-150510-local.md
 ```
 
 Reports include: timestamp, diff stats, deterministic analysis results, all findings with verification status, and the verdict.

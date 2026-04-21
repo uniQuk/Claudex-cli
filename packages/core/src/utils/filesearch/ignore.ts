@@ -28,9 +28,9 @@ export function loadIgnoreRules(options: LoadIgnoreRulesOptions): Ignore {
   }
 
   if (options.useQwenignore) {
-    const qwenignorePath = path.join(options.projectRoot, '.qwenignore');
-    if (fs.existsSync(qwenignorePath)) {
-      ignorer.add(fs.readFileSync(qwenignorePath, 'utf8'));
+    const claudexignorePath = path.join(options.projectRoot, '.claudexignore');
+    if (fs.existsSync(claudexignorePath)) {
+      ignorer.add(fs.readFileSync(claudexignorePath, 'utf8'));
     }
   }
 

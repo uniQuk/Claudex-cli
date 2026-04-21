@@ -25,9 +25,9 @@ describe('crawler', () => {
     vi.restoreAllMocks();
   });
 
-  it('should use .qwenignore rules', async () => {
+  it('should use .claudexignore rules', async () => {
     tmpDir = await createTmpDir({
-      '.qwenignore': 'dist/',
+      '.claudexignore': 'dist/',
       dist: ['ignored.js'],
       src: ['not-ignored.js'],
     });
@@ -51,16 +51,16 @@ describe('crawler', () => {
       expect.arrayContaining([
         '.',
         'src/',
-        '.qwenignore',
+        '.claudexignore',
         'src/not-ignored.js',
       ]),
     );
   });
 
-  it('should combine .gitignore and .qwenignore rules', async () => {
+  it('should combine .gitignore and .claudexignore rules', async () => {
     tmpDir = await createTmpDir({
       '.gitignore': 'dist/',
-      '.qwenignore': 'build/',
+      '.claudexignore': 'build/',
       dist: ['ignored-by-git.js'],
       build: ['ignored-by-gemini.js'],
       src: ['not-ignored.js'],
@@ -85,7 +85,7 @@ describe('crawler', () => {
       expect.arrayContaining([
         '.',
         'src/',
-        '.qwenignore',
+        '.claudexignore',
         '.gitignore',
         'src/not-ignored.js',
       ]),

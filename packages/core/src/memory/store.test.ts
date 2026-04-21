@@ -42,24 +42,24 @@ describe('auto-memory storage scaffold', () => {
     });
   });
 
-  it('builds stable auto-memory paths under project .qwen directory', () => {
+  it('builds stable auto-memory paths under project .claudex directory', () => {
     expect(getAutoMemoryRoot(projectRoot)).toBe(
-      path.join(projectRoot, '.qwen', 'memory'),
+      path.join(projectRoot, '.claudex', 'memory'),
     );
     expect(getAutoMemoryIndexPath(projectRoot)).toBe(
-      path.join(projectRoot, '.qwen', 'memory', 'MEMORY.md'),
+      path.join(projectRoot, '.claudex', 'memory', 'MEMORY.md'),
     );
     expect(getAutoMemoryMetadataPath(projectRoot)).toBe(
-      path.join(projectRoot, '.qwen', 'meta.json'),
+      path.join(projectRoot, '.claudex', 'meta.json'),
     );
     expect(getAutoMemoryExtractCursorPath(projectRoot)).toBe(
-      path.join(projectRoot, '.qwen', 'extract-cursor.json'),
+      path.join(projectRoot, '.claudex', 'extract-cursor.json'),
     );
     expect(getAutoMemoryConsolidationLockPath(projectRoot)).toBe(
-      path.join(projectRoot, '.qwen', 'consolidation.lock'),
+      path.join(projectRoot, '.claudex', 'consolidation.lock'),
     );
     expect(getAutoMemoryTopicPath(projectRoot, 'feedback')).toBe(
-      path.join(projectRoot, '.qwen', 'memory', 'feedback.md'),
+      path.join(projectRoot, '.claudex', 'memory', 'feedback.md'),
     );
   });
 

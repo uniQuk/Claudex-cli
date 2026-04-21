@@ -122,7 +122,7 @@ Defined in `tokenLimits.ts`:
 ### Why 64K escalated limit?
 
 - Covers the vast majority of long outputs that were truncated at 8K
-- Matches the output limit of many modern models (Claude Sonnet, Gemini 3.x, Qwen3.x)
+- Matches the output limit of many modern models (Claude Sonnet, Gemini 3.x, Claudex3.x)
 - Higher values (e.g., 128K) would negate slot optimization benefits for the <1% of requests that escalate
 
 ### Why not progressive escalation (8K → 16K → 32K → 64K)?

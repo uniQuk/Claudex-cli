@@ -19,7 +19,7 @@ export const summaryCommand: SlashCommand = {
   name: 'summary',
   get description() {
     return t(
-      'Generate a project summary and save it to .qwen/PROJECT_SUMMARY.md',
+      'Generate a project summary and save it to .claudex/PROJECT_SUMMARY.md',
     );
   },
   kind: CommandKind.BUILT_IN,
@@ -136,7 +136,7 @@ export const summaryCommand: SlashCommand = {
     }> => {
       // Ensure .qwen directory exists
       const projectRoot = config.getProjectRoot();
-      const qwenDir = path.join(projectRoot, '.qwen');
+      const qwenDir = path.join(projectRoot, '.claudex');
       try {
         await fsPromises.mkdir(qwenDir, { recursive: true });
       } catch (_err) {
@@ -156,7 +156,7 @@ export const summaryCommand: SlashCommand = {
       await fsPromises.writeFile(summaryPath, summaryContent, 'utf8');
 
       return {
-        filePathForDisplay: '.qwen/PROJECT_SUMMARY.md',
+        filePathForDisplay: '.claudex/PROJECT_SUMMARY.md',
         fullPath: summaryPath,
       };
     };

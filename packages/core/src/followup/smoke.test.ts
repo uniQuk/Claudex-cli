@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen Team
+ * Copyright 2025 Claudex CLI contributors
  * SPDX-License-Identifier: Apache-2.0
  *
  * Smoke Tests — E2E verification of core followup modules working together.

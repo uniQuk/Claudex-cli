@@ -53,8 +53,8 @@ describe('FileDiscoveryService', () => {
       expect(service.shouldGitIgnoreFile('node_modules/foo.js')).toBe(false);
     });
 
-    it('should load .qwenignore patterns even when not in a git repo', async () => {
-      await createTestFile('.qwenignore', 'secrets.txt');
+    it('should load .claudexignore patterns even when not in a git repo', async () => {
+      await createTestFile('.claudexignore', 'secrets.txt');
       const service = new FileDiscoveryService(projectRoot);
 
       expect(service.shouldQwenIgnoreFile('secrets.txt')).toBe(true);
@@ -66,7 +66,7 @@ describe('FileDiscoveryService', () => {
     beforeEach(async () => {
       await fs.mkdir(path.join(projectRoot, '.git'));
       await createTestFile('.gitignore', 'node_modules/\n.git/\ndist');
-      await createTestFile('.qwenignore', 'logs/');
+      await createTestFile('.claudexignore', 'logs/');
     });
 
     it('should filter out git-ignored and qwen-ignored files by default', () => {
@@ -98,7 +98,7 @@ describe('FileDiscoveryService', () => {
 
       const filtered = service.filterFiles(files, {
         respectGitIgnore: false,
-        respectQwenIgnore: true, // still respect this one
+        respectClaudexIgnore: true, // still respect this one
       });
 
       expect(filtered).toEqual(
@@ -108,7 +108,7 @@ describe('FileDiscoveryService', () => {
       );
     });
 
-    it('should not filter files when respectQwenIgnore is false', () => {
+    it('should not filter files when respectClaudexIgnore is false', () => {
       const files = [
         'src/index.ts',
         'node_modules/package/index.js',
@@ -119,7 +119,7 @@ describe('FileDiscoveryService', () => {
 
       const filtered = service.filterFiles(files, {
         respectGitIgnore: true,
-        respectQwenIgnore: false,
+        respectClaudexIgnore: false,
       });
 
       expect(filtered).toEqual(
@@ -140,7 +140,7 @@ describe('FileDiscoveryService', () => {
     beforeEach(async () => {
       await fs.mkdir(path.join(projectRoot, '.git'));
       await createTestFile('.gitignore', 'node_modules/');
-      await createTestFile('.qwenignore', '*.log');
+      await createTestFile('.claudexignore', '*.log');
     });
 
     it('should return true for git-ignored files', () => {

@@ -12,7 +12,7 @@ import {
   INSTALL_METADATA_FILENAME,
   EXTENSIONS_CONFIG_FILENAME,
 } from './variables.js';
-import { QWEN_DIR } from '../config/storage.js';
+import { CLAUDEX_DIR } from '../config/storage.js';
 import {
   ExtensionManager,
   SettingScope,
@@ -81,7 +81,7 @@ vi.mock('../index.js', async (importOriginal) => {
   };
 });
 
-const EXTENSIONS_DIRECTORY_NAME = path.join(QWEN_DIR, 'extensions');
+const EXTENSIONS_DIRECTORY_NAME = path.join(CLAUDEX_DIR, 'extensions');
 
 function createExtension({
   extensionsDir = 'extensions-dir',
@@ -123,10 +123,10 @@ describe('extension tests', () => {
 
   beforeEach(() => {
     tempHomeDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), 'qwen-code-test-home-'),
+      path.join(os.tmpdir(), 'claudex-test-home-'),
     );
     tempWorkspaceDir = fs.mkdtempSync(
-      path.join(tempHomeDir, 'qwen-code-test-workspace-'),
+      path.join(tempHomeDir, 'claudex-test-workspace-'),
     );
     userExtensionsDir = path.join(tempHomeDir, EXTENSIONS_DIRECTORY_NAME);
     fs.mkdirSync(userExtensionsDir, { recursive: true });

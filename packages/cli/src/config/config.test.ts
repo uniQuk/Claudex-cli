@@ -160,11 +160,11 @@ vi.mock('@claudex/core', async (importOriginal) => {
     ),
     DEFAULT_MEMORY_FILE_FILTERING_OPTIONS: {
       respectGitIgnore: false,
-      respectQwenIgnore: true,
+      respectClaudexIgnore: true,
     },
     DEFAULT_FILE_FILTERING_OPTIONS: {
       respectGitIgnore: true,
-      respectQwenIgnore: true,
+      respectClaudexIgnore: true,
     },
   };
 });
@@ -2280,12 +2280,12 @@ describe('loadCliConfig fileFiltering', () => {
       value: false,
     },
     {
-      property: 'respectQwenIgnore',
+      property: 'respectClaudexIgnore',
       getter: (c) => c.getFileFilteringRespectQwenIgnore(),
       value: true,
     },
     {
-      property: 'respectQwenIgnore',
+      property: 'respectClaudexIgnore',
       getter: (c) => c.getFileFilteringRespectQwenIgnore(),
       value: false,
     },
@@ -2565,18 +2565,18 @@ describe('sandbox image resolution precedence', () => {
     vi.resetAllMocks();
     vi.mocked(os.homedir).mockReturnValue('/mock/home/user');
     vi.stubEnv('GEMINI_API_KEY', 'test-api-key');
-    delete process.env['QWEN_SANDBOX_IMAGE'];
+    delete process.env['CLAUDEX_SANDBOX_IMAGE'];
   });
 
   afterEach(() => {
     process.argv = originalArgv;
     vi.unstubAllEnvs();
     vi.restoreAllMocks();
-    delete process.env['QWEN_SANDBOX_IMAGE'];
+    delete process.env['CLAUDEX_SANDBOX_IMAGE'];
   });
 
   it('uses --sandbox-image over env and settings', async () => {
-    vi.stubEnv('QWEN_SANDBOX_IMAGE', 'env-image');
+    vi.stubEnv('CLAUDEX_SANDBOX_IMAGE', 'env-image');
     process.argv = [
       'node',
       'script.js',
@@ -2595,8 +2595,8 @@ describe('sandbox image resolution precedence', () => {
     expect(config.getSandbox()?.image).toBe('cli-image');
   });
 
-  it('uses QWEN_SANDBOX_IMAGE over tools.sandboxImage', async () => {
-    vi.stubEnv('QWEN_SANDBOX_IMAGE', 'env-image');
+  it('uses CLAUDEX_SANDBOX_IMAGE over tools.sandboxImage', async () => {
+    vi.stubEnv('CLAUDEX_SANDBOX_IMAGE', 'env-image');
     process.argv = ['node', 'script.js', '--sandbox'];
     const argv = await parseArguments();
     const settings: Settings = {
@@ -2637,21 +2637,21 @@ describe('sandbox image resolution precedence', () => {
 
 describe('loadCliConfig runtimeOutputDir', () => {
   const originalArgv = process.argv;
-  const originalRuntimeEnv = process.env['QWEN_RUNTIME_DIR'];
+  const originalRuntimeEnv = process.env['CLAUDEX_RUNTIME_DIR'];
 
   beforeEach(() => {
     process.argv = ['node', 'script.js'];
     Storage.setRuntimeBaseDir(null);
-    delete process.env['QWEN_RUNTIME_DIR'];
+    delete process.env['CLAUDEX_RUNTIME_DIR'];
   });
 
   afterEach(() => {
     process.argv = originalArgv;
     Storage.setRuntimeBaseDir(null);
     if (originalRuntimeEnv !== undefined) {
-      process.env['QWEN_RUNTIME_DIR'] = originalRuntimeEnv;
+      process.env['CLAUDEX_RUNTIME_DIR'] = originalRuntimeEnv;
     } else {
-      delete process.env['QWEN_RUNTIME_DIR'];
+      delete process.env['CLAUDEX_RUNTIME_DIR'];
     }
     vi.unstubAllEnvs();
     vi.restoreAllMocks();
@@ -2681,13 +2681,13 @@ describe('loadCliConfig runtimeOutputDir', () => {
     const argv = await parseArguments();
     const settings: Settings = {};
     await loadCliConfig(settings, argv);
-    expect(Storage.getRuntimeBaseDir()).toBe(Storage.getGlobalQwenDir());
+    expect(Storage.getRuntimeBaseDir()).toBe(Storage.getGlobalClaudexDir());
   });
 
-  it('should let QWEN_RUNTIME_DIR env var take priority over settings', async () => {
+  it('should let CLAUDEX_RUNTIME_DIR env var take priority over settings', async () => {
     const envDir = path.resolve('from-env');
     const settingsDir = path.resolve('from-settings');
-    process.env['QWEN_RUNTIME_DIR'] = envDir;
+    process.env['CLAUDEX_RUNTIME_DIR'] = envDir;
     const argv = await parseArguments();
     const settings: Settings = {
       advanced: { runtimeOutputDir: settingsDir },
@@ -2707,6 +2707,6 @@ describe('loadCliConfig runtimeOutputDir', () => {
     expect(Storage.getRuntimeBaseDir()).toBe(firstRuntimeDir);
 
     await loadCliConfig({}, argv);
-    expect(Storage.getRuntimeBaseDir()).toBe(Storage.getGlobalQwenDir());
+    expect(Storage.getRuntimeBaseDir()).toBe(Storage.getGlobalClaudexDir());
   });
 });

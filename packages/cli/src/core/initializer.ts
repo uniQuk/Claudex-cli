@@ -4,11 +4,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as path from 'node:path';
+import * as os from 'node:os';
+import * as fs from 'node:fs';
 import {
   IdeClient,
   IdeConnectionEvent,
   IdeConnectionType,
   logIdeConnection,
+  Storage,
   type Config,
 } from '@claudex/core';
 import { type LoadedSettings } from '../config/settings.js';
@@ -30,12 +34,31 @@ export interface InitializationResult {
  * @param settings The loaded application settings.
  * @returns The results of the initialization.
  */
+/**
+ * Migrates ~/.qwen to ~/.claudex on first run if the new directory doesn't exist.
+ */
+function migrateStorageDir(): void {
+  const oldDir = path.join(os.homedir(), '.qwen');
+  const newDir = Storage.getGlobalClaudexDir();
+  if (!fs.existsSync(newDir) && fs.existsSync(oldDir)) {
+    try {
+      fs.renameSync(oldDir, newDir);
+    } catch {
+      // Non-fatal — fall back to creating a fresh directory
+    }
+  }
+}
+
 export async function initializeApp(
   config: Config,
   settings: LoadedSettings,
 ): Promise<InitializationResult> {
+  // Migrate storage dir from .qwen to .claudex if needed
+  migrateStorageDir();
+
   // Initialize i18n system
   const languageSetting =
+    process.env['CLAUDEX_LANG'] ||
     process.env['QWEN_CODE_LANG'] ||
     (settings.merged.general?.language as string) ||
     'auto';

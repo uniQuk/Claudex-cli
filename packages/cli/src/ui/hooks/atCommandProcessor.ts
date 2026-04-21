@@ -203,18 +203,18 @@ export async function handleAtCommand({
       respectFileIgnore.respectGitIgnore &&
       fileDiscovery.shouldIgnoreFile(pathName, {
         respectGitIgnore: true,
-        respectQwenIgnore: false,
+        respectClaudexIgnore: false,
       });
-    const qwenIgnored =
-      respectFileIgnore.respectQwenIgnore &&
+    const claudexIgnored =
+      respectFileIgnore.respectClaudexIgnore &&
       fileDiscovery.shouldIgnoreFile(pathName, {
         respectGitIgnore: false,
-        respectQwenIgnore: true,
+        respectClaudexIgnore: true,
       });
 
-    if (gitIgnored || qwenIgnored) {
+    if (gitIgnored || claudexIgnored) {
       const reason =
-        gitIgnored && qwenIgnored ? 'both' : gitIgnored ? 'git' : 'qwen';
+        gitIgnored && claudexIgnored ? 'both' : gitIgnored ? 'git' : 'qwen';
       ignoredByReason[reason].push(pathName);
       const reasonText =
         reason === 'both'

@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen Team
+ * Copyright 2025 Claudex CLI contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -187,7 +187,7 @@ class QwenAgent implements Agent {
     return {
       protocolVersion: PROTOCOL_VERSION,
       agentInfo: {
-        name: 'qwen-code',
+        name: 'claudex',
         title: 'Claudex',
         version,
       },

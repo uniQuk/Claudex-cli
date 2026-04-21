@@ -474,7 +474,7 @@ export async function parseArguments(): Promise<CliArgs> {
           description:
             'Slash command names to hide/disable (comma-separated or ' +
             'repeated). Merged with the `slashCommands.disabled` setting ' +
-            'and QWEN_DISABLED_SLASH_COMMANDS. Matched case-insensitively ' +
+            'and CLAUDEX_DISABLED_SLASH_COMMANDS. Matched case-insensitively ' +
             'against the final command name.',
           coerce: (names: string[]) =>
             names.flatMap((n) => n.split(',').map((t) => t.trim())),
@@ -695,7 +695,7 @@ export async function loadCliConfig(
   const debugMode = isDebugMode(argv);
   const bareMode = isBareMode(argv.bare);
 
-  // Set runtime output directory from settings (env var QWEN_RUNTIME_DIR
+  // Set runtime output directory from settings (env var CLAUDEX_RUNTIME_DIR
   // is auto-detected inside getRuntimeBaseDir() at each call site).
   // Pass cwd so that relative paths like ".qwen" resolve per-project.
   Storage.setRuntimeBaseDir(settings.advanced?.runtimeOutputDir, cwd);
@@ -719,11 +719,11 @@ export async function loadCliConfig(
   // Automatically load output-language.md if it exists
   const projectStorage = new Storage(cwd);
   const projectOutputLanguagePath = path.join(
-    projectStorage.getQwenDir(),
+    projectStorage.getClaudexDir(),
     'output-language.md',
   );
   const globalOutputLanguagePath = path.join(
-    Storage.getGlobalQwenDir(),
+    Storage.getGlobalClaudexDir(),
     'output-language.md',
   );
 
@@ -875,9 +875,11 @@ export async function loadCliConfig(
   };
   for (const name of settings.slashCommands?.disabled ?? []) addDisabled(name);
   for (const name of argv.disabledSlashCommands ?? []) addDisabled(name);
-  for (const name of (process.env['QWEN_DISABLED_SLASH_COMMANDS'] ?? '').split(
-    ',',
-  )) {
+  for (const name of (
+    process.env['CLAUDEX_DISABLED_SLASH_COMMANDS'] ??
+    process.env['QWEN_DISABLED_SLASH_COMMANDS'] ??
+    ''
+  ).split(',')) {
     addDisabled(name);
   }
 

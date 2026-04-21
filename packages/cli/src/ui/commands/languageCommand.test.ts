@@ -64,10 +64,10 @@ vi.mock('@claudex/core', async (importOriginal) => {
   return {
     ...actual,
     Storage: {
-      getGlobalQwenDir: vi.fn().mockReturnValue('/mock/.qwen'),
+      getGlobalClaudexDir: vi.fn().mockReturnValue('/mock/.qwen'),
       getGlobalSettingsPath: vi
         .fn()
-        .mockReturnValue('/mock/.qwen/settings.json'),
+        .mockReturnValue('/mock/.claudex/settings.json'),
     },
   };
 });
@@ -741,7 +741,7 @@ describe('languageCommand', () => {
       vi.mocked(i18n.detectSystemLanguage).mockReturnValue('en');
       vi.mocked(fs.readFileSync).mockReturnValue(
         `# Output language preference: English
-<!-- qwen-code:llm-output-language: English -->
+<!-- claudex:llm-output-language: English -->
 `,
       );
 
@@ -754,7 +754,7 @@ describe('languageCommand', () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
       vi.mocked(fs.readFileSync).mockReturnValue(
         `# Output language preference: English
-<!-- qwen-code:llm-output-language: English -->
+<!-- claudex:llm-output-language: English -->
 `,
       );
 

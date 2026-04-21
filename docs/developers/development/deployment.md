@@ -1,57 +1,57 @@
-# Qwen Code Execution and Deployment
+# Claudex Execution and Deployment
 
-This document describes how to run Qwen Code and explains the deployment architecture that Qwen Code uses.
+This document describes how to run Claudex and explains the deployment architecture that Claudex uses.
 
-## Running Qwen Code
+## Running Claudex
 
-There are several ways to run Qwen Code. The option you choose depends on how you intend to use it.
+There are several ways to run Claudex. The option you choose depends on how you intend to use it.
 
 ---
 
 ### 1. Standard installation (Recommended for typical users)
 
-This is the recommended way for end-users to install Qwen Code. It involves downloading the Qwen Code package from the NPM registry.
+This is the recommended way for end-users to install Claudex. It involves downloading the Claudex package from the NPM registry.
 
 - **Global install:**
 
   ```bash
-  npm install -g @qwen-code/qwen-code
+  npm install -g @claudex/claudex
   ```
 
   Then, run the CLI from anywhere:
 
   ```bash
-  qwen
+  claudex
   ```
 
 - **NPX execution:**
 
   ```bash
   # Execute the latest version from NPM without a global install
-  npx @qwen-code/qwen-code
+  npx @claudex/claudex
   ```
 
 ---
 
 ### 2. Running in a sandbox (Docker/Podman)
 
-For security and isolation, Qwen Code can be run inside a container. This is the default way that the CLI executes tools that might have side effects.
+For security and isolation, Claudex can be run inside a container. This is the default way that the CLI executes tools that might have side effects.
 
 - **Directly from the Registry:**
   You can run the published sandbox image directly. This is useful for environments where you only have Docker and want to run the CLI.
   ```bash
   # Run the published sandbox image
-  docker run --rm -it ghcr.io/qwenlm/qwen-code:0.0.11
+  docker run --rm -it ghcr.io/claudexlm/claudex:0.0.11
   ```
 - **Using the `--sandbox` flag:**
-  If you have Qwen Code installed locally (using the standard installation described above), you can instruct it to run inside the sandbox container.
+  If you have Claudex installed locally (using the standard installation described above), you can instruct it to run inside the sandbox container.
   ```bash
-  qwen --sandbox -y -p "your prompt here"
+  claudex --sandbox -y -p "your prompt here"
   ```
 
 ---
 
-### 3. Running from source (Recommended for Qwen Code contributors)
+### 3. Running from source (Recommended for Claudex contributors)
 
 Contributors to the project will want to run the CLI directly from the source code.
 
@@ -68,19 +68,19 @@ Contributors to the project will want to run the CLI directly from the source co
   # Link the local cli package to your global node_modules
   npm link packages/cli
 
-  # Now you can run your local version using the `qwen` command
-  qwen
+  # Now you can run your local version using the `claudex` command
+  claudex
   ```
 
 ---
 
-### 4. Running the latest Qwen Code commit from GitHub
+### 4. Running the latest Claudex commit from GitHub
 
-You can run the most recently committed version of Qwen Code directly from the GitHub repository. This is useful for testing features still in development.
+You can run the most recently committed version of Claudex directly from the GitHub repository. This is useful for testing features still in development.
 
 ```bash
 # Execute the CLI directly from the main branch on GitHub
-npx https://github.com/QwenLM/qwen-code
+npx https://github.com/ClaudexLM/claudex
 ```
 
 ## Deployment architecture
@@ -89,24 +89,24 @@ The execution methods described above are made possible by the following archite
 
 **NPM packages**
 
-Qwen Code project is a monorepo that publishes core packages to the NPM registry:
+Claudex project is a monorepo that publishes core packages to the NPM registry:
 
-- `@qwen-code/qwen-code-core`: The backend, handling logic and tool execution.
-- `@qwen-code/qwen-code`: The user-facing frontend.
+- `@claudex/claudex-core`: The backend, handling logic and tool execution.
+- `@claudex/claudex`: The user-facing frontend.
 
-These packages are used when performing the standard installation and when running Qwen Code from the source.
+These packages are used when performing the standard installation and when running Claudex from the source.
 
 **Build and packaging processes**
 
 There are two distinct build processes used, depending on the distribution channel:
 
-- **NPM publication:** For publishing to the NPM registry, the TypeScript source code in `@qwen-code/qwen-code-core` and `@qwen-code/qwen-code` is transpiled into standard JavaScript using the TypeScript Compiler (`tsc`). The resulting `dist/` directory is what gets published in the NPM package. This is a standard approach for TypeScript libraries.
+- **NPM publication:** For publishing to the NPM registry, the TypeScript source code in `@claudex/claudex-core` and `@claudex/claudex` is transpiled into standard JavaScript using the TypeScript Compiler (`tsc`). The resulting `dist/` directory is what gets published in the NPM package. This is a standard approach for TypeScript libraries.
 
-- **GitHub `npx` execution:** When running the latest version of Qwen Code directly from GitHub, a different process is triggered by the `prepare` script in `package.json`. This script uses `esbuild` to bundle the entire application and its dependencies into a single, self-contained JavaScript file. This bundle is created on-the-fly on the user's machine and is not checked into the repository.
+- **GitHub `npx` execution:** When running the latest version of Claudex directly from GitHub, a different process is triggered by the `prepare` script in `package.json`. This script uses `esbuild` to bundle the entire application and its dependencies into a single, self-contained JavaScript file. This bundle is created on-the-fly on the user's machine and is not checked into the repository.
 
 **Docker sandbox image**
 
-The Docker-based execution method is supported by the `qwen-code-sandbox` container image. This image is published to a container registry and contains a pre-installed, global version of Qwen Code.
+The Docker-based execution method is supported by the `claudex-sandbox` container image. This image is published to a container registry and contains a pre-installed, global version of Claudex.
 
 ## Release process
 

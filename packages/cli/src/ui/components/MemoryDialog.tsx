@@ -12,7 +12,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import {
   getAllGeminiMdFilenames,
-  QWEN_DIR,
+  CLAUDEX_DIR,
   getAutoMemoryRoot,
   getAutoMemoryProjectStateDir,
 } from '@claudex/core';
@@ -125,7 +125,7 @@ export function MemoryDialog({ onClose }: MemoryDialogProps) {
     () =>
       path.join(
         os.homedir(),
-        QWEN_DIR,
+        CLAUDEX_DIR,
         getAllGeminiMdFilenames()[0] ?? 'QWEN.md',
       ),
     [],
@@ -215,7 +215,7 @@ export function MemoryDialog({ onClose }: MemoryDialogProps) {
           );
         case 'global':
           return resolvePreferredMemoryFile(
-            path.join(os.homedir(), QWEN_DIR),
+            path.join(os.homedir(), CLAUDEX_DIR),
             getAllGeminiMdFilenames()[0] ?? 'QWEN.md',
           );
         case 'managed':

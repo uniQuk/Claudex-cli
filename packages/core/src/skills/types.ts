@@ -8,10 +8,10 @@ import type { HookDefinition, HookEventName } from '../hooks/types.js';
 
 /**
  * Represents the storage level for a skill configuration.
- * - 'project': Stored in `.qwen/skills/` within the project directory
- * - 'user': Stored in `~/.qwen/skills/` in the user's home directory
+ * - 'project': Stored in `.claudex/skills/` within the project directory
+ * - 'user': Stored in `~/.claudex/skills/` in the user's home directory
  * - 'extension': Provided by an installed extension
- * - 'bundled': Built-in skills shipped with qwen-code
+ * - 'bundled': Built-in skills shipped with claudex
  */
 export type SkillLevel = 'project' | 'user' | 'extension' | 'bundled';
 

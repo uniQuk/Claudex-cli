@@ -37,7 +37,7 @@ vi.mock('../i18n/index.js', () => ({
 // Mock @claudex/core
 vi.mock('@claudex/core', () => ({
   Storage: {
-    getGlobalQwenDir: vi.fn(() => '/mock/home/.qwen'),
+    getGlobalClaudexDir: vi.fn(() => '/mock/home/.qwen'),
   },
 }));
 
@@ -202,7 +202,7 @@ describe('languageUtils', () => {
 
       const writtenContent = vi.mocked(fs.writeFileSync).mock.calls[0][1];
       expect(writtenContent).toContain(
-        '<!-- qwen-code:llm-output-language: Chinese -->',
+        '<!-- claudex:llm-output-language: Chinese -->',
       );
     });
 
@@ -215,7 +215,7 @@ describe('languageUtils', () => {
         '# Output language preference: Test--Language',
       );
       expect(writtenContent).toContain(
-        '<!-- qwen-code:llm-output-language: TestLanguage -->',
+        '<!-- claudex:llm-output-language: TestLanguage -->',
       );
     });
 
@@ -314,7 +314,7 @@ describe('languageUtils', () => {
       vi.mocked(i18n.detectSystemLanguage).mockReturnValue('en');
       vi.mocked(fs.readFileSync).mockReturnValue(
         `# Output language preference: French
-<!-- qwen-code:llm-output-language: French -->
+<!-- claudex:llm-output-language: French -->
 `,
       );
 
@@ -327,7 +327,7 @@ describe('languageUtils', () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
       vi.mocked(fs.readFileSync).mockReturnValue(
         `# Output language preference: French
-<!-- qwen-code:llm-output-language: French -->
+<!-- claudex:llm-output-language: French -->
 `,
       );
 
@@ -417,8 +417,8 @@ describe('languageUtils', () => {
 
   describe('output-language.md path resolution priority', () => {
     it('should prefer project-level path over global path', () => {
-      const projectPath = '/project/.qwen/output-language.md';
-      const globalPath = '/mock/home/.qwen/output-language.md';
+      const projectPath = '/project/.claudex/output-language.md';
+      const globalPath = '/mock/home/.claudex/output-language.md';
 
       vi.mocked(fs.existsSync).mockImplementation((p) => {
         if (p.toString() === projectPath) return true;
@@ -437,8 +437,8 @@ describe('languageUtils', () => {
     });
 
     it('should fall back to global path when project-level does not exist', () => {
-      const projectPath = '/project/.qwen/output-language.md';
-      const globalPath = '/mock/home/.qwen/output-language.md';
+      const projectPath = '/project/.claudex/output-language.md';
+      const globalPath = '/mock/home/.claudex/output-language.md';
 
       vi.mocked(fs.existsSync).mockImplementation((p) => {
         if (p.toString() === projectPath) return false;
@@ -457,8 +457,8 @@ describe('languageUtils', () => {
     });
 
     it('should return undefined when neither path exists', () => {
-      const projectPath = '/project/.qwen/output-language.md';
-      const globalPath = '/mock/home/.qwen/output-language.md';
+      const projectPath = '/project/.claudex/output-language.md';
+      const globalPath = '/mock/home/.claudex/output-language.md';
 
       vi.mocked(fs.existsSync).mockReturnValue(false);
 

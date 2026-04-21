@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * @license
- * Copyright 2025 Qwen Team
+ * Copyright 2025 Claudex CLI contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -20,7 +20,7 @@ const HTML_TEMPLATE = `<!DOCTYPE html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,${encodeURIComponent(FAVICON_SVG)}">
-  <title>Qwen Code Chat Export</title>
+  <title>Claudex Chat Export</title>
   <!-- Load React and ReactDOM from CDN -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>

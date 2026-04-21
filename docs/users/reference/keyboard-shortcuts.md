@@ -1,6 +1,6 @@
-# Qwen Code Keyboard Shortcuts
+# Claudex Keyboard Shortcuts
 
-This document lists the available keyboard shortcuts in Qwen Code.
+This document lists the available keyboard shortcuts in Claudex.
 
 ## General
 

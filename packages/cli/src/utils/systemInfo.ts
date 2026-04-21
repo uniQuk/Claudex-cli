@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 Claudex CLI contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -89,7 +89,7 @@ export async function getIdeClientName(
 /**
  * Gets the sandbox environment information.
  * Handles different sandbox types including sandbox-exec and custom sandbox environments.
- * For bug reports, removes 'qwen-' or 'qwen-code-' prefixes from sandbox names.
+ * For bug reports, removes 'claudex-' prefixes from sandbox names.
  *
  * @param stripPrefix - Whether to strip 'qwen-' prefix (used for bug reports)
  */
@@ -104,9 +104,9 @@ export function getSandboxEnv(stripPrefix = false): string {
     return 'no sandbox';
   }
 
-  // For bug reports, remove qwen- prefix
+  // For bug reports, remove claudex- prefix
   if (stripPrefix) {
-    return sandbox.replace(/^qwen-(?:code-)?/, '');
+    return sandbox.replace(/^claudex-/, '');
   }
 
   return sandbox;

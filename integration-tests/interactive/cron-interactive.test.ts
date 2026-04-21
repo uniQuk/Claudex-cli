@@ -18,8 +18,8 @@ import { describe, it, expect, afterEach } from 'vitest';
 import { InteractiveSession } from './interactive-session.js';
 
 const IS_SANDBOX =
-  process.env['QWEN_SANDBOX'] &&
-  process.env['QWEN_SANDBOX']!.toLowerCase() !== 'false';
+  process.env['CLAUDEX_SANDBOX'] &&
+  process.env['CLAUDEX_SANDBOX']!.toLowerCase() !== 'false';
 
 function makeEnv(): NodeJS.ProcessEnv {
   const env = { ...process.env };

@@ -27,8 +27,8 @@ import { TestRig } from '../test-helper.js';
 const REQUEST_TIMEOUT_MS = 60_000;
 
 const IS_SANDBOX =
-  process.env['QWEN_SANDBOX'] &&
-  process.env['QWEN_SANDBOX']!.toLowerCase() !== 'false';
+  process.env['CLAUDEX_SANDBOX'] &&
+  process.env['CLAUDEX_SANDBOX']!.toLowerCase() !== 'false';
 
 type PendingRequest = {
   resolve: (value: unknown) => void;

@@ -229,7 +229,7 @@ describe('terminal-bench integration', () => {
         const args = [
           'run',
           '--agent-import-path',
-          'integration-tests.terminal-bench.qwen_code:QwenCodeAgent',
+          'integration-tests.terminal-bench.claudex_code:QwenCodeAgent',
           '--agent-kwarg',
           `api_key=${apiKey}`,
           '--agent-kwarg',

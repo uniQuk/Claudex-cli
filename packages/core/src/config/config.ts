@@ -310,7 +310,7 @@ export interface AgentsCollabSettings {
   displayMode?: string;
   /** Arena-specific settings */
   arena?: {
-    /** Custom base directory for Arena worktrees (default: ~/.qwen/arena) */
+    /** Custom base directory for Arena worktrees (default: ~/.claudex/arena) */
     worktreeBaseDir?: string;
     /** Preserve worktrees and state files after session ends */
     preserveArtifacts?: boolean;
@@ -340,7 +340,7 @@ export interface ConfigParameters {
    * CLI surface. Matched case-insensitively on the final (post-rename)
    * command name. Sourced from settings (`slashCommands.disabled`, UNION
    * merged across scopes), the `--disabled-slash-commands` CLI flag, and
-   * the `QWEN_DISABLED_SLASH_COMMANDS` environment variable.
+   * the `CLAUDEX_DISABLED_SLASH_COMMANDS` environment variable.
    */
   disabledSlashCommands?: string[];
   /** Merged permission rules from all sources (settings + CLI args). */
@@ -367,7 +367,7 @@ export interface ConfigParameters {
   usageStatisticsEnabled?: boolean;
   fileFiltering?: {
     respectGitIgnore?: boolean;
-    respectQwenIgnore?: boolean;
+    respectClaudexIgnore?: boolean;
     enableRecursiveFileSearch?: boolean;
     enableFuzzySearch?: boolean;
   };
@@ -435,7 +435,7 @@ export interface ConfigParameters {
   channel?: string;
   /**
    * File descriptor number for structured JSON event output (dual output mode).
-   * When set, Qwen Code outputs structured JSON events to this fd while
+   * When set, Claudex outputs structured JSON events to this fd while
    * continuing to render the TUI on stdout. The caller must provide this fd
    * via spawn stdio configuration.
    * Mutually exclusive with jsonFile.
@@ -488,7 +488,7 @@ export interface ConfigParameters {
   projectHooks?: Record<string, unknown>;
 
   hooks?: Record<string, unknown>;
-  /** Glob patterns to exclude from .qwen/rules/ loading. */
+  /** Glob patterns to exclude from .claudex/rules/ loading. */
   contextRuleExcludes?: string[];
   /** Warnings generated during configuration resolution */
   warnings?: string[];
@@ -607,7 +607,7 @@ export class Config {
   private cronScheduler: CronScheduler | null = null;
   private readonly fileFiltering: {
     respectGitIgnore: boolean;
-    respectQwenIgnore: boolean;
+    respectClaudexIgnore: boolean;
     enableRecursiveFileSearch: boolean;
     enableFuzzySearch: boolean;
   };
@@ -764,7 +764,7 @@ export class Config {
 
     this.fileFiltering = {
       respectGitIgnore: params.fileFiltering?.respectGitIgnore ?? true,
-      respectQwenIgnore: params.fileFiltering?.respectQwenIgnore ?? true,
+      respectClaudexIgnore: params.fileFiltering?.respectClaudexIgnore ?? true,
       enableRecursiveFileSearch:
         params.fileFiltering?.enableRecursiveFileSearch ?? true,
       enableFuzzySearch: params.fileFiltering?.enableFuzzySearch ?? true,
@@ -1692,7 +1692,7 @@ export class Config {
    * denylist; `CommandService.create` handles the normalization.
    *
    * CLI callers (loadCliConfig) populate this from settings, the
-   * `--disabled-slash-commands` flag, and `QWEN_DISABLED_SLASH_COMMANDS`.
+   * `--disabled-slash-commands` flag, and `CLAUDEX_DISABLED_SLASH_COMMANDS`.
    */
   getDisabledSlashCommands(): readonly string[] {
     return this.disabledSlashCommands;
@@ -1984,7 +1984,11 @@ export class Config {
 
   isCronEnabled(): boolean {
     // Cron is experimental and opt-in: enabled via settings or env var
-    if (process.env['QWEN_CODE_ENABLE_CRON'] === '1') return true;
+    if (
+      process.env['CLAUDEX_ENABLE_CRON'] === '1' ||
+      process.env['QWEN_CODE_ENABLE_CRON'] === '1'
+    )
+      return true;
     return this.cronEnabled;
   }
 
@@ -2000,13 +2004,13 @@ export class Config {
     return this.fileFiltering.respectGitIgnore;
   }
   getFileFilteringRespectQwenIgnore(): boolean {
-    return this.fileFiltering.respectQwenIgnore;
+    return this.fileFiltering.respectClaudexIgnore;
   }
 
   getFileFilteringOptions(): FileFilteringOptions {
     return {
       respectGitIgnore: this.fileFiltering.respectGitIgnore,
-      respectQwenIgnore: this.fileFiltering.respectQwenIgnore,
+      respectClaudexIgnore: this.fileFiltering.respectClaudexIgnore,
     };
   }
 

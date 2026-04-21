@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This file provides guidance to Qwen Code when working with code in this repository.
+This file provides guidance to Claudex when working with code in this repository.
 
 ## Common Commands
 
@@ -56,7 +56,7 @@ npm run test:integration:interactive:sandbox:none
 Or combined in one command:
 
 ```bash
-cd integration-tests && cross-env QWEN_SANDBOX=false npx vitest run cli interactive
+cd integration-tests && cross-env CLAUDEX_SANDBOX=false npx vitest run cli interactive
 ```
 
 **Gotcha:** In interactive tests, always call `session.idle()` between sends — ANSI output streams asynchronously.

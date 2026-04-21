@@ -14,7 +14,7 @@
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "env": {
-        "QWEN_SANDBOX": "false"
+        "CLAUDEX_SANDBOX": "false"
       }
     },
     {
@@ -25,7 +25,7 @@
       "type": "node",
       // fix source mapping when debugging in sandbox using global installation
       // note this does not interfere when remoteRoot is also ${workspaceFolder}/packages
-      "remoteRoot": "/usr/local/share/npm-global/lib/node_modules/@qwen-code",
+      "remoteRoot": "/usr/local/share/npm-global/lib/node_modules/@claudex",
       "localRoot": "${workspaceFolder}/packages"
     },
     {
@@ -74,7 +74,7 @@
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "env": {
-        "QWEN_SANDBOX": "false"
+        "CLAUDEX_SANDBOX": "false"
       }
     },
     {
@@ -95,7 +95,7 @@
       "internalConsoleOptions": "neverOpen",
       "skipFiles": ["<node_internals>/**"],
       "env": {
-        "QWEN_SANDBOX": "false"
+        "CLAUDEX_SANDBOX": "false"
       }
     },
     {
@@ -126,7 +126,7 @@
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "env": {
-        "GEMINI_SANDBOX": "false"
+        "CLAUDEX_SANDBOX": "false"
       }
     }
   ],

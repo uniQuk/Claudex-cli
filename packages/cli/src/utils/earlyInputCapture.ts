@@ -239,7 +239,9 @@ export function startEarlyInputCapture(): void {
   }
 
   // Check if disabled
-  if (process.env['QWEN_CODE_DISABLE_EARLY_CAPTURE'] === '1') {
+  if (
+    (process.env['CLAUDEX_DISABLE_EARLY_CAPTURE'] ?? process.env['QWEN_CODE_DISABLE_EARLY_CAPTURE']) === '1'
+  ) {
     debugLogger.debug('Early input capture disabled by environment variable');
     return;
   }

@@ -35,7 +35,7 @@ import {
 
 const debugLogger = createDebugLogger('SKILL_MANAGER');
 
-const QWEN_CONFIG_DIR = '.qwen';
+const CLAUDEX_CONFIG_DIR = '.claudex';
 const SKILLS_CONFIG_DIR = 'skills';
 const SKILL_MANIFEST_FILE = 'SKILL.md';
 
@@ -877,7 +877,7 @@ export class SkillManager {
   }
 
   private async ensureUserSkillsDir(): Promise<void> {
-    const baseDir = path.join(os.homedir(), QWEN_CONFIG_DIR, SKILLS_CONFIG_DIR);
+    const baseDir = path.join(os.homedir(), CLAUDEX_CONFIG_DIR, SKILLS_CONFIG_DIR);
     try {
       await fs.mkdir(baseDir, { recursive: true });
     } catch (error) {

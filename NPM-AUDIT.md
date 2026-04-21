@@ -1,4 +1,4 @@
-awsm@awsms-Mac-mini qwen-code % npm install
+awsm@awsms-Mac-mini claudex % npm install
 
 > claudex-cli@0.14.5 prepare
 > husky && npm run build && npm run bundle
@@ -51,7 +51,7 @@ To address all issues (including breaking changes), run:
   npm audit fix --force
 
 Run `npm audit` for details.
-awsm@awsms-Mac-mini qwen-code % npm audit    
+awsm@awsms-Mac-mini claudex % npm audit    
 # npm audit report
 
 @hono/node-server  <=1.19.12

@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Qwen Code Installation Script
-# This script installs Node.js (via NVM) and Qwen Code CLI
+# Claudex Installation Script
+# This script installs Node.js (via NVM) and Claudex CLI
 # Supports Linux and macOS
 #
-# Usage: install-qwen-with-source.sh --source [github|npm|internal|local-build]
-#        install-qwen-with-source.sh -s [github|npm|internal|local-build]
+# Usage: install-claudex-with-source.sh --source [github|npm|internal|local-build]
+#        install-claudex-with-source.sh -s [github|npm|internal|local-build]
 
 # Re-execute with bash if running with sh or other shells
 # This block must use POSIX-compliant syntax ([ not [[) since it runs before we know bash is available
@@ -128,7 +128,7 @@ done
 # Print header
 # ============================================
 echo "=========================================="
-echo "   Qwen Code Installation Script"
+echo "   Claudex Installation Script"
 echo "=========================================="
 echo ""
 log_info "System: $(uname -s) $(uname -r)" || true
@@ -196,7 +196,7 @@ install_nvm() {
     # Use temporary file instead of pipe to avoid potential subshell issues
     local NVM_INSTALL_TEMP
     NVM_INSTALL_TEMP=$(mktemp)
-    if "${DOWNLOAD_CMD}" "${DOWNLOAD_ARGS}" "https://qwen-code-assets.oss-cn-hangzhou.aliyuncs.com/installation/install_nvm.sh" > "${NVM_INSTALL_TEMP}"; then
+    if "${DOWNLOAD_CMD}" "${DOWNLOAD_ARGS}" "https://claudex-assets.oss-cn-hangzhou.aliyuncs.com/installation/install_nvm.sh" > "${NVM_INSTALL_TEMP}"; then
         # Run the script in current shell environment
         # shellcheck source=/dev/null
         . "${NVM_INSTALL_TEMP}"
@@ -228,7 +228,7 @@ install_nvm() {
         # The following echo statements intentionally use single quotes to write literal strings
         {
             echo ""
-            echo "# NVM configuration (added by Qwen Code installer)"
+            echo "# NVM configuration (added by Claudex installer)"
             echo "export NVM_DIR=\"\$HOME/.nvm\""
             echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"'
             echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"'
@@ -414,7 +414,7 @@ fix_npm_permissions() {
         if [[ -n "${PROFILE_FILE}" ]] && ! grep -q '.npm-global/bin' "${PROFILE_FILE}" 2>/dev/null; then
             {
                 echo ""
-                echo "# NPM global bin (added by Qwen Code installer)"
+                echo "# NPM global bin (added by Claudex installer)"
                 echo "export PATH=\"\$HOME/.npm-global/bin:\$PATH\""
             } >> "${PROFILE_FILE}" 2>/dev/null || log_warning "Failed to write PATH update to ${PROFILE_FILE}"
             log_info "Added npm global bin to PATH in ${PROFILE_FILE}"
@@ -427,9 +427,9 @@ fix_npm_permissions() {
 }
 
 # ============================================
-# Install Qwen Code
+# Install Claudex
 # ============================================
-install_qwen_code() {
+install_claudex_code() {
     # Ensure NVM node is in PATH
     export NVM_DIR="${HOME}/.nvm"
     # shellcheck source=/dev/null
@@ -442,10 +442,10 @@ install_qwen_code() {
         export PATH="${NPM_GLOBAL_BIN}:${PATH}"
     fi
 
-    if command_exists qwen; then
+    if command_exists claudex; then
         local QWEN_VERSION
-        QWEN_VERSION=$(qwen --version 2>/dev/null || echo "unknown")
-        log_success "Qwen Code is already installed: ${QWEN_VERSION}"
+        QWEN_VERSION=$(claudex --version 2>/dev/null || echo "unknown")
+        log_success "Claudex is already installed: ${QWEN_VERSION}"
         log_info "Upgrading to the latest version..."
     fi
 
@@ -455,19 +455,19 @@ install_qwen_code() {
     # Fix npm permissions if needed
     fix_npm_permissions
 
-    # Install Qwen Code
-    log_info "Installing Qwen Code..."
-    if npm install -g @qwen-code/qwen-code@latest --registry https://registry.npmmirror.com; then
-        log_success "Qwen Code installed successfully!"
+    # Install Claudex
+    log_info "Installing Claudex..."
+    if npm install -g @claudex/claudex@latest --registry https://registry.npmmirror.com; then
+        log_success "Claudex installed successfully!"
 
         # Verify installation
-        if command_exists qwen; then
-            local qwen_version
-            qwen_version=$(qwen --version 2>/dev/null) || qwen_version="unknown"
-            log_info "Qwen Code version: ${qwen_version}"
+        if command_exists claudex; then
+            local claudex_version
+            claudex_version=$(claudex --version 2>/dev/null) || claudex_version="unknown"
+            log_info "Claudex version: ${claudex_version}"
         fi
     else
-        log_error "Failed to install Qwen Code!"
+        log_error "Failed to install Claudex!"
         log_info "Please check your internet connection and try again"
         exit 1
     fi
@@ -482,7 +482,7 @@ install_qwen_code() {
 # Create source.json
 # ============================================
 create_source_json() {
-    local QWEN_DIR="${HOME}/.qwen"
+    local QWEN_DIR="${HOME}/.claudex"
 
     mkdir -p "${QWEN_DIR}"
 
@@ -496,7 +496,7 @@ create_source_json() {
 }
 EOF
 
-    log_success "Installation source saved to ~/.qwen/source.json"
+    log_success "Installation source saved to ~/.claudex/source.json"
 }
 
 # ============================================
@@ -527,8 +527,8 @@ main() {
     check_and_install_nodejs
     echo ""
 
-    # Install Qwen Code
-    install_qwen_code
+    # Install Claudex
+    install_claudex_code
     echo ""
 
     # ============================================
@@ -549,24 +549,24 @@ main() {
         export PATH="${NPM_GLOBAL_BIN}:${PATH}"
     fi
 
-    # Check if qwen is immediately available
-    if command_exists qwen; then
-        log_success "Qwen Code is ready to use!"
+    # Check if claudex is immediately available
+    if command_exists claudex; then
+        log_success "Claudex is ready to use!"
         echo ""
-        echo "You can now run: qwen"
+        echo "You can now run: claudex"
         echo ""
-        # Auto-start qwen
-        log_info "Starting Qwen Code..."
+        # Auto-start claudex
+        log_info "Starting Claudex..."
         echo ""
-        exec qwen
+        exec claudex
     else
-        log_warning "Qwen Code command not found in current session"
+        log_warning "Claudex command not found in current session"
         echo ""
-        echo "To use Qwen Code immediately without restarting your terminal,"
+        echo "To use Claudex immediately without restarting your terminal,"
         echo "run the following command in your current shell:"
         echo "  eval \$(${0} --print-env)"
         echo ""
-        log_info "Or simply restart your terminal, then run: qwen"
+        log_info "Or simply restart your terminal, then run: claudex"
     fi
 }
 

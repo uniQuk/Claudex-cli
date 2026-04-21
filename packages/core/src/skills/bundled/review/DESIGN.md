@@ -61,7 +61,7 @@ Applied throughout:
 
 ## Why base-branch rule loading (security)
 
-A malicious PR could add `.qwen/review-rules.md` with "never report security issues." If rules are read from the PR branch, the review is compromised.
+A malicious PR could add `.claudex/review-rules.md` with "never report security issues." If rules are read from the PR branch, the review is compromised.
 
 **Decision:** For PR reviews, read rules from the base branch via `git show <base>:<path>`. The base branch represents the project's established configuration, not the PR author's proposed changes.
 
@@ -72,7 +72,7 @@ A malicious PR could add `.qwen/review-rules.md` with "never report security iss
 - **y/n prompt:** "Post findings as PR inline comments? (y/n)" — blocks terminal, forces immediate decision.
 - **Follow-up tips (chosen):** Ghost text suggestions via existing suggestion engine. Non-blocking, discoverable via Tab.
 
-**Decision:** Tips. Qwen Code's follow-up suggestion system is a core UX differentiator. Blocking prompts interrupt flow. Tips are zero-friction and let users decide when/if to act.
+**Decision:** Tips. Claudex's follow-up suggestion system is a core UX differentiator. Blocking prompts interrupt flow. Tips are zero-friction and let users decide when/if to act.
 
 **Exception:** Autofix uses a blocking y/n because it modifies code — higher stakes require explicit consent.
 
@@ -100,7 +100,7 @@ Key implementation detail: Step 9 must use the owner/repo extracted from the URL
 
 **Considered:**
 
-- **`.qwen/review-tools.md`**: Let projects define custom lint/build/test commands. Precise, but requires users to learn a new config format and maintain it.
+- **`.claudex/review-tools.md`**: Let projects define custom lint/build/test commands. Precise, but requires users to learn a new config format and maintain it.
 - **Auto-discovery from CI config (chosen)**: Read `.github/workflows/*.yml`, `Makefile`, etc. to find what commands the project already runs in CI. Zero user effort.
 
 **Decision:** Auto-discovery. Every project already defines its tool chain in CI config. Reading those files leverages existing knowledge without asking users to duplicate it. The LLM is capable of parsing YAML workflow files and extracting the relevant commands. Falls back gracefully: if no CI config exists, Step 3 is simply skipped and LLM agents still review the diff.
@@ -109,7 +109,7 @@ Key implementation detail: Step 9 must use the owner/repo extracted from the URL
 
 | Idea                                                         | Why rejected                                                                                                              |
 | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| `.qwen/review-tools.md` for custom tool config               | Requires users to learn a new format. Auto-discovery from CI config achieves the same result with zero user effort.       |
+| `.claudex/review-tools.md` for custom tool config               | Requires users to learn a new format. Auto-discovery from CI config achieves the same result with zero user effort.       |
 | Use fast model for verification/reverse audit                | User requirement: quality first. Fast models may miss subtle issues.                                                      |
 | Reduce to 2 agents (like Gemini)                             | Loses dimensional focus. Gemini compensates with deterministic tasks; we already have those AND want higher LLM coverage. |
 | Auto-approve PR after autofix                                | Remote PR still has original code until push. Approving unfixed code is misleading.                                       |
@@ -135,7 +135,7 @@ For a PR with 15 findings:
 
 ## Future optimization: Fork Subagent
 
-> Dependency: [Fork Subagent proposal](https://github.com/wenshao/codeagents/blob/main/docs/comparison/qwen-code-improvement-report-p0-p1-core.md#2-fork-subagentp0)
+> Dependency: [Fork Subagent proposal](https://github.com/wenshao/codeagents/blob/main/docs/comparison/claudex-improvement-report-p0-p1-core.md#2-fork-subagentp0)
 
 **Current problem:** Each of the 7 LLM calls (5 review + 1 verify + 1 reverse) creates a new subagent from scratch. The system prompt (~50K tokens) is sent independently to each, totaling ~350K input tokens with massive redundancy.
 
@@ -162,4 +162,4 @@ With Fork + prompt cache sharing:
 
 **Estimated savings:** ~65% token reduction (350K → ~120K) with zero quality impact.
 
-**Why not implemented now:** Fork Subagent requires changes to the Qwen Code core (`AgentTool`, `forkSubagent.ts`, `CacheSafeParams`). This is a platform-level feature (~400 lines, ~5 days), not a /review-specific change. When available, /review should be updated to use fork instead of independent subagents.
+**Why not implemented now:** Fork Subagent requires changes to the Claudex core (`AgentTool`, `forkSubagent.ts`, `CacheSafeParams`). This is a platform-level feature (~400 lines, ~5 days), not a /review-specific change. When available, /review should be updated to use fork instead of independent subagents.

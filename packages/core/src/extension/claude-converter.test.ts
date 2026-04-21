@@ -418,7 +418,7 @@ describe('convertClaudePluginPackage', () => {
       'crlf-agents-plugin',
     );
 
-    // Verify: agent file was properly parsed and converted into .qwen/agents folder structure
+    // Verify: agent file was properly parsed and converted into .claudex/agents folder structure
     const convertedAgentsDir = path.join(result.convertedDir, 'agents');
     expect(fs.existsSync(convertedAgentsDir)).toBe(true);
 
@@ -540,10 +540,10 @@ describe('performVariableReplacement for Claude extensions', () => {
     performVariableReplacement(extDir);
 
     const result = fs.readFileSync(path.join(extDir, 'setup.sh'), 'utf-8');
-    expect(result).toContain('$HOME/.qwen/config');
-    expect(result).toContain('~/.qwen/cache');
-    expect(result).toContain('./.qwen/local');
-    expect(result).not.toContain('.claude');
+    expect(result).toContain('$HOME/.claudex/config');
+    expect(result).toContain('~/.claudex/cache');
+    expect(result).toContain('./.claudex/local');
+    expect(result).not.toMatch(/\.claude(?!x)/); // .claudex is ok, but not .claude without x
   });
 
   it('should replace role with type in shell scripts', () => {

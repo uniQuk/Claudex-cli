@@ -1,10 +1,10 @@
 # Contextual Tips
 
-Qwen Code includes a contextual tips system that helps you discover features and stay aware of session state.
+Claudex includes a contextual tips system that helps you discover features and stay aware of session state.
 
 ## Startup Tips
 
-Each time you launch Qwen Code, a tip is shown in the header area. Tips are selected by priority first, then rotated across sessions using LRU (least-recently-used) scheduling among tips of the same priority, so you see a different tip each time.
+Each time you launch Claudex, a tip is shown in the header area. Tips are selected by priority first, then rotated across sessions using LRU (least-recently-used) scheduling among tips of the same priority, so you see a different tip each time.
 
 New users see onboarding-focused tips during their first sessions:
 
@@ -18,7 +18,7 @@ After that, tips rotate through general features like `/compress`, `/approval-mo
 
 ## Post-Response Tips
 
-During a conversation, Qwen Code monitors your context window usage and shows tips when action may be needed:
+During a conversation, Claudex monitors your context window usage and shows tips when action may be needed:
 
 | Context usage | Condition                      | Tip                                               |
 | ------------- | ------------------------------ | ------------------------------------------------- |
@@ -30,7 +30,7 @@ Post-response tips have per-tip cooldowns to avoid being repetitive.
 
 ## Tip History
 
-Tip display history is persisted at `~/.qwen/tip_history.json`. This file tracks:
+Tip display history is persisted at `~/.claudex/tip_history.json`. This file tracks:
 
 - Session count (used for new-user tip selection)
 - Which tips have been shown and when (used for LRU rotation and cooldown)
@@ -39,7 +39,7 @@ You can safely delete this file to reset tip history.
 
 ## Disabling Tips
 
-To hide all tips (both startup and post-response), set `ui.hideTips` to `true` in `~/.qwen/settings.json`:
+To hide all tips (both startup and post-response), set `ui.hideTips` to `true` in `~/.claudex/settings.json`:
 
 ```json
 {

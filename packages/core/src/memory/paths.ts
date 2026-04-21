@@ -7,7 +7,7 @@
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
-import { QWEN_DIR, sanitizeCwd } from '../utils/paths.js';
+import { CLAUDEX_DIR, sanitizeCwd } from '../utils/paths.js';
 import type { AutoMemoryType } from './types.js';
 
 export const AUTO_MEMORY_DIRNAME = 'memory';
@@ -87,7 +87,7 @@ export function getMemoryBaseDir(): string {
   if (process.env['QWEN_CODE_MEMORY_BASE_DIR']) {
     return process.env['QWEN_CODE_MEMORY_BASE_DIR'];
   }
-  return path.join(os.homedir(), QWEN_DIR);
+  return path.join(os.homedir(), CLAUDEX_DIR);
 }
 
 // Memoize by projectRoot — findCanonicalGitRoot() walks the file system (existsSync
@@ -100,7 +100,7 @@ export function getAutoMemoryRoot(projectRoot: string): string {
 
   let result: string;
   if (process.env['QWEN_CODE_MEMORY_LOCAL'] === '1') {
-    result = path.join(projectRoot, QWEN_DIR, AUTO_MEMORY_DIRNAME);
+    result = path.join(projectRoot, CLAUDEX_DIR, AUTO_MEMORY_DIRNAME);
   } else {
     const canonicalRoot =
       findCanonicalGitRoot(projectRoot) ?? path.resolve(projectRoot);
