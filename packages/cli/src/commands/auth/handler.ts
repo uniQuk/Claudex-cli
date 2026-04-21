@@ -285,8 +285,8 @@ async function promptForRegion(): Promise<CodingPlanRegion> {
     [
       {
         value: CodingPlanRegion.CHINA,
-        label: t('中国 (China)'),
-        description: t('阿里云百炼 (aliyun.com)'),
+        label: t('China'),
+        description: t('Alibaba Cloud Bailian (aliyun.com)'),
       },
       {
         value: CodingPlanRegion.GLOBAL,
@@ -462,7 +462,7 @@ export async function showAuthStatus(): Promise<void> {
         if (codingPlanRegion) {
           const regionDisplay =
             codingPlanRegion === CodingPlanRegion.CHINA
-              ? t('中国 (China) - 阿里云百炼')
+              ? t('China - Alibaba Cloud Bailian')
               : t('Global - Alibaba Cloud');
           writeStdoutLine(t('  Region: {{region}}', { region: regionDisplay }));
         }

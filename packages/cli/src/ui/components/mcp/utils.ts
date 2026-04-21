@@ -7,9 +7,7 @@
 import type { MCPServerDisplayInfo, GroupedServers } from './types.js';
 import { SOURCE_DISPLAY_NAMES } from './constants.js';
 
-/**
- * 按来源分组服务器
- */
+/** Group servers by their source (user / project / extension) */
 export function groupServersBySource(
   servers: MCPServerDisplayInfo[],
 ): GroupedServers[] {
@@ -24,7 +22,7 @@ export function groupServersBySource(
     }
   }
 
-  // 按优先级排序: user > project > extension
+  // Sort by priority: user > project > extension
   const sourceOrder = ['user', 'project', 'extension'];
   const result: GroupedServers[] = [];
 
@@ -42,9 +40,7 @@ export function groupServersBySource(
   return result;
 }
 
-/**
- * 获取状态颜色
- */
+/** Map connection status to a display color */
 export function getStatusColor(
   status: string,
 ): 'green' | 'yellow' | 'red' | 'gray' {
@@ -60,9 +56,7 @@ export function getStatusColor(
   }
 }
 
-/**
- * 获取状态图标
- */
+/** Map connection status to a display icon */
 export function getStatusIcon(status: string): string {
   switch (status) {
     case 'connected':
@@ -76,17 +70,13 @@ export function getStatusIcon(status: string): string {
   }
 }
 
-/**
- * 截断文本
- */
+/** Truncate text to a maximum length, appending '...' if needed */
 export function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength - 3) + '...';
 }
 
-/**
- * 格式化服务器命令显示
- */
+/** Format a server's transport command for display */
 export function formatServerCommand(server: MCPServerDisplayInfo): string {
   const config = server.config;
   if (config.httpUrl) {

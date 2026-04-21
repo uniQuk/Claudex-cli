@@ -85,10 +85,10 @@ export class LlmRewriter {
     const inputParts: string[] = [];
 
     if (turnContent.thoughts.length > 0) {
-      inputParts.push('[内部推理]\n' + turnContent.thoughts.join('\n'));
+      inputParts.push('[internal reasoning]\n' + turnContent.thoughts.join('\n'));
     }
     if (turnContent.messages.length > 0) {
-      inputParts.push('[回复文本]\n' + turnContent.messages.join('\n'));
+      inputParts.push('[reply text]\n' + turnContent.messages.join('\n'));
     }
 
     // Prepend previous rewrite outputs as context for coherence
@@ -97,7 +97,7 @@ export class LlmRewriter {
         this.contextTurns === Infinity
           ? this.outputHistory
           : this.outputHistory.slice(-this.contextTurns);
-      inputParts.unshift('[上一轮改写结果]\n' + contextSlice.join('\n---\n'));
+      inputParts.unshift('[previous rewrite output]\n' + contextSlice.join('\n---\n'));
     }
 
     const inputText = inputParts.join('\n\n');

@@ -63,13 +63,13 @@ describe('LlmRewriter', () => {
       await rewriter.rewrite(makeTurn(['first message']));
       const firstInput =
         mockGenerateContent.mock.calls[0][0].contents[0].parts[0].text;
-      expect(firstInput).not.toContain('上一轮改写结果');
+      expect(firstInput).not.toContain('previous rewrite output');
 
       // Second call — should include first rewrite output
       await rewriter.rewrite(makeTurn(['second message']));
       const secondInput =
         mockGenerateContent.mock.calls[1][0].contents[0].parts[0].text;
-      expect(secondInput).toContain('上一轮改写结果');
+      expect(secondInput).toContain('previous rewrite output');
       expect(secondInput).toContain('rewritten output');
     });
 
@@ -85,7 +85,7 @@ describe('LlmRewriter', () => {
 
       const secondInput =
         mockGenerateContent.mock.calls[1][0].contents[0].parts[0].text;
-      expect(secondInput).not.toContain('上一轮改写结果');
+      expect(secondInput).not.toContain('previous rewrite output');
     });
 
     it('should include last N rewrites when contextTurns=N', async () => {
@@ -221,7 +221,7 @@ describe('LlmRewriter', () => {
       // Second call should have no context (first rewrite returned null)
       const input =
         mockGenerateContent.mock.calls[1][0].contents[0].parts[0].text;
-      expect(input).not.toContain('上一轮改写结果');
+      expect(input).not.toContain('previous rewrite output');
     });
   });
 });
