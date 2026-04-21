@@ -11,9 +11,9 @@ import { initStartupProfiler } from './src/utils/startupProfiler.js';
 // Must run before any other imports to capture the earliest possible T0.
 initStartupProfiler();
 
-import './src/gemini.js';
-import { main } from './src/gemini.js';
-import { FatalError } from '@qwen-code/qwen-code-core';
+import './src/claudex.js';
+import { main } from './src/claudex.js';
+import { FatalError } from '@claudex/core';
 import { writeStderrLine } from './src/utils/stdioHelpers.js';
 
 // --- Global Entry Point ---

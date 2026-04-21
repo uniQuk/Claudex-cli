@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen Code
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -40,7 +40,7 @@ vi.mock('../utils/resumeHistoryUtils.js', () => ({
   buildResumedHistoryItems: vi.fn(() => [{ id: 1, type: 'user', text: 'hi' }]),
 }));
 
-vi.mock('@qwen-code/qwen-code-core', () => {
+vi.mock('@claudex/core', () => {
   class SessionService {
     constructor(_cwd: string) {}
     async loadSession(_sessionId: string) {
@@ -147,7 +147,7 @@ describe('useResumeCommand', () => {
         debug: vi.fn(),
         error: vi.fn(),
       }),
-    } as unknown as import('@qwen-code/qwen-code-core').Config;
+    } as unknown as import('@claudex/core').Config;
 
     const { result } = renderHook(() =>
       useResumeCommand({

@@ -15,7 +15,7 @@ import { t } from '../../i18n/index.js';
 export const toolsCommand: SlashCommand = {
   name: 'tools',
   get description() {
-    return t('list available Qwen Code tools. Usage: /tools [desc]');
+    return t('list available Claudex tools. Usage: /tools [desc]');
   },
   kind: CommandKind.BUILT_IN,
   commandType: 'local-jsx',

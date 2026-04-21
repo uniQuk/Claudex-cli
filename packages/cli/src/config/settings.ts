@@ -15,7 +15,7 @@ import {
   getErrorMessage,
   Storage,
   createDebugLogger,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import stripJsonComments from 'strip-json-comments';
 import { DefaultLight } from '../ui/themes/default-light.js';
 import { DefaultDark } from '../ui/themes/default.js';

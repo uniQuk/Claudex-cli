@@ -60,7 +60,7 @@ vi.mock('node:stream', async (importOriginal) => {
 });
 
 // Mock core dependencies
-vi.mock('@qwen-code/qwen-code-core', () => ({
+vi.mock('@claudex/core', () => ({
   createDebugLogger: () => ({
     debug: vi.fn(),
     error: vi.fn(),
@@ -98,10 +98,10 @@ vi.mock('../utils/acpModelUtils.js', () => ({
 }));
 
 import { runAcpAgent } from './acpAgent.js';
-import type { Config } from '@qwen-code/qwen-code-core';
+import type { Config } from '@claudex/core';
 import type { LoadedSettings } from '../config/settings.js';
 import type { CliArgs } from '../config/config.js';
-import { SessionEndReason } from '@qwen-code/qwen-code-core';
+import { SessionEndReason } from '@claudex/core';
 
 describe('runAcpAgent shutdown cleanup', () => {
   let processExitSpy: MockInstance<typeof process.exit>;

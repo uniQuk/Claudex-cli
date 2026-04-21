@@ -308,7 +308,6 @@ export * from './utils/sideQuery.js';
 // OAuth & Authentication
 // ============================================================================
 
-export * from './qwen/qwenOAuth2.js';
 
 // ============================================================================
 // Message Bus Types
@@ -351,3 +350,25 @@ export {
   type PostToolUseFailureHookResult,
   generateToolUseId,
 } from './core/toolHookTriggers.js';
+
+// Dead-letter stubs for removed OAuth/Qwen functionality
+import EventEmitter from 'node:events';
+export async function clearCachedCredentialFile(): Promise<void> {}
+export enum QwenOAuth2Event { AuthUri = 'auth_uri', TokenRefreshed = 'token_refreshed', AuthProgress = 'auth_progress' }
+export const qwenOAuth2Events = new EventEmitter();
+export interface DeviceAuthorizationData {
+  device_code: string;
+  user_code: string;
+  verification_uri: string;
+  verification_uri_complete?: string;
+  expires_in: number;
+  interval?: number;
+}
+
+// Stub telemetry SDK functions (removed)
+export async function shutdownTelemetry(): Promise<void> {}
+export function isTelemetrySdkInitialized(): boolean { return false; }
+
+// Stub for UserFeedbackRating (feedback feature removed)
+export enum UserFeedbackRating { LIKE = 'like', DISLIKE = 'dislike' }
+export { MAIN_SOURCE } from './utils/subagentNameContext.js';

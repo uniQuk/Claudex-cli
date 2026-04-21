@@ -19,11 +19,11 @@ import type {
   ToolExecuteConfirmationDetails,
   ToolMcpConfirmationDetails,
   ApprovalMode,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import {
   InputFormat,
   ToolConfirmationOutcome,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import type {
   CLIControlPermissionRequest,
   CLIControlSetPermissionModeRequest,

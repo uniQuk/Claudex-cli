@@ -1,35 +1,14 @@
 /**
- * @license
- * Copyright 2025 Google LLC
- * SPDX-License-Identifier: Apache-2.0
+ * Stub tool call decision telemetry — no-op.
  */
-
-import { ToolConfirmationOutcome } from '../tools/tools.js';
+export type ToolCallDecisionEvent = Record<string, unknown>;
 
 export enum ToolCallDecision {
   ACCEPT = 'accept',
   REJECT = 'reject',
   MODIFY = 'modify',
-  AUTO_ACCEPT = 'auto_accept',
+  AUTO_ACCEPT = 'auto-accept',
 }
 
-export function getDecisionFromOutcome(
-  outcome: ToolConfirmationOutcome,
-): ToolCallDecision {
-  switch (outcome) {
-    case ToolConfirmationOutcome.ProceedOnce:
-    case ToolConfirmationOutcome.RestorePrevious:
-      return ToolCallDecision.ACCEPT;
-    case ToolConfirmationOutcome.ProceedAlways:
-    case ToolConfirmationOutcome.ProceedAlwaysServer:
-    case ToolConfirmationOutcome.ProceedAlwaysTool:
-    case ToolConfirmationOutcome.ProceedAlwaysProject:
-    case ToolConfirmationOutcome.ProceedAlwaysUser:
-      return ToolCallDecision.AUTO_ACCEPT;
-    case ToolConfirmationOutcome.ModifyWithEditor:
-      return ToolCallDecision.MODIFY;
-    case ToolConfirmationOutcome.Cancel:
-    default:
-      return ToolCallDecision.REJECT;
-  }
-}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function logToolCallDecision(_config: unknown, _event: unknown): void {}

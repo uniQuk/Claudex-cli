@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen Code
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -27,7 +27,7 @@ const mockConnect = vi.fn();
 const mockGetInstance = vi.fn().mockResolvedValue({ connect: mockConnect });
 const mockLogIdeConnection = vi.fn();
 
-vi.mock('@qwen-code/qwen-code-core', async (importOriginal) => {
+vi.mock('@claudex/core', async (importOriginal) => {
   const actual = await importOriginal<Record<string, unknown>>();
   return {
     ...actual,

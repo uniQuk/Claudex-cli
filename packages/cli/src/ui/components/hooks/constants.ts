@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { HooksConfigSource, HookEventName } from '@qwen-code/qwen-code-core';
+import { HooksConfigSource, HookEventName } from '@claudex/core';
 import type { HookExitCode, HookEventDisplayInfo } from './types.js';
 import { t } from '../../../i18n/index.js';
 
@@ -109,7 +109,7 @@ export function getHookShortDescription(eventName: string): string {
     [HookEventName.Notification]: t('When notifications are sent'),
     [HookEventName.UserPromptSubmit]: t('When the user submits a prompt'),
     [HookEventName.SessionStart]: t('When a new session is started'),
-    [HookEventName.Stop]: t('Right before Qwen Code concludes its response'),
+    [HookEventName.Stop]: t('Right before Claudex concludes its response'),
     [HookEventName.SubagentStart]: t(
       'When a subagent (Agent tool call) is started',
     ),

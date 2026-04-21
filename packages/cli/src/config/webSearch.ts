@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type { WebSearchProviderConfig } from '@qwen-code/qwen-code-core';
+import type { WebSearchProviderConfig } from '@claudex/core';
 import type { Settings } from './settings.js';
 
 /**

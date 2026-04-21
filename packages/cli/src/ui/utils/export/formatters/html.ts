@@ -5,7 +5,7 @@
  */
 
 import type { ExportSessionData } from '../types.js';
-import { EXPORT_HTML_TEMPLATE as HTML_TEMPLATE } from '@qwen-code/web-templates';
+const HTML_TEMPLATE = '<!-- HTML export not available -->';
 
 /**
  * Escapes JSON for safe embedding in HTML.

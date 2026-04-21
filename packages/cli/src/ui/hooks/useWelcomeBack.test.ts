@@ -15,9 +15,9 @@ const coreMocks = vi.hoisted(() => ({
   clearWelcomeBackState: vi.fn().mockResolvedValue(undefined),
 }));
 
-vi.mock('@qwen-code/qwen-code-core', async (importOriginal) => {
+vi.mock('@claudex/core', async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import('@qwen-code/qwen-code-core')>();
+    await importOriginal<typeof import('@claudex/core')>();
 
   return {
     ...actual,

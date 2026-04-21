@@ -64,7 +64,6 @@ import { BackgroundTaskRegistry } from '../agents/background-tasks.js';
 import {
   DEFAULT_OTLP_ENDPOINT,
   DEFAULT_TELEMETRY_TARGET,
-  initializeTelemetry,
   logStartSession,
   logRipgrepFallback,
   RipgrepFallbackEvent,
@@ -861,10 +860,6 @@ export class Config {
       onModelChange: this.handleModelChange.bind(this),
     });
 
-    if (this.telemetrySettings.enabled) {
-      initializeTelemetry(this);
-    }
-
     const proxyUrl = this.getProxy();
     if (proxyUrl) {
       setGlobalDispatcher(new ProxyAgent(proxyUrl));
@@ -1442,7 +1437,7 @@ export class Config {
     // - Non-qwen providers may need to re-validate credentials / baseUrl / envKey.
     // - ModelsConfig.applyResolvedModelDefaults can clear or change credentials sources.
     // - Refresh keeps runtime behavior consistent and centralized.
-    if (authType === AuthType.QWEN_OAUTH && !requiresRefresh) {
+    if (false && !requiresRefresh) {
       const { config, sources } = resolveContentGeneratorConfigWithSources(
         this,
         authType,

@@ -21,7 +21,7 @@ import type { SlashCommand, SlashCommandActionReturn } from './types.js';
 import { CommandKind } from './types.js';
 import { getUrlOpenCommand } from '../../ui/utils/commandUtils.js';
 import { t } from '../../i18n/index.js';
-import { createDebugLogger } from '@qwen-code/qwen-code-core';
+import { createDebugLogger } from '@claudex/core';
 
 const debugLogger = createDebugLogger('SETUP_GITHUB');
 
@@ -53,7 +53,7 @@ function getOpenUrlsCommands(readmeUrl: string): string[] {
   return commands;
 }
 
-// Add Qwen Code specific entries to .gitignore file
+// Add Claudex specific entries to .gitignore file
 export async function updateGitignore(gitRepoRoot: string): Promise<void> {
   const gitignoreEntries = ['.qwen/', 'gha-creds-*.json'];
 

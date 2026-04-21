@@ -21,7 +21,7 @@ import type {
   HookExecutionRequest,
   HookExecutionResponse,
   MessageBus,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import {
   AuthType,
   ApprovalMode,
@@ -50,7 +50,7 @@ import {
   createHookOutput,
   generateToolUseId,
   MessageBusType,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 
 import { RequestError } from '@agentclientprotocol/sdk';
 import type {
@@ -1159,7 +1159,7 @@ export class Session implements SessionContext {
     if (pm && !(await pm.isToolEnabled(fc.name as string))) {
       return earlyErrorResponse(
         new Error(
-          `Qwen Code requires permission to use "${fc.name}", but that permission was declined.`,
+          `Claudex requires permission to use "${fc.name}", but that permission was declined.`,
         ),
         fc.name,
       );
@@ -1340,7 +1340,7 @@ export class Session implements SessionContext {
           if (hooksEnabled && messageBus) {
             void fireNotificationHook(
               messageBus,
-              `Qwen Code needs your permission to use ${fc.name}`,
+              `Claudex needs your permission to use ${fc.name}`,
               NotificationType.PermissionPrompt,
               'Permission needed',
             );

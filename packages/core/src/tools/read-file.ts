@@ -179,9 +179,7 @@ class ReadFileToolInvocation extends BaseToolInvocation<
         ? result.llmContent.split('\n').length
         : undefined;
     const mimetype = getSpecificMimeType(this.params.file_path);
-    const programming_language = getProgrammingLanguage({
-      file_path: this.params.file_path,
-    });
+    const programming_language = getProgrammingLanguage(this.params.file_path);
     logFileOperation(
       this.config,
       new FileOperationEvent(

@@ -9,7 +9,7 @@ import {
   getErrorMessage,
   type Config,
   type ProviderModelConfig as ModelConfig,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import { writeStdoutLine, writeStderrLine } from '../../utils/stdioHelpers.js';
 import { t } from '../../i18n/index.js';
 import {
@@ -73,11 +73,6 @@ export async function handleQwenAuth(
       approvalMode: undefined,
       telemetry: undefined,
       checkpointing: undefined,
-      telemetryTarget: undefined,
-      telemetryOtlpEndpoint: undefined,
-      telemetryOtlpProtocol: undefined,
-      telemetryLogPrompts: undefined,
-      telemetryOutfile: undefined,
       allowedMcpServerNames: undefined,
       allowedTools: undefined,
       acp: undefined,
@@ -220,7 +215,7 @@ async function handleCodePlanAuth(
 
     // Generate model configs from template
     const newConfigs = template.map((templateConfig) => ({
-      ...templateConfig,
+      ...(templateConfig as Record<string, unknown>),
       envKey: CODING_PLAN_ENV_KEY,
     }));
 
@@ -259,12 +254,11 @@ async function handleCodePlanAuth(
     settings.setValue(authTypeScope, 'codingPlan.version', version);
 
     // If there are configs, use the first one as the model
-    if (updatedConfigs.length > 0 && updatedConfigs[0]?.id) {
-      settings.setValue(
-        authTypeScope,
-        'model.name',
-        (updatedConfigs[0] as ModelConfig).id,
-      );
+    if (updatedConfigs.length > 0 && updatedConfigs[0]) {
+      const firstConfig = updatedConfigs[0] as ModelConfig & { id?: string };
+      if (firstConfig.id) {
+        settings.setValue(authTypeScope, 'model.name', firstConfig.id);
+      }
     }
 
     // Refresh auth with the new configuration

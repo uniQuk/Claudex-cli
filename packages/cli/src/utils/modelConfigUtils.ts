@@ -11,7 +11,7 @@ import {
   resolveModelConfig,
   type ModelConfigSourcesInput,
   type ProviderModelConfig,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import type { Settings } from '../config/settings.js';
 
 export interface CliGenerationConfigInputs {
@@ -46,24 +46,12 @@ export interface ResolvedCliGenerationConfig {
 }
 
 export function getAuthTypeFromEnv(): AuthType | undefined {
-  if (process.env['QWEN_OAUTH']) {
-    return AuthType.QWEN_OAUTH;
-  }
-
   if (
     process.env['OPENAI_API_KEY'] &&
     process.env['OPENAI_MODEL'] &&
     process.env['OPENAI_BASE_URL']
   ) {
     return AuthType.USE_OPENAI;
-  }
-
-  if (process.env['GEMINI_API_KEY'] && process.env['GEMINI_MODEL']) {
-    return AuthType.USE_GEMINI;
-  }
-
-  if (process.env['GOOGLE_API_KEY'] && process.env['GOOGLE_MODEL']) {
-    return AuthType.USE_VERTEX_AI;
   }
 
   if (

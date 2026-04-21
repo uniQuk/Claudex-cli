@@ -16,8 +16,8 @@ import type {
   ServerGeminiStreamEvent,
   ToolCallRequestInfo,
   ToolCallResponseInfo,
-} from '@qwen-code/qwen-code-core';
-import { createDebugLogger } from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
+import { createDebugLogger } from '@claudex/core';
 import type { Part } from '@google/genai';
 import { StreamJsonOutputAdapter } from '../nonInteractive/io/index.js';
 

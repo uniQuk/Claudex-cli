@@ -16,7 +16,7 @@ import {
   USER_AGREEMENT_RATE_MEDIUM,
 } from '../utils/displayUtils.js';
 import { useSessionStats } from '../contexts/SessionContext.js';
-import type { ToolCallStats } from '@qwen-code/qwen-code-core';
+import type { ToolCallStats } from '@claudex/core';
 import { t } from '../../i18n/index.js';
 
 const TOOL_NAME_COL_WIDTH = 25;
@@ -84,9 +84,9 @@ export const ToolStatsDisplay: React.FC<ToolStatsDisplayProps> = ({
 
   const totalDecisions = Object.values(tools.byName).reduce(
     (acc, tool) => {
-      acc.accept += tool.decisions.accept;
-      acc.reject += tool.decisions.reject;
-      acc.modify += tool.decisions.modify;
+      acc.accept += tool.decisions['accept'];
+      acc.reject += tool.decisions['reject'];
+      acc.modify += tool.decisions['modify'];
       return acc;
     },
     { accept: 0, reject: 0, modify: 0 },

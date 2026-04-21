@@ -619,7 +619,7 @@ export async function main() {
 
     if (!input) {
       writeStderrLine(
-        `No input provided via stdin. Input can be provided by piping data into gemini or using the --prompt option.`,
+        `No input provided via stdin. Input can be provided by piping data into claudex or using the --prompt option.`,
       );
       process.exit(1);
     }

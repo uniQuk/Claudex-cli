@@ -8,7 +8,7 @@ import {
   type UserFeedbackRating,
   isNodeError,
   AuthType,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import { StreamingState, MessageType, type HistoryItem } from '../types.js';
 import {
   SettingScope,
@@ -123,7 +123,7 @@ export const useFeedbackDialog = ({
       if (rating >= FEEDBACK_OPTIONS.GOOD && rating <= FEEDBACK_OPTIONS.FINE) {
         const feedbackEvent = new UserFeedbackEvent(
           sessionStats.sessionId,
-          rating as UserFeedbackRating,
+          rating as unknown as UserFeedbackRating,
           config.getModel(),
           config.getApprovalMode(),
         );

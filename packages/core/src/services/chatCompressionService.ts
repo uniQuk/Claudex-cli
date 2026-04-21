@@ -304,8 +304,8 @@ export class ChatCompressionService {
       makeChatCompressionEvent({
         tokens_before: originalTokenCount,
         tokens_after: newTokenCount,
-        compression_input_token_count: compressionInputTokenCount,
-        compression_output_token_count: compressionOutputTokenCount,
+        compression_input_token_count: compressionInputTokenCount ?? 0,
+        compression_output_token_count: compressionOutputTokenCount ?? 0,
       }),
     );
 

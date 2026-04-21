@@ -1,5 +1,5 @@
 {
-  "name": "@qwen-code/qwen-code",
+  "name": "@claudex/cli",
   "version": "0.14.5",
   "description": "Qwen Code",
   "repository": {
@@ -10,7 +10,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "qwen": "dist/index.js"
+    "claudex": "dist/index.js"
   },
   "exports": {
     ".": {
@@ -40,12 +40,7 @@
     "@google/genai": "1.30.0",
     "@iarna/toml": "^2.2.5",
     "@modelcontextprotocol/sdk": "^1.25.1",
-    "@qwen-code/channel-base": "file:../channels/base",
-    "@qwen-code/channel-telegram": "file:../channels/telegram",
-    "@qwen-code/channel-weixin": "file:../channels/weixin",
-    "@qwen-code/channel-dingtalk": "file:../channels/dingtalk",
-    "@qwen-code/qwen-code-core": "file:../core",
-    "@qwen-code/web-templates": "file:../web-templates",
+    "@claudex/core": "file:../core",
     "@types/update-notifier": "^6.0.8",
     "ansi-regex": "^6.2.2",
     "command-exists": "^1.2.9",

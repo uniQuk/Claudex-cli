@@ -15,7 +15,7 @@ import { t } from '../../i18n/index.js';
 import type {
   HookRegistryEntry,
   SessionHookEntry,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 
 /**
  * Format hook source for display
@@ -183,7 +183,7 @@ const listCommand: SlashCommand = {
 export const hooksCommand: SlashCommand = {
   name: 'hooks',
   get description() {
-    return t('Manage Qwen Code hooks');
+    return t('Manage Claudex hooks');
   },
   kind: CommandKind.BUILT_IN,
   commandType: 'local-jsx',

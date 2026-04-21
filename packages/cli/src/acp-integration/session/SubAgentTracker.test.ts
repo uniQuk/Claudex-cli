@@ -17,12 +17,12 @@ import type {
   AgentStreamTextEvent,
   ToolEditConfirmationDetails,
   ToolInfoConfirmationDetails,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import {
   AgentEventType,
   ToolConfirmationOutcome,
   ToolNames,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import type { AgentSideConnection } from '@agentclientprotocol/sdk';
 import { EventEmitter } from 'node:events';
 

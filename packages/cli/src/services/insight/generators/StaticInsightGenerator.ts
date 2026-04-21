@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen Code
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -13,7 +13,7 @@ import type {
   InsightProgressCallback,
 } from '../types/StaticInsightTypes.js';
 
-import { updateSymlink, Storage, type Config } from '@qwen-code/qwen-code-core';
+import { updateSymlink, Storage, type Config } from '@claudex/core';
 
 export class StaticInsightGenerator {
   private dataProcessor: DataProcessor;

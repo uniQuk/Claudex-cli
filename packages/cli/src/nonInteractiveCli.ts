@@ -8,7 +8,7 @@ import type {
   BackgroundAgentStatus,
   Config,
   ToolCallRequestInfo,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import { isSlashCommand } from './ui/utils/commandUtils.js';
 import type { LoadedSettings } from './config/settings.js';
 import {
@@ -25,7 +25,7 @@ import {
   parseAndFormatApiError,
   createDebugLogger,
   SendMessageType,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import type { Content, Part, PartListUnion } from '@google/genai';
 import type { CLIUserMessage, PermissionMode } from './nonInteractive/types.js';
 import type { JsonOutputAdapterInterface } from './nonInteractive/io/BaseJsonOutputAdapter.js';
@@ -56,6 +56,8 @@ import {
 // Surfaced to stderr in TEXT mode so a headless run that halts on a loop
 // doesn't exit with empty stdout and no explanation — see PR #3236 review.
 const LOOP_TYPE_LABELS: Record<LoopType, string> = {
+  [LoopType.TOOL_LOOP]: 'the model entered a tool loop',
+  [LoopType.CONTENT_LOOP]: 'the model entered a content loop',
   [LoopType.CONSECUTIVE_IDENTICAL_TOOL_CALLS]:
     'the model repeated the same tool call with identical arguments',
   [LoopType.CHANTING_IDENTICAL_SENTENCES]:

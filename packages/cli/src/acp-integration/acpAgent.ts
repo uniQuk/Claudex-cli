@@ -21,7 +21,7 @@ import {
   SessionStartSource,
   SessionEndReason,
   type PermissionMode,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import {
   AgentSideConnection,
   RequestError,
@@ -188,7 +188,7 @@ class QwenAgent implements Agent {
       protocolVersion: PROTOCOL_VERSION,
       agentInfo: {
         name: 'qwen-code',
-        title: 'Qwen Code',
+        title: 'Claudex',
         version,
       },
       authMethods,
@@ -472,7 +472,7 @@ class QwenAgent implements Agent {
     if (!selectedType) {
       throw RequestError.authRequired(
         { authMethods: this.pickAuthMethodsForAuthRequired() },
-        'Use Qwen Code CLI to authenticate first.',
+        'Use Claudex CLI to authenticate first.',
       );
     }
 

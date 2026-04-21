@@ -15,7 +15,7 @@ export const helpCommand: SlashCommand = {
   kind: CommandKind.BUILT_IN,
   commandType: 'local-jsx',
   get description() {
-    return t('for help on Qwen Code');
+    return t('for help on Claudex');
   },
   action: async (context) => {
     const helpItem: Omit<HistoryItemHelp, 'id'> = {

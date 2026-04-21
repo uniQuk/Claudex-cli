@@ -15,6 +15,7 @@ import { getCacheSafeParams, runForkedAgent } from '../utils/forkedAgent.js';
 import {
   uiTelemetryService,
   EVENT_API_RESPONSE,
+  type UiEvent,
 } from '../telemetry/uiTelemetry.js';
 import { ApiResponseEvent } from '../telemetry/types.js';
 import { createDebugLogger } from '../utils/debugLogger.js';
@@ -387,5 +388,5 @@ function reportSuggestionUsage(
   const uiEvent = Object.assign(event, {
     'event.name': EVENT_API_RESPONSE as typeof EVENT_API_RESPONSE,
   });
-  uiTelemetryService.addEvent(uiEvent);
+  uiTelemetryService.addEvent(uiEvent as unknown as UiEvent);
 }

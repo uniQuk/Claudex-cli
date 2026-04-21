@@ -9,7 +9,7 @@ import {
   type Config,
   type ModelProvidersConfig,
   type ProviderModelConfig,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import { loadEnvironment, loadSettings, type Settings } from './settings.js';
 import { t } from '../i18n/index.js';
 
@@ -19,8 +19,6 @@ import { t } from '../i18n/index.js';
 const DEFAULT_ENV_KEYS: Record<string, string> = {
   [AuthType.USE_OPENAI]: 'OPENAI_API_KEY',
   [AuthType.USE_ANTHROPIC]: 'ANTHROPIC_API_KEY',
-  [AuthType.USE_GEMINI]: 'GEMINI_API_KEY',
-  [AuthType.USE_VERTEX_AI]: 'GOOGLE_API_KEY',
 };
 
 /**
@@ -188,14 +186,6 @@ export function validateAuthMethod(
     return null;
   }
 
-  if (authMethod === AuthType.QWEN_OAUTH) {
-    // Qwen OAuth free tier was discontinued on 2026-04-15.
-    // Block new OAuth setups; existing cached tokens still work until server rejects them.
-    return t(
-      'Qwen OAuth free tier was discontinued on 2026-04-15. Run /auth to switch to Coding Plan, OpenRouter, Fireworks AI, or another provider.',
-    );
-  }
-
   if (authMethod === AuthType.USE_ANTHROPIC) {
     const apiKeyError = getApiKeyError(authMethod, settings.merged, config);
     if (apiKeyError) {
@@ -220,24 +210,6 @@ export function validateAuthMethod(
       return t('ANTHROPIC_BASE_URL environment variable not found.');
     }
 
-    return null;
-  }
-
-  if (authMethod === AuthType.USE_GEMINI) {
-    const apiKeyError = getApiKeyError(authMethod, settings.merged, config);
-    if (apiKeyError) {
-      return apiKeyError;
-    }
-    return null;
-  }
-
-  if (authMethod === AuthType.USE_VERTEX_AI) {
-    const apiKeyError = getApiKeyError(authMethod, settings.merged, config);
-    if (apiKeyError) {
-      return apiKeyError;
-    }
-
-    process.env['GOOGLE_GENAI_USE_VERTEXAI'] = 'true';
     return null;
   }
 

@@ -7,16 +7,15 @@
 import type {
   MCPServerConfig,
   BugCommandSettings,
-  TelemetrySettings,
   AuthType,
   ChatCompressionSettings,
   ModelProvidersConfig,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import {
   ApprovalMode,
   DEFAULT_TRUNCATE_TOOL_OUTPUT_LINES,
   DEFAULT_TRUNCATE_TOOL_OUTPUT_THRESHOLD,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import type { CustomTheme } from '../ui/themes/theme.js';
 import { getLanguageSettingsOptions } from '../i18n/languages.js';
 
@@ -355,7 +354,7 @@ const SETTINGS_SCHEMA = {
         requiresRestart: false,
         default: true,
         description:
-          'Automatically add a Co-authored-by trailer to git commit messages when commits are made through Qwen Code.',
+          'Automatically add a Co-authored-by trailer to git commit messages when commits are made through Claudex.',
         showInDialog: true,
       },
       checkpointing: {
@@ -569,7 +568,7 @@ const SETTINGS_SCHEMA = {
         requiresRestart: false,
         default: false,
         description:
-          'Show Qwen Code status and thoughts in the terminal window title',
+          'Show Claudex status and thoughts in the terminal window title',
         showInDialog: false,
       },
       hideTips: {
@@ -740,37 +739,6 @@ const SETTINGS_SCHEMA = {
     },
   },
 
-  privacy: {
-    type: 'object',
-    label: 'Privacy',
-    category: 'Privacy',
-    requiresRestart: true,
-    default: {},
-    description: 'Privacy-related settings.',
-    showInDialog: false,
-    properties: {
-      usageStatisticsEnabled: {
-        type: 'boolean',
-        label: 'Enable Usage Statistics',
-        category: 'Privacy',
-        requiresRestart: true,
-        default: true,
-        description: 'Enable collection of usage statistics',
-        showInDialog: true,
-      },
-    },
-  },
-
-  telemetry: {
-    type: 'object',
-    label: 'Telemetry',
-    category: 'Advanced',
-    requiresRestart: true,
-    default: undefined as TelemetrySettings | undefined,
-    description: 'Telemetry configuration.',
-    showInDialog: false,
-  },
-
   fastModel: {
     type: 'string',
     label: 'Fast Model',
@@ -936,7 +904,7 @@ const SETTINGS_SCHEMA = {
             requiresRestart: false,
             default: undefined,
             description:
-              "Overrides the default context window size for the selected model. Use this setting when a provider's effective context limit differs from Qwen Code's default. This value defines the model's assumed maximum context capacity, not a per-request token limit.",
+              "Overrides the default context window size for the selected model. Use this setting when a provider's effective context limit differs from Claudex's default. This value defines the model's assumed maximum context capacity, not a per-request token limit.",
             parentKey: 'generationConfig',
             showInDialog: false,
           },

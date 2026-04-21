@@ -1,17 +1,8 @@
 /**
- * @license
- * Copyright 2025 Google LLC
- * SPDX-License-Identifier: Apache-2.0
+ * Stub telemetry utils — no-ops.
  */
 
-import { getLanguageFromFilePath } from '../utils/language-detection.js';
-
-export function getProgrammingLanguage(
-  args: Record<string, unknown>,
-): string | undefined {
-  const filePath = args['file_path'] || args['path'];
-  if (typeof filePath === 'string') {
-    return getLanguageFromFilePath(filePath);
-  }
-  return undefined;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function getProgrammingLanguage(_filename: string): string {
+  return 'unknown';
 }

@@ -6,17 +6,17 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import type { DeviceAuthorizationData } from '@qwen-code/qwen-code-core';
+import type { DeviceAuthorizationData } from '@claudex/core';
 import { useQwenAuth } from './useQwenAuth.js';
 import {
   AuthType,
   qwenOAuth2Events,
   QwenOAuth2Event,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 
 // Mock the qwenOAuth2Events
-vi.mock('@qwen-code/qwen-code-core', async () => {
-  const actual = await vi.importActual('@qwen-code/qwen-code-core');
+vi.mock('@claudex/core', async () => {
+  const actual = await vi.importActual('@claudex/core');
   const mockEmitter = {
     on: vi.fn().mockReturnThis(),
     off: vi.fn().mockReturnThis(),

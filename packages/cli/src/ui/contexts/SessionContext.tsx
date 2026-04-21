@@ -19,8 +19,8 @@ import type {
   ModelMetrics,
   ModelMetricsCore,
   ToolCallStats,
-} from '@qwen-code/qwen-code-core';
-import { uiTelemetryService } from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
+import { uiTelemetryService } from '@claudex/core';
 
 export enum ToolCallDecision {
   ACCEPT = 'accept',
@@ -241,7 +241,13 @@ export const SessionStatsProvider: React.FC<{
       });
     };
 
-    uiTelemetryService.on('update', handleUpdate);
+    const onUpdate = () =>
+      handleUpdate({
+        metrics: uiTelemetryService.getMetrics(),
+        lastPromptTokenCount: uiTelemetryService.getLastPromptTokenCount(),
+      });
+
+    uiTelemetryService.on('update', onUpdate);
     // Set initial state
     handleUpdate({
       metrics: uiTelemetryService.getMetrics(),
@@ -249,7 +255,7 @@ export const SessionStatsProvider: React.FC<{
     });
 
     return () => {
-      uiTelemetryService.off('update', handleUpdate);
+      uiTelemetryService.off('update', onUpdate);
     };
   }, []);
 

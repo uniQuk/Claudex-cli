@@ -8,7 +8,7 @@ import type {
   ChatRecord,
   AgentResultDisplay,
   NotificationRecordPayload,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import type {
   Content,
   GenerateContentResponseUsageMetadata,

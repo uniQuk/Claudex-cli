@@ -54,10 +54,13 @@ export interface ContentGenerator {
 
 export enum AuthType {
   USE_OPENAI = 'openai',
-  QWEN_OAUTH = 'qwen-oauth',
-  USE_GEMINI = 'gemini',
-  USE_VERTEX_AI = 'vertex-ai',
   USE_ANTHROPIC = 'anthropic',
+  /** @deprecated Dead-letter value — never selected at runtime. */
+  QWEN_OAUTH = 'qwen-oauth',
+  /** @deprecated Dead-letter value — never selected at runtime. */
+  USE_GEMINI = '_removed_use_gemini',
+  /** @deprecated Dead-letter value — never selected at runtime. */
+  USE_VERTEX_AI = '_removed_use_vertex_ai',
 }
 
 /**
@@ -221,12 +224,7 @@ export function validateModelConfig(
 ): ModelConfigValidationResult {
   const errors: Error[] = [];
 
-  // Qwen OAuth doesn't need validation - it uses dynamic tokens
-  if (config.authType === AuthType.QWEN_OAUTH) {
-    return { valid: true, errors: [] };
-  }
-
-  // API key is required for all other auth types
+  // API key is required for all auth types
   if (!config.apiKey) {
     if (isStrictModelProvider) {
       errors.push(
@@ -311,42 +309,11 @@ export async function createContentGenerator(
       './openaiContentGenerator/index.js'
     );
     baseGenerator = createOpenAIContentGenerator(generatorConfig, config);
-  } else if (authType === AuthType.QWEN_OAUTH) {
-    const { getQwenOAuthClient: getQwenOauthClient } = await import(
-      '../qwen/qwenOAuth2.js'
-    );
-    const { QwenContentGenerator } = await import(
-      '../qwen/qwenContentGenerator.js'
-    );
-
-    try {
-      const qwenClient = await getQwenOauthClient(
-        config,
-        isInitialAuth ? { requireCachedCredentials: true } : undefined,
-      );
-      baseGenerator = new QwenContentGenerator(
-        qwenClient,
-        generatorConfig,
-        config,
-      );
-    } catch (error) {
-      throw new Error(
-        `${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
   } else if (authType === AuthType.USE_ANTHROPIC) {
     const { createAnthropicContentGenerator } = await import(
       './anthropicContentGenerator/index.js'
     );
     baseGenerator = createAnthropicContentGenerator(generatorConfig, config);
-  } else if (
-    authType === AuthType.USE_GEMINI ||
-    authType === AuthType.USE_VERTEX_AI
-  ) {
-    const { createGeminiContentGenerator } = await import(
-      './geminiContentGenerator/index.js'
-    );
-    baseGenerator = createGeminiContentGenerator(generatorConfig, config);
   } else {
     throw new Error(
       `Error creating contentGenerator: Unsupported authType: ${authType}`,

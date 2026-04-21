@@ -10,7 +10,7 @@ import {
   HookEventName,
   HooksConfigSource,
   HookType,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import { HookConfigDetailStep } from './HookConfigDetailStep.js';
 import type { HookEventDisplayInfo, HookConfigDisplayInfo } from './types.js';
 
@@ -41,7 +41,7 @@ vi.mock('../../semantic-colors.js', () => ({
 describe('HookConfigDetailStep', () => {
   const createMockHookEvent = (): HookEventDisplayInfo => ({
     event: HookEventName.Stop,
-    shortDescription: 'Right before Qwen Code concludes its response',
+    shortDescription: 'Right before Claudex concludes its response',
     description: '',
     exitCodes: [
       { code: 0, description: 'stdout/stderr not shown' },

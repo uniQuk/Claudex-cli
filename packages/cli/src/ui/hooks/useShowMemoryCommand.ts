@@ -6,9 +6,9 @@
 
 import type { Message } from '../types.js';
 import { MessageType } from '../types.js';
-import type { Config } from '@qwen-code/qwen-code-core';
+import type { Config } from '@claudex/core';
 import type { LoadedSettings } from '../../config/settings.js';
-import { createDebugLogger } from '@qwen-code/qwen-code-core';
+import { createDebugLogger } from '@claudex/core';
 
 const debugLogger = createDebugLogger('SHOW_MEMORY');
 

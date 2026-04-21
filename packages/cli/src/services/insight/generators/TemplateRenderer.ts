@@ -1,10 +1,11 @@
 /**
  * @license
- * Copyright 2025 Qwen Code
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { INSIGHT_JS, INSIGHT_CSS } from '@qwen-code/web-templates';
+const INSIGHT_JS = '';
+const INSIGHT_CSS = '';
 import type { InsightData } from '../types/StaticInsightTypes.js';
 
 export class TemplateRenderer {
@@ -15,7 +16,7 @@ export class TemplateRenderer {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Qwen Code Insights</title>
+    <title>Claudex Insights</title>
     <style>
       ${INSIGHT_CSS}
     </style>

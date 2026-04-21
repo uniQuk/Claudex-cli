@@ -13,7 +13,7 @@ import {
   SessionStartSource,
   ToolNames,
   type PermissionMode,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 
 export const clearCommand: SlashCommand = {
   name: 'clear',

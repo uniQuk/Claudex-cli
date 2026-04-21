@@ -14,8 +14,6 @@ import {
   loadServerHierarchicalMemory,
   type LoadServerHierarchicalMemoryResponse,
   setGeminiMdFilename as setServerGeminiMdFilename,
-  resolveTelemetrySettings,
-  FatalConfigError,
   Storage,
   InputFormat,
   OutputFormat,
@@ -30,7 +28,7 @@ import {
   NativeLspService,
   isBareMode,
   isToolEnabled,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import { extensionsCommand } from '../commands/extensions.js';
 import { hooksCommand } from '../commands/hooks.js';
 import type { Settings } from './settings.js';
@@ -51,7 +49,6 @@ import { getCliVersion } from '../utils/version.js';
 import { loadSandboxConfig } from './sandboxConfig.js';
 import { appEvents } from '../utils/events.js';
 import { mcpCommand } from '../commands/mcp.js';
-import { channelCommand } from '../commands/channel.js';
 
 // UUID v4 regex pattern for validation
 const SESSION_ID_REGEX =
@@ -120,11 +117,6 @@ export interface CliArgs {
   approvalMode: string | undefined;
   telemetry: boolean | undefined;
   checkpointing: boolean | undefined;
-  telemetryTarget: string | undefined;
-  telemetryOtlpEndpoint: string | undefined;
-  telemetryOtlpProtocol: string | undefined;
-  telemetryLogPrompts: boolean | undefined;
-  telemetryOutfile: string | undefined;
   allowedMcpServerNames: string[] | undefined;
   allowedTools: string[] | undefined;
   acp: boolean | undefined;
@@ -189,7 +181,7 @@ export async function parseArguments(): Promise<CliArgs> {
   // hack: if the first argument is the CLI entry point, remove it
   if (
     rawArgv.length > 0 &&
-    (rawArgv[0].endsWith('/dist/qwen-cli/cli.js') ||
+    (rawArgv[0].endsWith('/dist/claudex-cli/cli.js') ||
       rawArgv[0].endsWith('/dist/cli.js') ||
       rawArgv[0].endsWith('/dist/cli/cli.js'))
   ) {
@@ -198,64 +190,9 @@ export async function parseArguments(): Promise<CliArgs> {
 
   const yargsInstance = yargs(rawArgv)
     .locale('en')
-    .scriptName('qwen')
+    .scriptName('claudex')
     .usage(
-      'Usage: qwen [options] [command]\n\nQwen Code - Launch an interactive CLI, use -p/--prompt for non-interactive mode',
-    )
-    .option('telemetry', {
-      type: 'boolean',
-      description:
-        'Enable telemetry? This flag specifically controls if telemetry is sent. Other --telemetry-* flags set specific values but do not enable telemetry on their own.',
-    })
-    .option('telemetry-target', {
-      type: 'string',
-      choices: ['local', 'gcp'],
-      description:
-        'Set the telemetry target (local or gcp). Overrides settings files.',
-    })
-    .option('telemetry-otlp-endpoint', {
-      type: 'string',
-      description:
-        'Set the OTLP endpoint for telemetry. Overrides environment variables and settings files.',
-    })
-    .option('telemetry-otlp-protocol', {
-      type: 'string',
-      choices: ['grpc', 'http'],
-      description:
-        'Set the OTLP protocol for telemetry (grpc or http). Overrides settings files.',
-    })
-    .option('telemetry-log-prompts', {
-      type: 'boolean',
-      description:
-        'Enable or disable logging of user prompts for telemetry. Overrides settings files.',
-    })
-    .option('telemetry-outfile', {
-      type: 'string',
-      description: 'Redirect all telemetry output to the specified file.',
-    })
-    .deprecateOption(
-      'telemetry',
-      'Use the "telemetry.enabled" setting in settings.json instead. This flag will be removed in a future version.',
-    )
-    .deprecateOption(
-      'telemetry-target',
-      'Use the "telemetry.target" setting in settings.json instead. This flag will be removed in a future version.',
-    )
-    .deprecateOption(
-      'telemetry-otlp-endpoint',
-      'Use the "telemetry.otlpEndpoint" setting in settings.json instead. This flag will be removed in a future version.',
-    )
-    .deprecateOption(
-      'telemetry-otlp-protocol',
-      'Use the "telemetry.otlpProtocol" setting in settings.json instead. This flag will be removed in a future version.',
-    )
-    .deprecateOption(
-      'telemetry-log-prompts',
-      'Use the "telemetry.logPrompts" setting in settings.json instead. This flag will be removed in a future version.',
-    )
-    .deprecateOption(
-      'telemetry-outfile',
-      'Use the "telemetry.outfile" setting in settings.json instead. This flag will be removed in a future version.',
+      'Usage: claudex [options] [command]\n\nClaudex CLI - Launch an interactive CLI, use -p/--prompt for non-interactive mode',
     )
     .option('debug', {
       alias: 'd',
@@ -271,7 +208,7 @@ export async function parseArguments(): Promise<CliArgs> {
     })
     .option('proxy', {
       type: 'string',
-      description: 'Proxy for Qwen Code, like schema://user:password@host:port',
+      description: 'Proxy for Claudex, like schema://user:password@host:port',
     })
     .deprecateOption(
       'proxy',
@@ -282,7 +219,7 @@ export async function parseArguments(): Promise<CliArgs> {
       description:
         'Enable chat recording to disk. If false, chat history is not saved and --continue/--resume will not work.',
     })
-    .command('$0 [query..]', 'Launch Qwen Code CLI', (yargsInstance: Argv) =>
+    .command('$0 [query..]', 'Launch Claudex CLI', (yargsInstance: Argv) =>
       yargsInstance
         .positional('query', {
           description:
@@ -630,7 +567,6 @@ export async function parseArguments(): Promise<CliArgs> {
     // Register Hooks subcommands
     .command(hooksCommand)
     // Register Channel subcommands
-    .command(channelCommand);
 
   yargsInstance
     .version(await getCliVersion()) // This will enable the --version flag based on package.json
@@ -851,22 +787,6 @@ export async function loadCliConfig(
       `Approval mode overridden to "default" because the current folder is not trusted.`,
     );
     approvalMode = ApprovalMode.DEFAULT;
-  }
-
-  let telemetrySettings;
-  try {
-    telemetrySettings = await resolveTelemetrySettings({
-      argv,
-      env: process.env as unknown as Record<string, string | undefined>,
-      settings: settings.telemetry,
-    });
-  } catch (err) {
-    if (err instanceof FatalConfigError) {
-      throw new FatalConfigError(
-        `Invalid telemetry configuration: ${err.message}.`,
-      );
-    }
-    throw err;
   }
 
   // Interactive mode determination with priority:
@@ -1167,8 +1087,7 @@ export async function loadCliConfig(
       ...settings.ui?.accessibility,
       screenReader,
     },
-    telemetry: telemetrySettings,
-    usageStatisticsEnabled: settings.privacy?.usageStatisticsEnabled ?? true,
+    usageStatisticsEnabled: false,
     clearContextOnIdle: settings.context?.clearContextOnIdle,
     fileFiltering: settings.context?.fileFiltering,
     checkpointing:

@@ -86,10 +86,6 @@
     "src/commands/extensions/examples/**"
   ],
   "references": [
-    { "path": "../core" },
-    { "path": "../channels/base" },
-    { "path": "../channels/telegram" },
-    { "path": "../channels/weixin" },
-    { "path": "../channels/dingtalk" }
+    { "path": "../core" }
   ]
 }

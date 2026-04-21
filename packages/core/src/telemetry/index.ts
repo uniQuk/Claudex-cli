@@ -1,138 +1,23 @@
 /**
- * @license
- * Copyright 2025 Google LLC
- * SPDX-License-Identifier: Apache-2.0
+ * Stub telemetry index — no data is collected or sent.
+ * All OpenTelemetry SDK initialization is removed.
  */
 
-export enum TelemetryTarget {
-  GCP = 'gcp',
-  LOCAL = 'local',
-  QWEN = 'qwen',
-}
+export const DEFAULT_OTLP_ENDPOINT = '';
+export const DEFAULT_TELEMETRY_TARGET = 'none';
 
-const DEFAULT_TELEMETRY_TARGET = TelemetryTarget.LOCAL;
-const DEFAULT_OTLP_ENDPOINT = 'http://localhost:4317';
+export type TelemetryTarget = 'none' | 'local' | 'gcp';
 
-export { DEFAULT_TELEMETRY_TARGET, DEFAULT_OTLP_ENDPOINT };
-export {
-  initializeTelemetry,
-  shutdownTelemetry,
-  isTelemetrySdkInitialized,
-} from './sdk.js';
-export {
-  resolveTelemetrySettings,
-  parseBooleanEnvFlag,
-  parseTelemetryTargetValue,
-} from './config.js';
-export {
-  logStartSession,
-  logUserPrompt,
-  logUserRetry,
-  logToolCall,
-  logApiRequest,
-  logApiError,
-  logApiCancel,
-  logApiResponse,
-  logFlashFallback,
-  logSlashCommand,
-  logConversationFinishedEvent,
-  logKittySequenceOverflow,
-  logChatCompression,
-  logToolOutputTruncated,
-  logExtensionEnable,
-  logExtensionInstallEvent,
-  logExtensionUninstall,
-  logExtensionDisable,
-  logExtensionUpdateEvent,
-  logRipgrepFallback,
-  logNextSpeakerCheck,
-  logAuth,
-  logSkillLaunch,
-  logUserFeedback,
-  logArenaSessionStarted,
-  logArenaAgentCompleted,
-  logArenaSessionEnded,
-  logMemoryExtract,
-  logMemoryDream,
-  logMemoryRecall,
-} from './loggers.js';
-export type { SlashCommandEvent, ChatCompressionEvent } from './types.js';
-export {
-  SlashCommandStatus,
-  EndSessionEvent,
-  UserPromptEvent,
-  UserRetryEvent,
-  ApiRequestEvent,
-  ApiErrorEvent,
-  ApiResponseEvent,
-  ApiCancelEvent,
-  FlashFallbackEvent,
-  StartSessionEvent,
-  ToolCallEvent,
-  ConversationFinishedEvent,
-  KittySequenceOverflowEvent,
-  ToolOutputTruncatedEvent,
-  RipgrepFallbackEvent,
-  NextSpeakerCheckEvent,
-  AuthEvent,
-  SkillLaunchEvent,
-  UserFeedbackEvent,
-  UserFeedbackRating,
-  makeArenaSessionStartedEvent,
-  makeArenaAgentCompletedEvent,
-  makeArenaSessionEndedEvent,
-  MemoryExtractEvent,
-  MemoryDreamEvent,
-  MemoryRecallEvent,
-} from './types.js';
-export { makeSlashCommandEvent, makeChatCompressionEvent } from './types.js';
-export type {
-  ArenaSessionStartedEvent,
-  ArenaAgentCompletedEvent,
-  ArenaSessionEndedEvent,
-  ArenaSessionEndedStatus,
-  ArenaAgentCompletedStatus,
-} from './types.js';
-export type { TelemetryEvent } from './types.js';
-export { SpanStatusCode, ValueType } from '@opentelemetry/api';
-export { SemanticAttributes } from '@opentelemetry/semantic-conventions';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function initializeTelemetry(_config: unknown): void {}
+
+// Re-export all stubs so callers can import from 'telemetry/index.js'
+export * from './loggers.js';
+export * from './types.js';
 export * from './uiTelemetry.js';
-export {
-  // Core metrics functions
-  recordToolCallMetrics,
-  recordTokenUsageMetrics,
-  recordApiResponseMetrics,
-  recordApiErrorMetrics,
-  recordFileOperationMetric,
-  recordInvalidChunk,
-  recordContentRetry,
-  recordContentRetryFailure,
-  // Performance monitoring functions
-  recordStartupPerformance,
-  recordMemoryUsage,
-  recordCpuUsage,
-  recordToolQueueDepth,
-  recordToolExecutionBreakdown,
-  recordTokenEfficiency,
-  recordApiRequestBreakdown,
-  recordPerformanceScore,
-  recordPerformanceRegression,
-  recordBaselineComparison,
-  isPerformanceMonitoringActive,
-  // Arena metrics functions
-  recordArenaSessionStartedMetrics,
-  recordArenaAgentCompletedMetrics,
-  recordArenaSessionEndedMetrics,
-  // Auto-Memory metrics functions
-  recordMemoryExtractMetrics,
-  recordMemoryDreamMetrics,
-  recordMemoryRecallMetrics,
-  // Performance monitoring types
-  PerformanceMetricType,
-  MemoryMetricType,
-  ToolExecutionPhase,
-  ApiRequestPhase,
-  FileOperation,
-} from './metrics.js';
-export { QwenLogger } from './qwen-logger/qwen-logger.js';
-export { sanitizeHookName } from './sanitize.js';
+
+/** @deprecated Dead-letter stub for QwenLogger — no-op class. */
+export class QwenLogger {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  logStartSessionEvent(_args: unknown): void {}
+}

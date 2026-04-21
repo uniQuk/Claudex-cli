@@ -20,8 +20,6 @@ describe('SettingsSchema', () => {
         'general',
         'ui',
         'ide',
-        'privacy',
-        'telemetry',
         'model',
         'context',
         'tools',
@@ -55,7 +53,6 @@ describe('SettingsSchema', () => {
         'general',
         'ui',
         'ide',
-        'privacy',
         'model',
         'context',
         'tools',
@@ -182,18 +179,12 @@ describe('SettingsSchema', () => {
       expect(getSettingsSchema().ui.properties.hideTips.showInDialog).toBe(
         true,
       );
-      expect(
-        getSettingsSchema().privacy.properties.usageStatisticsEnabled
-          .showInDialog,
-      ).toBe(true);
-
       // Check that advanced settings are hidden from dialog
       expect(getSettingsSchema().security.properties.auth.showInDialog).toBe(
         false,
       );
       expect(getSettingsSchema().permissions.showInDialog).toBe(false);
       expect(getSettingsSchema().mcpServers.showInDialog).toBe(false);
-      expect(getSettingsSchema().telemetry.showInDialog).toBe(false);
 
       // Check that some settings are appropriately hidden
       expect(getSettingsSchema().ui.properties.theme.showInDialog).toBe(true);

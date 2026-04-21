@@ -11,11 +11,11 @@ import { createMockCommandContext } from '../../test-utils/mockCommandContext.js
 import {
   SessionEndReason,
   SessionStartSource,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 
 // Mock the telemetry service
-vi.mock('@qwen-code/qwen-code-core', async () => {
-  const actual = await vi.importActual('@qwen-code/qwen-code-core');
+vi.mock('@claudex/core', async () => {
+  const actual = await vi.importActual('@claudex/core');
   return {
     ...actual,
     uiTelemetryService: {
@@ -24,7 +24,7 @@ vi.mock('@qwen-code/qwen-code-core', async () => {
   };
 });
 
-import type { GeminiClient } from '@qwen-code/qwen-code-core';
+import type { GeminiClient } from '@claudex/core';
 
 describe('clearCommand', () => {
   let mockContext: CommandContext;

@@ -20,11 +20,11 @@ import {
 import {
   ExtensionManager,
   parseInstallSource,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 
-vi.mock('@qwen-code/qwen-code-core', async (importOriginal) => {
+vi.mock('@claudex/core', async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import('@qwen-code/qwen-code-core')>();
+    await importOriginal<typeof import('@claudex/core')>();
   return {
     ...actual,
     parseInstallSource: vi.fn(),

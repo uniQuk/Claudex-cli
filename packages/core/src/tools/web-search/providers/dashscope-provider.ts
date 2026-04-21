@@ -13,7 +13,11 @@ import type {
   WebSearchResultItem,
   DashScopeProviderConfig,
 } from '../types.js';
-import type { QwenCredentials } from '../../../qwen/qwenOAuth2.js';
+interface QwenCredentials {
+  access_token?: string;
+  expiry_date?: number;
+  resource_url?: string;
+}
 
 interface DashScopeSearchItem {
   _id: string;

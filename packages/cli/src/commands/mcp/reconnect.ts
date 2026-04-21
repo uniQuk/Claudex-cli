@@ -11,9 +11,9 @@ import {
   Config,
   FileDiscoveryService,
   ExtensionManager,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import { isWorkspaceTrusted } from '../../config/trustedFolders.js';
-import type { MCPServerConfig } from '@qwen-code/qwen-code-core';
+import type { MCPServerConfig } from '@claudex/core';
 
 async function getMcpServersFromConfig(
   extensionManager?: ExtensionManager,
@@ -23,7 +23,6 @@ async function getMcpServersFromConfig(
     extensionManager ??
     new ExtensionManager({
       isWorkspaceTrusted: !!isWorkspaceTrusted(settings.merged),
-      telemetrySettings: settings.merged.telemetry,
     });
 
   if (!extensionManager) {
@@ -111,7 +110,6 @@ async function reconnectAllMcpServers(): Promise<void> {
   const settings = loadSettings();
   const extensionManager = new ExtensionManager({
     isWorkspaceTrusted: !!isWorkspaceTrusted(settings.merged),
-    telemetrySettings: settings.merged.telemetry,
   });
   await extensionManager.refreshCache();
 

@@ -8,12 +8,12 @@
 import type { CommandModule } from 'yargs';
 import { loadSettings } from '../../config/settings.js';
 import { writeStdoutLine } from '../../utils/stdioHelpers.js';
-import type { MCPServerConfig } from '@qwen-code/qwen-code-core';
+import type { MCPServerConfig } from '@claudex/core';
 import {
   MCPServerStatus,
   createTransport,
   ExtensionManager,
-} from '@qwen-code/qwen-code-core';
+} from '@claudex/core';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { isWorkspaceTrusted } from '../../config/trustedFolders.js';
 
@@ -28,7 +28,6 @@ async function getMcpServersFromConfig(): Promise<
   const settings = loadSettings();
   const extensionManager = new ExtensionManager({
     isWorkspaceTrusted: !!isWorkspaceTrusted(settings.merged),
-    telemetrySettings: settings.merged.telemetry,
   });
   await extensionManager.refreshCache();
   const extensions = extensionManager.getLoadedExtensions();
