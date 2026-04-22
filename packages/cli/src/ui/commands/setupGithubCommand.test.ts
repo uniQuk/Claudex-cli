@@ -177,7 +177,7 @@ describe('updateGitignore', () => {
     expect(content).toBe('.claudex/\nsome-other-file\n\ngha-creds-*.json\n');
     expect(content).toContain('gha-creds-*.json');
     // Should not duplicate .claudex/ entry
-    expect((content.match(/\.qwen\//g) || []).length).toBe(1);
+    expect((content.match(/\.claudex\//g) || []).length).toBe(1);
   });
 
   it('does not get confused by entries in comments or as substrings', async () => {
