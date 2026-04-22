@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -13,7 +13,7 @@ import type {
   WebSearchResultItem,
   DashScopeProviderConfig,
 } from '../types.js';
-interface QwenCredentials {
+interface ClaudexCredentials {
   access_token?: string;
   expiry_date?: number;
   resource_url?: string;
@@ -64,23 +64,23 @@ interface DashScopeSearchResponse {
 
 // File System Configuration
 const CLAUDEX_DIR = '.claudex';
-const QWEN_CREDENTIAL_FILENAME = 'oauth_creds.json';
+const CLAUDEX_CREDENTIAL_FILENAME = 'oauth_creds.json';
 
 /**
  * Get the path to the cached OAuth credentials file.
  */
-function getQwenCachedCredentialPath(): string {
-  return path.join(os.homedir(), CLAUDEX_DIR, QWEN_CREDENTIAL_FILENAME);
+function getClaudexCachedCredentialPath(): string {
+  return path.join(os.homedir(), CLAUDEX_DIR, CLAUDEX_CREDENTIAL_FILENAME);
 }
 
 /**
- * Load cached Qwen OAuth credentials from disk.
+ * Load cached Claudex OAuth credentials from disk.
  */
-async function loadQwenCredentials(): Promise<QwenCredentials | null> {
+async function loadClaudexCredentials(): Promise<ClaudexCredentials | null> {
   try {
-    const keyFile = getQwenCachedCredentialPath();
+    const keyFile = getClaudexCachedCredentialPath();
     const creds = await fs.readFile(keyFile, 'utf-8');
-    return JSON.parse(creds) as QwenCredentials;
+    return JSON.parse(creds) as ClaudexCredentials;
   } catch {
     return null;
   }
@@ -97,9 +97,9 @@ export class DashScopeProvider extends BaseWebSearchProvider {
   }
 
   isAvailable(): boolean {
-    // DashScope provider is only available when auth type is QWEN_OAUTH
+    // DashScope provider is only available when auth type is CLAUDEX_OAUTH
     // This ensures it's only used when OAuth credentials are available
-    return this.config.authType === 'qwen-oauth';
+    return this.config.authType === 'claudex-oauth';
   }
 
   /**
@@ -112,7 +112,7 @@ export class DashScopeProvider extends BaseWebSearchProvider {
     apiEndpoint: string;
   }> {
     // Load credentials once
-    const credentials = await loadQwenCredentials();
+    const credentials = await loadClaudexCredentials();
 
     // Get access token: try OAuth credentials first, fallback to apiKey
     let accessToken: string | null = null;

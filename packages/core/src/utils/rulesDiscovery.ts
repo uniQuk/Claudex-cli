@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -191,7 +191,7 @@ async function loadRulesFromDir(
 
 /**
  * Format loaded rules into a single string with source markers,
- * consistent with the `--- Context from: ... ---` format used for QWEN.md.
+ * consistent with the `--- Context from: ... ---` format used for CLAUDEX.md.
  */
 export function formatRules(rules: RuleFile[], projectRoot: string): string {
   return rules
@@ -201,7 +201,7 @@ export function formatRules(rules: RuleFile[], projectRoot: string): string {
         : rule.filePath;
       // Normalize to forward slashes for cross-platform consistency in the
       // system prompt. Glob patterns in `paths:` use forward slashes, so
-      // display paths should match — otherwise Windows shows `.qwen\rules\foo.md`
+      // display paths should match — otherwise Windows shows `.claudex\rules\foo.md`
       // and Linux shows `.claudex/rules/foo.md`, which is confusing in diffs/tests.
       const displayPath = rawDisplayPath.replace(/\\/g, '/');
       return (

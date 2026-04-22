@@ -523,7 +523,7 @@ const SETTINGS_SCHEMA = {
         label: 'Theme',
         category: 'UI',
         requiresRestart: false,
-        default: 'Qwen Dark' as string,
+        default: 'Claudex Dark' as string,
         description: 'The color theme for the UI.',
         showInDialog: true,
       },
@@ -624,7 +624,7 @@ const SETTINGS_SCHEMA = {
         requiresRestart: false,
         default: true,
         description:
-          'Show optional feedback dialog after conversations to help improve Qwen performance.',
+          'Show optional feedback dialog after conversations to help improve Claudex performance.',
         showInDialog: true,
       },
       enableFollowupSuggestions: {
@@ -746,7 +746,7 @@ const SETTINGS_SCHEMA = {
     requiresRestart: false,
     default: '',
     description:
-      'Model used for generating prompt suggestions and speculative execution. Leave empty to use the main model. A smaller/faster model (e.g., qwen3-coder-flash) reduces latency and cost.',
+      'Model used for generating prompt suggestions and speculative execution. Leave empty to use the main model. A smaller/faster model (e.g., claudex3-coder-flash) reduces latency and cost.',
     showInDialog: true,
   },
 

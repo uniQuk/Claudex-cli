@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -1045,7 +1045,7 @@ export class Session implements SessionContext {
       selectedAuthType,
       parsed.modelId,
       selectedAuthType !== previousAuthType &&
-        selectedAuthType === AuthType.QWEN_OAUTH
+        selectedAuthType === AuthType.CLAUDEX_OAUTH
         ? { requireCachedCredentials: true }
         : undefined,
     );
@@ -1691,7 +1691,7 @@ export class Session implements SessionContext {
         return normalizePartList(result.content);
 
       case 'message': {
-        await this.client.extNotification('_qwencode/slash_command', {
+        await this.client.extNotification('_claudexcode/slash_command', {
           sessionId: this.sessionId,
           command: originalPrompt
             .filter((block) => block.type === 'text')
@@ -1718,7 +1718,7 @@ export class Session implements SessionContext {
 
         // Stream all messages to the client
         for await (const msg of result.messages) {
-          await this.client.extNotification('_qwencode/slash_command', {
+          await this.client.extNotification('_claudexcode/slash_command', {
             sessionId: this.sessionId,
             command,
             messageType: msg.messageType,

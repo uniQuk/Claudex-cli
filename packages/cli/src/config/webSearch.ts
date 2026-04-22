@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -33,7 +33,7 @@ export interface WebSearchConfig {
  *
  * @param argv - Command line arguments
  * @param settings - User settings from settings.json
- * @param authType - Authentication type (e.g., 'qwen-oauth')
+ * @param authType - Authentication type (e.g., 'claudex-oauth')
  * @returns WebSearch configuration or undefined if no providers available
  */
 export function buildWebSearchConfig(
@@ -74,7 +74,7 @@ export function buildWebSearchConfig(
     }
   }
 
-  // Step 2: DashScope auto-injection for qwen-oauth was removed when the
+  // Step 2: DashScope auto-injection for claudex-oauth was removed when the
   // free tier was discontinued on 2026-04-15.  Users who explicitly configure
   // a dashscope provider in settings.json still get it (handled in Step 1).
 

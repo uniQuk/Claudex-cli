@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2026 Qwen Team
+ * Copyright 2026 Claudex Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -240,7 +240,7 @@ export function startEarlyInputCapture(): void {
 
   // Check if disabled
   if (
-    (process.env['CLAUDEX_DISABLE_EARLY_CAPTURE'] ?? process.env['QWEN_CODE_DISABLE_EARLY_CAPTURE']) === '1'
+    (process.env['CLAUDEX_DISABLE_EARLY_CAPTURE'] ?? process.env['CLAUDEX_CODE_DISABLE_EARLY_CAPTURE']) === '1'
   ) {
     debugLogger.debug('Early input capture disabled by environment variable');
     return;

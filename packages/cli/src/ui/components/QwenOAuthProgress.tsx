@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -13,7 +13,7 @@ import type { DeviceAuthorizationData } from '@claudex/core';
 import { useKeypress } from '../hooks/useKeypress.js';
 import { t } from '../../i18n/index.js';
 
-interface QwenOAuthProgressProps {
+interface ClaudexOAuthProgressProps {
   onTimeout: () => void;
   onCancel: () => void;
   deviceAuth?: DeviceAuthorizationData;
@@ -33,13 +33,13 @@ function formatTime(seconds: number): string {
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 }
 
-export function QwenOAuthProgress({
+export function ClaudexOAuthProgress({
   onTimeout,
   onCancel,
   deviceAuth,
   authStatus,
   authMessage,
-}: QwenOAuthProgressProps): React.JSX.Element {
+}: ClaudexOAuthProgressProps): React.JSX.Element {
   const defaultTimeout = deviceAuth?.expires_in || 300; // Default 5 minutes
   const [timeRemaining, setTimeRemaining] = useState<number>(defaultTimeout);
   const [dots, setDots] = useState<string>('...');
@@ -93,7 +93,7 @@ export function QwenOAuthProgress({
         width="100%"
       >
         <Text bold color={theme.status.error}>
-          {t('Qwen OAuth Authentication Timeout')}
+          {t('Claudex OAuth Authentication Timeout')}
         </Text>
 
         <Box marginTop={1}>
@@ -127,7 +127,7 @@ export function QwenOAuthProgress({
         width="100%"
       >
         <Text bold color={theme.status.error}>
-          {t('Qwen OAuth Authentication Error')}
+          {t('Claudex OAuth Authentication Error')}
         </Text>
 
         <Box marginTop={1}>
@@ -156,10 +156,10 @@ export function QwenOAuthProgress({
         padding={1}
         width="100%"
       >
-        <Text bold>{t('Qwen OAuth Authentication')}</Text>
+        <Text bold>{t('Claudex OAuth Authentication')}</Text>
 
         <Box marginTop={1} flexDirection="column">
-          <Text>{t('Waiting for Qwen OAuth authentication...')}</Text>
+          <Text>{t('Waiting for Claudex OAuth authentication...')}</Text>
           <Text>
             {t('Time remaining:')} {formatTime(timeRemaining)}
           </Text>
@@ -180,7 +180,7 @@ export function QwenOAuthProgress({
       padding={1}
       width="100%"
     >
-      <Text bold>{t('Qwen OAuth Authentication')}</Text>
+      <Text bold>{t('Claudex OAuth Authentication')}</Text>
 
       <Box marginTop={1}>
         <Text>{t('Please visit this URL to authorize:')}</Text>

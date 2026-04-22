@@ -3,7 +3,7 @@ import type { ScenarioConfig } from '../scenario-runner.js';
 export default {
   name: 'pr-2371-review',
   spawn: ['node', 'dist/cli.js', '--yolo'],
-  terminal: { title: 'qwen-code', cwd: '../../..' },
+  terminal: { title: 'claudex-code', cwd: '../../..' },
   flow: [
     {
       type: '/review https://github.com/QwenLM/qwen-code/pull/2371',

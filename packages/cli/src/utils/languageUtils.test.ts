@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen team
+ * Copyright 2025 Claudex team
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -37,7 +37,7 @@ vi.mock('../i18n/index.js', () => ({
 // Mock @claudex/core
 vi.mock('@claudex/core', () => ({
   Storage: {
-    getGlobalClaudexDir: vi.fn(() => '/mock/home/.qwen'),
+    getGlobalClaudexDir: vi.fn(() => '/mock/home/.claudex'),
   },
 }));
 
@@ -173,7 +173,7 @@ describe('languageUtils', () => {
     it('should create directory and write file', () => {
       writeOutputLanguageFile('Chinese');
 
-      const globalDir = '/mock/home/.qwen';
+      const globalDir = '/mock/home/.claudex';
       const expectedDir = path.join(globalDir);
       const expectedFilePath = path.join(globalDir, 'output-language.md');
 

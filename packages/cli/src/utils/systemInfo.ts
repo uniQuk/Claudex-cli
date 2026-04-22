@@ -91,7 +91,7 @@ export async function getIdeClientName(
  * Handles different sandbox types including sandbox-exec and custom sandbox environments.
  * For bug reports, removes 'claudex-' prefixes from sandbox names.
  *
- * @param stripPrefix - Whether to strip 'qwen-' prefix (used for bug reports)
+ * @param stripPrefix - Whether to strip 'claudex-' prefix (used for bug reports)
  */
 export function getSandboxEnv(stripPrefix = false): string {
   const sandbox = process.env['SANDBOX'];

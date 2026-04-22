@@ -10,8 +10,8 @@ import {
   AuthType,
   clearCachedCredentialFile,
   createDebugLogger,
-  QwenOAuth2Event,
-  qwenOAuth2Events,
+  ClaudexOAuth2Event,
+  claudexOAuth2Events,
   MCPServerConfig,
   SessionService,
   tokenLimit,
@@ -92,7 +92,7 @@ export async function runAcpAgent(
 
   const stream = ndJsonStream(stdout, stdin);
   const connection = new AgentSideConnection(
-    (conn) => new QwenAgent(config, settings, argv, conn),
+    (conn) => new ClaudexAgent(config, settings, argv, conn),
     stream,
   );
 
@@ -168,7 +168,7 @@ function toStdioServer(server: McpServer): McpServerStdio | undefined {
   return undefined;
 }
 
-class QwenAgent implements Agent {
+class ClaudexAgent implements Agent {
   private sessions: Map<string, Session> = new Map();
   private clientCapabilities: ClientCapabilities | undefined;
 
@@ -218,8 +218,8 @@ class QwenAgent implements Agent {
       });
     };
 
-    if (method === AuthType.QWEN_OAUTH) {
-      qwenOAuth2Events.once(QwenOAuth2Event.AuthUri, authUriHandler);
+    if (method === AuthType.CLAUDEX_OAUTH) {
+      claudexOAuth2Events.once(ClaudexOAuth2Event.AuthUri, authUriHandler);
     }
 
     await clearCachedCredentialFile();
@@ -231,8 +231,8 @@ class QwenAgent implements Agent {
         method,
       );
     } finally {
-      if (method === AuthType.QWEN_OAUTH) {
-        qwenOAuth2Events.off(QwenOAuth2Event.AuthUri, authUriHandler);
+      if (method === AuthType.CLAUDEX_OAUTH) {
+        claudexOAuth2Events.off(ClaudexOAuth2Event.AuthUri, authUriHandler);
       }
     }
   }
@@ -496,13 +496,13 @@ class QwenAgent implements Agent {
     const authMethods = buildAuthMethods();
     const errorMessage = this.extractErrorMessage(error);
     if (
-      errorMessage?.includes('qwen-oauth') ||
-      errorMessage?.includes('Qwen OAuth')
+      errorMessage?.includes('claudex-oauth') ||
+      errorMessage?.includes('Claudex OAuth')
     ) {
-      const qwenOAuthMethods = authMethods.filter(
-        (m) => m.id === AuthType.QWEN_OAUTH,
+      const claudexOAuthMethods = authMethods.filter(
+        (m) => m.id === AuthType.CLAUDEX_OAUTH,
       );
-      return qwenOAuthMethods.length ? qwenOAuthMethods : authMethods;
+      return claudexOAuthMethods.length ? claudexOAuthMethods : authMethods;
     }
 
     if (selectedType) {

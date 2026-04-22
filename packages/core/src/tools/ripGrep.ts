@@ -257,13 +257,13 @@ class GrepToolInvocation extends BaseToolInvocation<
           fs.existsSync(searchPath) && fs.statSync(searchPath).isDirectory()
             ? searchPath
             : path.dirname(searchPath);
-        const qwenIgnorePath = path.join(dir, '.claudexignore');
+        const claudexIgnorePath = path.join(dir, '.claudexignore');
         if (
-          !seenIgnoreFiles.has(qwenIgnorePath) &&
-          fs.existsSync(qwenIgnorePath)
+          !seenIgnoreFiles.has(claudexIgnorePath) &&
+          fs.existsSync(claudexIgnorePath)
         ) {
-          rgArgs.push('--ignore-file', qwenIgnorePath);
-          seenIgnoreFiles.add(qwenIgnorePath);
+          rgArgs.push('--ignore-file', claudexIgnorePath);
+          seenIgnoreFiles.add(claudexIgnorePath);
         }
       }
     }

@@ -17,7 +17,7 @@ import type {
   SettingInputRequest,
   PluginChoiceRequest,
 } from '../types.js';
-import type { QwenAuthState } from '../hooks/useQwenAuth.js';
+import type { ClaudexAuthState } from '../hooks/useClaudexAuth.js';
 import type { CommandContext, SlashCommand } from '../commands/types.js';
 import type { TextBuffer } from '../components/shared/text-buffer.js';
 import type {
@@ -46,8 +46,8 @@ export interface UIState {
   authError: string | null;
   isAuthDialogOpen: boolean;
   pendingAuthType: AuthType | undefined;
-  // Qwen OAuth state
-  qwenAuthState: QwenAuthState;
+  // Claudex OAuth state
+  claudexAuthState: ClaudexAuthState;
   editorError: string | null;
   isEditorDialogOpen: boolean;
   debugMessage: string;

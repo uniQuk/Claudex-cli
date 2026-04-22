@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -104,8 +104,8 @@ describe('SkillManager', () => {
         return { name: 'regular-skill', description: 'A regular skill' };
       }
       if (yamlString.includes('name: shared-skill')) {
-        const desc = yamlString.includes('From qwen dir')
-          ? 'From qwen dir'
+        const desc = yamlString.includes('From claudex dir')
+          ? 'From claudex dir'
           : yamlString.includes('From agent dir')
             ? 'From agent dir'
             : 'A shared skill';
@@ -431,17 +431,17 @@ You are a helpful assistant.
     beforeEach(() => {
       // Mock directory listing based on path to handle multiple base dirs per level.
       // Use path.join to construct expected paths so separators match on all platforms.
-      const projectQwenSkillsDir = path.join(
+      const projectClaudexSkillsDir = path.join(
         '/test/project',
         '.claudex',
         'skills',
       );
-      const userQwenSkillsDir = path.join('/home/user', '.claudex', 'skills');
+      const userClaudexSkillsDir = path.join('/home/user', '.claudex', 'skills');
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       vi.mocked(fs.readdir).mockImplementation((dirPath: any) => {
         const pathStr = String(dirPath);
-        if (pathStr === projectQwenSkillsDir) {
+        if (pathStr === projectClaudexSkillsDir) {
           return Promise.resolve([
             {
               name: 'skill1',
@@ -463,7 +463,7 @@ You are a helpful assistant.
             },
           ] as unknown as Awaited<ReturnType<typeof fs.readdir>>);
         }
-        if (pathStr === userQwenSkillsDir) {
+        if (pathStr === userClaudexSkillsDir) {
           return Promise.resolve([
             {
               name: 'skill3',
@@ -541,15 +541,15 @@ Skill 3 content`);
     });
 
     it('should deduplicate same-name skills across provider dirs within a level', async () => {
-      // Override readdir to return the same skill name from both .qwen and .agents dirs
+      // Override readdir to return the same skill name from both .claudex and .agents dirs
       vi.mocked(fs.readdir).mockReset();
-      const projectQwenDir = path.join('/test/project', '.claudex', 'skills');
+      const projectClaudexDir = path.join('/test/project', '.claudex', 'skills');
       const projectAgentDir = path.join('/test/project', '.agents', 'skills');
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       vi.mocked(fs.readdir).mockImplementation((dirPath: any) => {
         const pathStr = String(dirPath);
-        if (pathStr === projectQwenDir) {
+        if (pathStr === projectClaudexDir) {
           return Promise.resolve([
             {
               name: 'shared-skill',
@@ -578,7 +578,7 @@ Skill 3 content`);
         const pathStr = String(filePath);
         if (pathStr.includes('.claudex') && pathStr.includes('shared-skill')) {
           return Promise.resolve(
-            `---\nname: shared-skill\ndescription: From qwen dir\n---\nQwen content`,
+            `---\nname: shared-skill\ndescription: From claudex dir\n---\nClaudex content`,
           );
         }
         if (pathStr.includes('.agents') && pathStr.includes('shared-skill')) {
@@ -594,10 +594,10 @@ Skill 3 content`);
         force: true,
       });
 
-      // Only one instance should remain, from .qwen (first in PROVIDER_CONFIG_DIRS)
+      // Only one instance should remain, from .claudex (first in PROVIDER_CONFIG_DIRS)
       expect(skills).toHaveLength(1);
       expect(skills[0].name).toBe('shared-skill');
-      expect(skills[0].description).toBe('From qwen dir');
+      expect(skills[0].description).toBe('From claudex dir');
     });
 
     it('should handle empty directories', async () => {
@@ -1114,7 +1114,7 @@ hooks:
     - matcher: "Bash"
       hooks:
         - type: command
-          command: 'echo $QWEN_SKILL_ROOT'
+          command: 'echo $CLAUDEX_SKILL_ROOT'
 ---
 Skill content`;
 

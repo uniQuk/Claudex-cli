@@ -80,9 +80,9 @@ describe('IdeClient', () => {
     delete process.env['CLAUDEX_IDE_SERVER_STDIO_COMMAND'];
     delete process.env['CLAUDEX_IDE_SERVER_STDIO_ARGS'];
     // Also clear legacy names so backward-compat fallbacks don't pick up host env vars
-    delete process.env['QWEN_CODE_IDE_SERVER_PORT'];
-    delete process.env['QWEN_CODE_IDE_SERVER_STDIO_COMMAND'];
-    delete process.env['QWEN_CODE_IDE_SERVER_STDIO_ARGS'];
+    delete process.env['CLAUDEX_CODE_IDE_SERVER_PORT'];
+    delete process.env['CLAUDEX_CODE_IDE_SERVER_STDIO_COMMAND'];
+    delete process.env['CLAUDEX_CODE_IDE_SERVER_STDIO_ARGS'];
 
     // Mock dependencies
     vi.spyOn(process, 'cwd').mockReturnValue('/test/workspace/sub-dir');

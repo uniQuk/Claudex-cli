@@ -50,7 +50,7 @@ describe('handleAtCommand', () => {
       isSandboxed: () => false,
       getFileService: () => new FileDiscoveryService(testRootDir),
       getFileFilteringRespectGitIgnore: () => true,
-      getFileFilteringRespectQwenIgnore: () => true,
+      getFileFilteringRespectClaudexIgnore: () => true,
       getFileFilteringOptions: () => ({
         respectGitIgnore: true,
         respectClaudexIgnore: true,
@@ -521,8 +521,8 @@ describe('handleAtCommand', () => {
     });
   });
 
-  describe('qwen-ignore filtering', () => {
-    it('should skip qwen-ignored files in @ commands', async () => {
+  describe('claudex-ignore filtering', () => {
+    it('should skip claudex-ignored files in @ commands', async () => {
       await createTestFile(
         path.join(testRootDir, '.claudexignore'),
         'build/output.js',
@@ -546,10 +546,10 @@ describe('handleAtCommand', () => {
         shouldProceed: true,
       });
       expect(mockOnDebugMessage).toHaveBeenCalledWith(
-        `Path ${claudexIgnoredFile} is qwen-ignored and will be skipped.`,
+        `Path ${claudexIgnoredFile} is claudex-ignored and will be skipped.`,
       );
       expect(mockOnDebugMessage).toHaveBeenCalledWith(
-        `Ignored 1 files:\nQwen-ignored: ${claudexIgnoredFile}`,
+        `Ignored 1 files:\nClaudex-ignored: ${claudexIgnoredFile}`,
       );
     });
   });
@@ -584,7 +584,7 @@ describe('handleAtCommand', () => {
     });
   });
 
-  it('should handle mixed qwen-ignored and valid files', async () => {
+  it('should handle mixed claudex-ignored and valid files', async () => {
     await createTestFile(
       path.join(testRootDir, '.claudexignore'),
       'dist/bundle.js',
@@ -618,10 +618,10 @@ describe('handleAtCommand', () => {
       shouldProceed: true,
     });
     expect(mockOnDebugMessage).toHaveBeenCalledWith(
-      `Path ${claudexIgnoredFile} is qwen-ignored and will be skipped.`,
+      `Path ${claudexIgnoredFile} is claudex-ignored and will be skipped.`,
     );
     expect(mockOnDebugMessage).toHaveBeenCalledWith(
-      `Ignored 1 files:\nQwen-ignored: ${claudexIgnoredFile}`,
+      `Ignored 1 files:\nClaudex-ignored: ${claudexIgnoredFile}`,
     );
   });
 

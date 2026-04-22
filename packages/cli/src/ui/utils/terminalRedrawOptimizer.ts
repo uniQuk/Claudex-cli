@@ -65,7 +65,7 @@ export function optimizeMultilineEraseLines(output: string): string {
 export function installTerminalRedrawOptimizer(
   stdout: NodeJS.WriteStream,
 ): () => void {
-  if (process.env['QWEN_CODE_LEGACY_ERASE_LINES'] === '1') {
+  if (process.env['CLAUDEX_CODE_LEGACY_ERASE_LINES'] === '1') {
     return () => {};
   }
 

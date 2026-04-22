@@ -79,8 +79,8 @@ export const tipRegistry: ContextualTip[] = [
     priority: 70,
   },
   {
-    id: 'new-user-qwenmd',
-    content: 'Add a QWEN.md file to give Claudex persistent project context.',
+    id: 'new-user-claudexmd',
+    content: 'Add a CLAUDEX.md file to give Claudex persistent project context.',
     trigger: 'startup',
     isRelevant: (ctx) => ctx.sessionCount < 10,
     cooldownPrompts: 0,
@@ -89,7 +89,7 @@ export const tipRegistry: ContextualTip[] = [
   {
     id: 'new-user-resume',
     content:
-      'You can resume a previous conversation by running qwen --continue or qwen --resume.',
+      'You can resume a previous conversation by running claudex --continue or claudex --resume.',
     trigger: 'startup',
     isRelevant: (ctx) => ctx.sessionCount < 10,
     cooldownPrompts: 0,

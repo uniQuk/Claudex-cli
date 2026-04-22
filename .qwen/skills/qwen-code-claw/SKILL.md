@@ -1,9 +1,9 @@
 ---
-name: qwen-code-claw
-description: Use Qwen Code as a Code Agent for code understanding, project generation, features, bug fixes, refactoring, and various programming tasks
+name: claudex-code-claw
+description: Use Claudex Code as a Code Agent for code understanding, project generation, features, bug fixes, refactoring, and various programming tasks
 ---
 
-# Qwen Code Claw
+# Claudex Code Claw
 
 ## When to Use This Skill
 
@@ -19,7 +19,7 @@ Use this skill when you need to:
 ## Install
 
 ```bash
-npm install -g @qwen-code/qwen-code
+npm install -g @claudex-code/claudex-code
 ```
 
 For normal session reuse, prefer a global install over `npx`.
@@ -29,7 +29,7 @@ For normal session reuse, prefer a global install over `npx`.
 Check if authentication is already configured:
 
 ```bash
-qwen auth status
+claudex auth status
 ```
 
 If authentication exists, skip this section. If not authenticated, check if the `BAILIAN_CODING_PLAN_API_KEY` environment variable exists:
@@ -41,20 +41,20 @@ echo $BAILIAN_CODING_PLAN_API_KEY
 **If `BAILIAN_CODING_PLAN_API_KEY` exists**, authenticate directly:
 
 ```bash
-qwen auth coding-plan --region china --key $BAILIAN_CODING_PLAN_API_KEY
+claudex auth coding-plan --region china --key $BAILIAN_CODING_PLAN_API_KEY
 ```
 
-**If the environment variable does not exist**, interrupt and prompt the user to authenticate via `qwen-oauth` or `coding-plan`:
+**If the environment variable does not exist**, interrupt and prompt the user to authenticate via `claudex-oauth` or `coding-plan`:
 
 ```bash
-qwen auth
+claudex auth
 ```
 
-Or configure custom API after launching Qwen Code via `/auth`.
+Or configure custom API after launching Claudex Code via `/auth`.
 
 ## ACPX Integration
 
-You should always use `acpx` to run Qwen Code over the Agent Client Protocol (ACP) instead of scraping PTY sessions.
+You should always use `acpx` to run Claudex Code over the Agent Client Protocol (ACP) instead of scraping PTY sessions.
 
 To use acpx:
 
@@ -82,12 +82,12 @@ To use acpx:
 4. **For complete CLI reference with all options and examples**:
    https://raw.githubusercontent.com/openclaw/acpx/main/docs/CLI.md
 
-From now on, when you need to delegate work to Qwen Code, use `acpx` instead of spawning raw terminal sessions. For example:
+From now on, when you need to delegate work to Claudex Code, use `acpx` instead of spawning raw terminal sessions. For example:
 
 ```bash
-npx acpx@latest qwen "fix the failing tests"
-npx acpx@latest qwen "refactor the auth module"
-npx acpx@latest qwen exec "one-shot: summarize this repo"
+npx acpx@latest claudex "fix the failing tests"
+npx acpx@latest claudex "refactor the auth module"
+npx acpx@latest claudex exec "one-shot: summarize this repo"
 ```
 
 > **Tip:** You should typically use the `--approve-all` flag to prevent task interruptions.
@@ -97,40 +97,40 @@ npx acpx@latest qwen exec "one-shot: summarize this repo"
 ### Persistent Repository Assistant
 
 ```bash
-acpx qwen 'inspect failing tests and propose a fix plan'
-acpx qwen 'apply the smallest safe fix and run tests'
+acpx claudex 'inspect failing tests and propose a fix plan'
+acpx claudex 'apply the smallest safe fix and run tests'
 ```
 
 ### One-Shot Script Steps
 
 ```bash
-acpx qwen exec 'summarize repo purpose in 3 lines'
+acpx claudex exec 'summarize repo purpose in 3 lines'
 ```
 
 ### Parallel Named Streams
 
 ```bash
-acpx qwen -s backend 'fix API pagination bug'
-acpx qwen -s docs 'draft changelog entry for release'
+acpx claudex -s backend 'fix API pagination bug'
+acpx claudex -s docs 'draft changelog entry for release'
 ```
 
 ### Queue Follow-ups Without Waiting
 
 ```bash
-acpx qwen 'run full test suite and investigate failures'
-acpx qwen --no-wait 'after tests, summarize root causes and next steps'
+acpx claudex 'run full test suite and investigate failures'
+acpx claudex --no-wait 'after tests, summarize root causes and next steps'
 ```
 
 ### Machine-Readable Output for Orchestration
 
 ```bash
-acpx --format json qwen 'review current branch changes' > events.ndjson
+acpx --format json claudex 'review current branch changes' > events.ndjson
 ```
 
 ### Repository-Wide Review with Permissive Mode
 
 ```bash
-acpx --cwd ~/repos/my-project --approve-all qwen -s pr-123 \
+acpx --cwd ~/repos/my-project --approve-all claudex -s pr-123 \
   'review PR #123 for regressions and propose minimal patch'
 ```
 
@@ -150,7 +150,7 @@ If every permission request is denied/cancelled and none are approved, `acpx` ex
 4. Use `--format json` for automation and script integration
 5. Use `--cwd` to manage context across multiple projects
 
-## QwenCode Reference
+## ClaudexCode Reference
 
 ### CLI Commands
 
@@ -161,19 +161,19 @@ If every permission request is denied/cancelled and none are approved, `acpx` ex
 | `/compress` | Compress history to save tokens |
 | `/stats`    | Show session info               |
 | `/auth`     | Configure authentication        |
-| `/exit`     | Exit Qwen Code                  |
+| `/exit`     | Exit Claudex Code                  |
 
 Full reference: https://raw.githubusercontent.com/QwenLM/qwen-code/refs/heads/main/docs/users/features/commands.md
 
 ### Configuration
 
-Config files (highest priority first): CLI args > env vars > system > project (`.qwen/settings.json`) > user (`~/.qwen/settings.json`) > defaults. Format: JSONC with env var interpolation.
+Config files (highest priority first): CLI args > env vars > system > project (`.claudex/settings.json`) > user (`~/.claudex/settings.json`) > defaults. Format: JSONC with env var interpolation.
 
 Key settings:
 
 | Setting                      | Description                               |
 | ---------------------------- | ----------------------------------------- |
-| `model.name`                 | Model to use (e.g. `qwen-max`)            |
+| `model.name`                 | Model to use (e.g. `claudex-max`)            |
 | `tools.approvalMode`         | `plan` / `default` / `auto_edit` / `yolo` |
 | `permissions.allow/ask/deny` | Tool permission rules                     |
 | `mcpServers.*`               | MCP server configurations                 |
@@ -182,7 +182,7 @@ Full reference: https://raw.githubusercontent.com/QwenLM/qwen-code/refs/heads/ma
 
 ### Authentication
 
-Supports Alibaba Cloud Coding Plan, OpenAI-compatible API keys, and Qwen OAuth (free tier discontinued 2026-04-15).
+Supports Alibaba Cloud Coding Plan, OpenAI-compatible API keys, and Claudex OAuth (free tier discontinued 2026-04-15).
 
 Full reference: https://raw.githubusercontent.com/QwenLM/qwen-code/refs/heads/main/docs/users/configuration/auth.md
 
@@ -209,7 +209,7 @@ Full reference: https://raw.githubusercontent.com/QwenLM/qwen-code/refs/heads/ma
 
 Well-known agent names resolve to commands:
 
-- `qwen` → `qwen --acp`
+- `claudex` → `claudex --acp`
 
 ### Command Syntax
 

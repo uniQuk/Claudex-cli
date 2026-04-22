@@ -1,13 +1,13 @@
 # Worked example: headless run prints empty stdout in zsh TTY
 
-A short qwen-code case to illustrate two failure modes from `SKILL.md`:
+A short claudex-code case to illustrate two failure modes from `SKILL.md`:
 _reproduction contradiction is data_, and _instrument the data flow, not
 just the code path_.
 
 ## The bug
 
 User: `npm run dev -- -p "..."` in zsh prints nothing. Process exits clean,
-`~/.qwen/logs` shows the model returned proper text. Stdout was empty.
+`~/.claudex/logs` shows the model returned proper text. Stdout was empty.
 
 Cause: `JsonOutputAdapter.emitResult` wrote `resultMessage.result` without
 a trailing `\n`. zsh's `PROMPT_SP` (powerlevel10k, agnoster, …) detects
@@ -55,5 +55,5 @@ fix was one line.
 
 ## Reference
 
-Fix commit: qwen-code `feadf052f` —
+Fix commit: claudex-code `feadf052f` —
 `fix(cli): append newline to text-mode emitResult so zsh PROMPT_SP doesn't erase the line`

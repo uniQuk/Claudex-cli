@@ -9,15 +9,15 @@ export const metadata = {
 };
 
 const banner = (
-  <Banner storageKey="some-key">Qwen Code 0.5.0 is released 🎉</Banner>
+  <Banner storageKey="some-key">Claudex Code 0.5.0 is released 🎉</Banner>
 );
 const navbar = (
   <Navbar
-    logo={<b>Qwen Code</b>}
+    logo={<b>Claudex Code</b>}
     // ... Your additional navbar options
   />
 );
-const footer = <Footer>MIT {new Date().getFullYear()} © Qwen Team.</Footer>;
+const footer = <Footer>MIT {new Date().getFullYear()} © Claudex Team.</Footer>;
 
 export default async function RootLayout({ children }) {
   return (

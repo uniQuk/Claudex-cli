@@ -60,7 +60,7 @@ describe('ShellTool', () => {
         .mockReturnValue(createMockWorkspaceContext('/test/dir')),
       storage: {
         getUserSkillsDirs: vi.fn().mockReturnValue(['/test/dir/.claudex/skills']),
-        getProjectTempDir: vi.fn().mockReturnValue('/tmp/qwen-temp'),
+        getProjectTempDir: vi.fn().mockReturnValue('/tmp/claudex-temp'),
       },
       getTruncateToolOutputThreshold: vi.fn().mockReturnValue(0),
       getTruncateToolOutputLines: vi.fn().mockReturnValue(0),
@@ -68,8 +68,8 @@ describe('ShellTool', () => {
       getGeminiClient: vi.fn(),
       getGitCoAuthor: vi.fn().mockReturnValue({
         enabled: true,
-        name: 'Qwen-Coder',
-        email: 'qwen-coder@alibabacloud.com',
+        name: 'Claudex-Coder',
+        email: 'claudex-coder@alibabacloud.com',
       }),
       getShouldUseNodePtyShell: vi.fn().mockReturnValue(false),
     } as unknown as Config;
@@ -577,7 +577,7 @@ describe('ShellTool', () => {
         // Verify that the command was executed with co-author added
         expect(mockShellExecutionService).toHaveBeenCalledWith(
           expect.stringContaining(
-            'Co-authored-by: Qwen-Coder <qwen-coder@alibabacloud.com>',
+            'Co-authored-by: Claudex-Coder <claudex-coder@alibabacloud.com>',
           ),
           expect.any(String),
           expect.any(Function),
@@ -607,7 +607,7 @@ describe('ShellTool', () => {
 
         expect(mockShellExecutionService).toHaveBeenCalledWith(
           expect.stringContaining(
-            'Co-authored-by: Qwen-Coder <qwen-coder@alibabacloud.com>',
+            'Co-authored-by: Claudex-Coder <claudex-coder@alibabacloud.com>',
           ),
           expect.any(String),
           expect.any(Function),
@@ -637,7 +637,7 @@ describe('ShellTool', () => {
 
         expect(mockShellExecutionService).toHaveBeenCalledWith(
           expect.stringContaining(
-            'Co-authored-by: Qwen-Coder <qwen-coder@alibabacloud.com>',
+            'Co-authored-by: Claudex-Coder <claudex-coder@alibabacloud.com>',
           ),
           expect.any(String),
           expect.any(Function),
@@ -667,7 +667,7 @@ describe('ShellTool', () => {
 
         expect(mockShellExecutionService).toHaveBeenCalledWith(
           expect.stringContaining(
-            'Co-authored-by: Qwen-Coder <qwen-coder@alibabacloud.com>',
+            'Co-authored-by: Claudex-Coder <claudex-coder@alibabacloud.com>',
           ),
           expect.any(String),
           expect.any(Function),
@@ -753,7 +753,7 @@ describe('ShellTool', () => {
 
         expect(mockShellExecutionService).toHaveBeenCalledWith(
           expect.stringContaining(
-            'Co-authored-by: Qwen-Coder <qwen-coder@alibabacloud.com>',
+            'Co-authored-by: Claudex-Coder <claudex-coder@alibabacloud.com>',
           ),
           expect.any(String),
           expect.any(Function),
@@ -767,8 +767,8 @@ describe('ShellTool', () => {
         // Mock config with disabled co-author
         (mockConfig.getGitCoAuthor as Mock).mockReturnValue({
           enabled: false,
-          name: 'Qwen-Coder',
-          email: 'qwen-coder@alibabacloud.com',
+          name: 'Claudex-Coder',
+          email: 'claudex-coder@alibabacloud.com',
         });
 
         const command = 'git commit -m "Initial commit"';
@@ -855,7 +855,7 @@ describe('ShellTool', () => {
 
         expect(mockShellExecutionService).toHaveBeenCalledWith(
           expect.stringContaining(
-            'Co-authored-by: Qwen-Coder <qwen-coder@alibabacloud.com>',
+            'Co-authored-by: Claudex-Coder <claudex-coder@alibabacloud.com>',
           ),
           expect.any(String),
           expect.any(Function),
@@ -888,7 +888,7 @@ describe('ShellTool', () => {
 
         expect(mockShellExecutionService).toHaveBeenCalledWith(
           expect.stringContaining(
-            'Co-authored-by: Qwen-Coder <qwen-coder@alibabacloud.com>',
+            'Co-authored-by: Claudex-Coder <claudex-coder@alibabacloud.com>',
           ),
           expect.any(String),
           expect.any(Function),

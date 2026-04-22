@@ -57,8 +57,8 @@ describe('FileDiscoveryService', () => {
       await createTestFile('.claudexignore', 'secrets.txt');
       const service = new FileDiscoveryService(projectRoot);
 
-      expect(service.shouldQwenIgnoreFile('secrets.txt')).toBe(true);
-      expect(service.shouldQwenIgnoreFile('src/index.js')).toBe(false);
+      expect(service.shouldClaudexIgnoreFile('secrets.txt')).toBe(true);
+      expect(service.shouldClaudexIgnoreFile('src/index.js')).toBe(false);
     });
   });
 
@@ -69,7 +69,7 @@ describe('FileDiscoveryService', () => {
       await createTestFile('.claudexignore', 'logs/');
     });
 
-    it('should filter out git-ignored and qwen-ignored files by default', () => {
+    it('should filter out git-ignored and claudex-ignored files by default', () => {
       const files = [
         'src/index.ts',
         'node_modules/package/index.js',
@@ -136,7 +136,7 @@ describe('FileDiscoveryService', () => {
     });
   });
 
-  describe('shouldGitIgnoreFile & shouldQwenIgnoreFile', () => {
+  describe('shouldGitIgnoreFile & shouldClaudexIgnoreFile', () => {
     beforeEach(async () => {
       await fs.mkdir(path.join(projectRoot, '.git'));
       await createTestFile('.gitignore', 'node_modules/');
@@ -161,19 +161,19 @@ describe('FileDiscoveryService', () => {
       ).toBe(false);
     });
 
-    it('should return true for qwen-ignored files', () => {
+    it('should return true for claudex-ignored files', () => {
       const service = new FileDiscoveryService(projectRoot);
 
       expect(
-        service.shouldQwenIgnoreFile(path.join(projectRoot, 'debug.log')),
+        service.shouldClaudexIgnoreFile(path.join(projectRoot, 'debug.log')),
       ).toBe(true);
     });
 
-    it('should return false for non-qwen-ignored files', () => {
+    it('should return false for non-claudex-ignored files', () => {
       const service = new FileDiscoveryService(projectRoot);
 
       expect(
-        service.shouldQwenIgnoreFile(path.join(projectRoot, 'src/index.ts')),
+        service.shouldClaudexIgnoreFile(path.join(projectRoot, 'src/index.ts')),
       ).toBe(false);
     });
   });

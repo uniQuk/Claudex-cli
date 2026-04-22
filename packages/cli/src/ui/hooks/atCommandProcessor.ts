@@ -164,7 +164,7 @@ export async function handleAtCommand({
   const contentLabelsForDisplay: string[] = [];
   const ignoredByReason: Record<string, string[]> = {
     git: [],
-    qwen: [],
+    claudex: [],
     both: [],
   };
 
@@ -214,14 +214,14 @@ export async function handleAtCommand({
 
     if (gitIgnored || claudexIgnored) {
       const reason =
-        gitIgnored && claudexIgnored ? 'both' : gitIgnored ? 'git' : 'qwen';
+        gitIgnored && claudexIgnored ? 'both' : gitIgnored ? 'git' : 'claudex';
       ignoredByReason[reason].push(pathName);
       const reasonText =
         reason === 'both'
-          ? 'ignored by both git and qwen'
+          ? 'ignored by both git and claudex'
           : reason === 'git'
             ? 'git-ignored'
-            : 'qwen-ignored';
+            : 'claudex-ignored';
       onDebugMessage(`Path ${pathName} is ${reasonText} and will be skipped.`);
       continue;
     }
@@ -310,7 +310,7 @@ export async function handleAtCommand({
   // Inform user about ignored paths
   const totalIgnored =
     ignoredByReason['git'].length +
-    ignoredByReason['qwen'].length +
+    ignoredByReason['claudex'].length +
     ignoredByReason['both'].length;
 
   if (totalIgnored > 0) {
@@ -318,8 +318,8 @@ export async function handleAtCommand({
     if (ignoredByReason['git'].length) {
       messages.push(`Git-ignored: ${ignoredByReason['git'].join(', ')}`);
     }
-    if (ignoredByReason['qwen'].length) {
-      messages.push(`Qwen-ignored: ${ignoredByReason['qwen'].join(', ')}`);
+    if (ignoredByReason['claudex'].length) {
+      messages.push(`Claudex-ignored: ${ignoredByReason['claudex'].join(', ')}`);
     }
     if (ignoredByReason['both'].length) {
       messages.push(`Ignored by both: ${ignoredByReason['both'].join(', ')}`);

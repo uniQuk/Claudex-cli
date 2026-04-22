@@ -2,16 +2,16 @@
 
 Every Claudex session starts with a fresh context window. Two mechanisms carry knowledge across sessions so you don't have to re-explain yourself every time:
 
-- **QWEN.md** — instructions _you_ write once and Claudex reads every session
+- **CLAUDEX.md** — instructions _you_ write once and Claudex reads every session
 - **Auto-memory** — notes Claudex writes itself based on what it learns from you
 
 ---
 
-## QWEN.md: your instructions to Claudex
+## CLAUDEX.md: your instructions to Claudex
 
-QWEN.md is a plain text file where you write things Claudex should always know about your project or your preferences. Think of it as a permanent briefing that loads at the start of every conversation.
+CLAUDEX.md is a plain text file where you write things Claudex should always know about your project or your preferences. Think of it as a permanent briefing that loads at the start of every conversation.
 
-### What to put in QWEN.md
+### What to put in CLAUDEX.md
 
 Add things you'd otherwise have to repeat every session:
 
@@ -20,26 +20,26 @@ Add things you'd otherwise have to repeat every session:
 - Architectural decisions ("we use the repository pattern, never call the database directly from controllers")
 - Personal preferences ("always use pnpm, not npm")
 
-Don't include things Claudex can figure out by reading your code. QWEN.md works best when it's short and specific — the longer it gets, the less reliably Claudex follows it.
+Don't include things Claudex can figure out by reading your code. CLAUDEX.md works best when it's short and specific — the longer it gets, the less reliably Claudex follows it.
 
-### Where to create QWEN.md
+### Where to create CLAUDEX.md
 
 | File                          | Who it applies to                             |
 | ----------------------------- | --------------------------------------------- |
-| `~/.claudex/QWEN.md`             | You, across all your projects                 |
-| `QWEN.md` in the project root | Your whole team (commit it to source control) |
+| `~/.claudex/CLAUDEX.md`             | You, across all your projects                 |
+| `CLAUDEX.md` in the project root | Your whole team (commit it to source control) |
 
-You can have both. Claudex loads all QWEN.md files it finds when you start a session — your personal one plus any in the project.
+You can have both. Claudex loads all CLAUDEX.md files it finds when you start a session — your personal one plus any in the project.
 
 If your repository already has an `AGENTS.md` file for other AI tools, Claudex reads that too. No need to duplicate instructions.
 
 ### Generate one automatically with `/init`
 
-Run `/init` and Claudex will analyze your codebase to create a starter QWEN.md with build commands, test instructions, and conventions it finds. If one already exists, it suggests additions instead of overwriting.
+Run `/init` and Claudex will analyze your codebase to create a starter CLAUDEX.md with build commands, test instructions, and conventions it finds. If one already exists, it suggests additions instead of overwriting.
 
 ### Reference other files
 
-You can point QWEN.md at other files so Claudex reads them too:
+You can point CLAUDEX.md at other files so Claudex reads them too:
 
 ```markdown
 See @README.md for project overview.
@@ -49,7 +49,7 @@ See @README.md for project overview.
 - Git workflow: @docs/git-workflow.md
 ```
 
-Use `@path/to/file` anywhere in QWEN.md. Relative paths resolve from the QWEN.md file itself.
+Use `@path/to/file` anywhere in CLAUDEX.md. Relative paths resolve from the CLAUDEX.md file itself.
 
 ---
 
@@ -57,7 +57,7 @@ Use `@path/to/file` anywhere in QWEN.md. Relative paths resolve from the QWEN.md
 
 Auto-memory runs in the background. After each of your conversations, Claudex quietly saves useful things it learned — your preferences, feedback you gave, project context — so it can use them in future sessions without you repeating yourself.
 
-This is different from QWEN.md: you don't write it, Claudex does.
+This is different from CLAUDEX.md: you don't write it, Claudex does.
 
 ### What Claudex saves
 
@@ -109,13 +109,13 @@ Opens the Memory panel. From here you can:
 
 - Turn auto-memory saving on or off
 - Turn periodic cleanup (dream) on or off
-- Open your personal QWEN.md (`~/.claudex/QWEN.md`)
-- Open the project QWEN.md
+- Open your personal CLAUDEX.md (`~/.claudex/CLAUDEX.md`)
+- Open the project CLAUDEX.md
 - Browse the auto-memory folder
 
 ### `/init`
 
-Generates a starter QWEN.md for your project. Claudex reads your codebase and fills in build commands, test instructions, and conventions it discovers.
+Generates a starter CLAUDEX.md for your project. Claudex reads your codebase and fills in build commands, test instructions, and conventions it discovers.
 
 ### `/remember <text>`
 
@@ -146,7 +146,7 @@ Runs the memory cleanup now instead of waiting for the automatic schedule:
 
 ## Troubleshooting
 
-### Claudex isn't following my QWEN.md
+### Claudex isn't following my CLAUDEX.md
 
 Open `/memory` to see which files are loaded. If your file isn't listed, Claudex can't see it — make sure it's in the project root or `~/.claudex/`.
 
@@ -155,7 +155,7 @@ Instructions work better when they're specific:
 - ✓ `Use 2-space indentation for TypeScript files`
 - ✗ `Format code nicely`
 
-If you have multiple QWEN.md files with conflicting instructions, Claudex may behave inconsistently. Review them and remove any contradictions.
+If you have multiple CLAUDEX.md files with conflicting instructions, Claudex may behave inconsistently. Review them and remove any contradictions.
 
 ### I want to see what Claudex has saved
 
@@ -165,4 +165,4 @@ Run `/memory` and select **Open auto-memory folder**. All saved memories are rea
 
 If auto-memory is on but Claudex doesn't seem to remember things across sessions, try running `/dream` to force a cleanup pass. Also check `/memory` to confirm both toggles are enabled.
 
-For things you always want Claudex to remember, add them to QWEN.md instead — auto-memory is best-effort, QWEN.md is guaranteed.
+For things you always want Claudex to remember, add them to CLAUDEX.md instead — auto-memory is best-effort, CLAUDEX.md is guaranteed.

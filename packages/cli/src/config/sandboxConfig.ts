@@ -38,7 +38,7 @@ function getSandboxCommand(
 
   // note environment variable takes precedence over argument (from command line or settings)
   const environmentConfiguredSandbox =
-    (process.env['CLAUDEX_SANDBOX'] ?? process.env['QWEN_SANDBOX'])
+    (process.env['CLAUDEX_SANDBOX'] ?? process.env['CLAUDEX_SANDBOX'])
       ?.toLowerCase()
       .trim() ?? '';
   sandbox =
@@ -100,7 +100,7 @@ export async function loadSandboxConfig(
   const packageJson = await getPackageJson();
   const image =
     argv.sandboxImage ??
-    (process.env['CLAUDEX_SANDBOX_IMAGE'] ?? process.env['QWEN_SANDBOX_IMAGE']) ??
+    (process.env['CLAUDEX_SANDBOX_IMAGE'] ?? process.env['CLAUDEX_SANDBOX_IMAGE']) ??
     settings.tools?.sandboxImage ??
     packageJson?.config?.sandboxImageUri;
 

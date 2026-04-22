@@ -1,8 +1,8 @@
 /**
  * Terminal-Bench Integration Tests
  *
- * Tests qwen-code integration with terminal-bench tasks
- * using both oracle (for debugging) and qwen-code agents
+ * Tests claudex-code integration with terminal-bench tasks
+ * using both oracle (for debugging) and claudex-code agents
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
@@ -211,29 +211,29 @@ describe('terminal-bench integration', () => {
     );
 
     it(
-      `should complete ${taskId} task with qwen-code agent`,
+      `should complete ${taskId} task with claudex-code agent`,
       async () => {
-        rig.setup(`terminal-bench-qwen-${taskId}`);
+        rig.setup(`terminal-bench-claudex-${taskId}`);
 
-        const outputPath = join(outputBase, `qwen-${taskId}`);
+        const outputPath = join(outputBase, `claudex-${taskId}`);
 
         // Check if API key is available
         const apiKey = process.env['OPENAI_API_KEY'];
         if (!apiKey) {
           throw new Error(
-            'OPENAI_API_KEY environment variable is not set. This test requires an API key to run the qwen-code agent.',
+            'OPENAI_API_KEY environment variable is not set. This test requires an API key to run the claudex-code agent.',
           );
         }
 
-        // Run qwen-code agent using spawn to avoid blocking event loop
+        // Run claudex-code agent using spawn to avoid blocking event loop
         const args = [
           'run',
           '--agent-import-path',
-          'integration-tests.terminal-bench.claudex_code:QwenCodeAgent',
+          'integration-tests.terminal-bench.claudex_code:ClaudexCodeAgent',
           '--agent-kwarg',
           `api_key=${apiKey}`,
           '--agent-kwarg',
-          `version=${process.env['QWEN_CODE_VERSION'] || 'latest'}`,
+          `version=${process.env['CLAUDEX_CODE_VERSION'] || 'latest'}`,
           '--dataset-path',
           ciTasksPath,
           '--task-id',
@@ -247,7 +247,7 @@ describe('terminal-bench integration', () => {
         const env = {
           ...process.env,
           OPENAI_API_KEY: apiKey,
-          OPENAI_MODEL: process.env['OPENAI_MODEL'] || 'qwen3-coder-plus',
+          OPENAI_MODEL: process.env['OPENAI_MODEL'] || 'claudex3-coder-plus',
           OPENAI_BASE_URL:
             process.env['OPENAI_BASE_URL'] ||
             'https://dashscope.aliyuncs.com/compatible-mode/v1',
@@ -271,7 +271,7 @@ describe('terminal-bench integration', () => {
           child.on('close', (code) => {
             if (code !== 0) {
               console.error(
-                `qwen-code agent failed for ${taskId} with stderr:`,
+                `claudex-code agent failed for ${taskId} with stderr:`,
                 stderr,
               );
               reject(new Error(`Process exited with code ${code}: ${stderr}`));

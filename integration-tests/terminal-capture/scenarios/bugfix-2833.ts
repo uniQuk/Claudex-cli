@@ -8,7 +8,7 @@ import type { ScenarioConfig } from '../scenario-runner.js';
 export default {
   name: 'streaming-bugfix-2833',
   spawn: ['node', 'dist/cli.js', '--yolo'],
-  terminal: { title: 'qwen-code', cwd: '../../..' },
+  terminal: { title: 'claudex-code', cwd: '../../..' },
   flow: [
     {
       type: '/qc:bugfix https://github.com/QwenLM/qwen-code/issues/2833',

@@ -35,10 +35,10 @@ export interface InitializationResult {
  * @returns The results of the initialization.
  */
 /**
- * Migrates ~/.qwen to ~/.claudex on first run if the new directory doesn't exist.
+ * Migrates ~/.claudex to ~/.claudex on first run if the new directory doesn't exist.
  */
 function migrateStorageDir(): void {
-  const oldDir = path.join(os.homedir(), '.qwen');
+  const oldDir = path.join(os.homedir(), '.claudex');
   const newDir = Storage.getGlobalClaudexDir();
   if (!fs.existsSync(newDir) && fs.existsSync(oldDir)) {
     try {
@@ -53,13 +53,13 @@ export async function initializeApp(
   config: Config,
   settings: LoadedSettings,
 ): Promise<InitializationResult> {
-  // Migrate storage dir from .qwen to .claudex if needed
+  // Migrate storage dir from .claudex to .claudex if needed
   migrateStorageDir();
 
   // Initialize i18n system
   const languageSetting =
     process.env['CLAUDEX_LANG'] ||
-    process.env['QWEN_CODE_LANG'] ||
+    process.env['CLAUDEX_CODE_LANG'] ||
     (settings.merged.general?.language as string) ||
     'auto';
   await initializeI18n(languageSetting as SupportedLanguage | 'auto');

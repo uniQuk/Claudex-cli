@@ -1,28 +1,28 @@
 ---
 name: e2e-testing
-description: Guide for running end-to-end tests of the Qwen Code CLI, including headless mode, MCP server testing, and API traffic inspection. Use this skill whenever you need to verify CLI behavior with real model calls, reproduce user-reported bugs end-to-end, test MCP tool integrations, or inspect raw API request/response payloads. Trigger on mentions of E2E testing, headless testing, MCP tool testing, or reproducing issues.
+description: Guide for running end-to-end tests of the Claudex Code CLI, including headless mode, MCP server testing, and API traffic inspection. Use this skill whenever you need to verify CLI behavior with real model calls, reproduce user-reported bugs end-to-end, test MCP tool integrations, or inspect raw API request/response payloads. Trigger on mentions of E2E testing, headless testing, MCP tool testing, or reproducing issues.
 ---
 
 # E2E Testing Guide
 
-How to run the Qwen Code CLI end-to-end — from building the bundle to inspecting
+How to run the Claudex Code CLI end-to-end — from building the bundle to inspecting
 raw API traffic. Use when unit tests aren't enough and you need to verify behavior
 through the full pipeline (model API → tool validation → tool execution).
 
 ## Which binary to use
 
-- **Reproducing bugs**: use the globally installed `qwen` command — this matches
+- **Reproducing bugs**: use the globally installed `claudex` command — this matches
   what the user ran when they filed the issue.
 - **Verifying fixes**: build first (`npm run build && npm run bundle`), then run
   `node dist/cli.js` — this tests your local changes.
 
 ## Headless Mode
 
-Run the CLI non-interactively with JSON output (`<qwen>` = `qwen` or
+Run the CLI non-interactively with JSON output (`<claudex>` = `claudex` or
 `node dist/cli.js` per above):
 
 ```bash
-<qwen> "your prompt here" \
+<claudex> "your prompt here" \
   --approval-mode yolo \
   --output-format json \
   2>/dev/null
@@ -44,7 +44,7 @@ When debugging model behavior (wrong tool arguments, schema issues), enable API
 logging to see the exact request/response payloads:
 
 ```bash
-<qwen> "prompt" \
+<claudex> "prompt" \
   --approval-mode yolo \
   --output-format json \
   --openai-logging \
@@ -103,7 +103,7 @@ what the user sees. Headless mode is simpler when you only need structured outpu
 
 ```bash
 tmux new-session -d -s test -x 200 -y 50 \
-  "cd /tmp/test-dir && <qwen> --approval-mode yolo"
+  "cd /tmp/test-dir && <claudex> --approval-mode yolo"
 sleep 3  # wait for TUI to initialize
 ```
 
@@ -162,7 +162,7 @@ a reusable zero-dependency test server template in `scripts/mcp-test-server.js`.
 Use `scripts/token-stats.py` to summarize token usage across recent API logs:
 
 ```bash
-python3 .qwen/skills/e2e-testing/scripts/token-stats.py 20  # last 20 requests
+python3 .claudex/skills/e2e-testing/scripts/token-stats.py 20  # last 20 requests
 ```
 
 Shows input, cached, and output tokens per request with cache hit rates. Useful

@@ -24,7 +24,7 @@ export const USER_SETTINGS_DIR = path.join(homedir(), SETTINGS_DIRECTORY_NAME);
 export function getTrustedFoldersPath(): string {
   const envPath =
     process.env['CLAUDEX_TRUSTED_FOLDERS_PATH'] ??
-    process.env['QWEN_CODE_TRUSTED_FOLDERS_PATH'];
+    process.env['CLAUDEX_CODE_TRUSTED_FOLDERS_PATH'];
   if (envPath) {
     return envPath;
   }

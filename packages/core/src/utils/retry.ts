@@ -6,7 +6,7 @@
 
 import type { GenerateContentResponse } from '@google/genai';
 import { AuthType } from '../core/contentGenerator.js';
-import { isQwenQuotaExceededError } from './quotaErrorDetection.js';
+import { isClaudexQuotaExceededError } from './quotaErrorDetection.js';
 import { createDebugLogger } from './debugLogger.js';
 import { getErrorStatus } from './errors.js';
 
@@ -108,10 +108,10 @@ export async function retryWithBackoff<T>(
     } catch (error) {
       const errorStatus = getErrorStatus(error);
 
-      // Check for Qwen OAuth quota exceeded error - throw immediately without retry
-      if (authType === AuthType.QWEN_OAUTH && isQwenQuotaExceededError(error)) {
+      // Check for Claudex OAuth quota exceeded error - throw immediately without retry
+      if (authType === AuthType.CLAUDEX_OAUTH && isClaudexQuotaExceededError(error)) {
         throw new Error(
-          `Qwen OAuth free tier has been discontinued as of 2026-04-15.\n\n` +
+          `Claudex OAuth free tier has been discontinued as of 2026-04-15.\n\n` +
             `To continue using Claudex, try one of these alternatives:\n` +
             `  - OpenRouter:    https://openrouter.ai/docs/quickstart\n` +
             `  - Fireworks AI:  https://docs.fireworks.ai/api-reference/introduction\n` +

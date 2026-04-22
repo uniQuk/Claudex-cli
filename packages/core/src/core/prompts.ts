@@ -117,13 +117,13 @@ export function getCoreSystemPrompt(
   model?: string,
   appendInstruction?: string,
 ): string {
-  // if QWEN_SYSTEM_MD is set (and not 0|false), override system prompt from file
-  // default path is .claudex/system.md but can be modified via custom path in QWEN_SYSTEM_MD
+  // if CLAUDEX_SYSTEM_MD is set (and not 0|false), override system prompt from file
+  // default path is .claudex/system.md but can be modified via custom path in CLAUDEX_SYSTEM_MD
   let systemMdEnabled = false;
   // The default path for the system prompt file. This can be overridden.
   let systemMdPath = path.resolve(path.join(CLAUDEX_CONFIG_DIR, 'system.md'));
   // Resolve the environment variable to get either a path or a switch value.
-  const systemMdResolution = resolvePathFromEnv(process.env['QWEN_SYSTEM_MD']);
+  const systemMdResolution = resolvePathFromEnv(process.env['CLAUDEX_SYSTEM_MD']);
 
   // Proceed only if the environment variable is set and is not disabled.
   if (systemMdResolution.value && !systemMdResolution.isDisabled) {
@@ -326,9 +326,9 @@ ${getToolCallExamples(model || '')}
 Your core function is efficient and safe assistance. Balance extreme conciseness with the crucial need for clarity, especially regarding safety and potential system modifications. Always prioritize user control and project conventions. Never make assumptions about the contents of files; instead use '${ToolNames.READ_FILE}' to ensure you aren't making broad assumptions. Finally, you are an agent - please keep going until the user's query is completely resolved.
 `.trim();
 
-  // if QWEN_WRITE_SYSTEM_MD is set (and not 0|false), write base system prompt to file
+  // if CLAUDEX_WRITE_SYSTEM_MD is set (and not 0|false), write base system prompt to file
   const writeSystemMdResolution = resolvePathFromEnv(
-    process.env['QWEN_WRITE_SYSTEM_MD'],
+    process.env['CLAUDEX_WRITE_SYSTEM_MD'],
   );
 
   // Check if the feature is enabled. This proceeds only if the environment
@@ -361,7 +361,7 @@ function getActionsSection(): string {
   return `
 # Executing actions with care
 
-Carefully consider the reversibility and blast radius of actions. Generally you can freely take local, reversible actions like editing files or running tests. But for actions that are hard to reverse, affect shared systems beyond your local environment, or could otherwise be risky or destructive, check with the user before proceeding. The cost of pausing to confirm is low, while the cost of an unwanted action (lost work, unintended messages sent, deleted branches) can be very high. For actions like these, consider the context, the action, and user instructions, and by default transparently communicate the action and ask for confirmation before proceeding. This default can be changed by user instructions - if explicitly asked to operate more autonomously, then you may proceed without confirmation, but still attend to the risks and consequences when taking actions. A user approving an action (like a git push) once does NOT mean that they approve it in all contexts, so unless actions are authorized in advance in durable instructions like QWEN.md files, always confirm first. Authorization stands for the scope specified, not beyond. Match the scope of your actions to what was actually requested.
+Carefully consider the reversibility and blast radius of actions. Generally you can freely take local, reversible actions like editing files or running tests. But for actions that are hard to reverse, affect shared systems beyond your local environment, or could otherwise be risky or destructive, check with the user before proceeding. The cost of pausing to confirm is low, while the cost of an unwanted action (lost work, unintended messages sent, deleted branches) can be very high. For actions like these, consider the context, the action, and user instructions, and by default transparently communicate the action and ask for confirmation before proceeding. This default can be changed by user instructions - if explicitly asked to operate more autonomously, then you may proceed without confirmation, but still attend to the risks and consequences when taking actions. A user approving an action (like a git push) once does NOT mean that they approve it in all contexts, so unless actions are authorized in advance in durable instructions like CLAUDEX.md files, always confirm first. Authorization stands for the scope specified, not beyond. Match the scope of your actions to what was actually requested.
 
 Examples of the kind of risky actions that warrant user confirmation:
 - Destructive operations: deleting files/branches, dropping database tables, killing processes, rm -rf, overwriting uncommitted changes
@@ -543,7 +543,7 @@ To help you check their settings, I can read their contents. Which one would you
 </example>
 `.trim();
 
-const qwenCoderToolCallExamples = `
+const claudexCoderToolCallExamples = `
 # Examples (Illustrating Tone and Workflow)
 <example>
 user: 1 + 2
@@ -700,7 +700,7 @@ I found the following 'app.config' files:
 To help you check their settings, I can read their contents. Which one would you like to start with, or should I read all of them?
 </example>
 `.trim();
-const qwenVlToolCallExamples = `
+const claudexVlToolCallExamples = `
 # Examples (Illustrating Tone and Workflow)
 <example>
 user: 1 + 2
@@ -801,18 +801,18 @@ To help you check their settings, I can read their contents. Which one would you
 
 function getToolCallExamples(model?: string): string {
   // Check for environment variable override first
-  const toolCallStyle = process.env['QWEN_CODE_TOOL_CALL_STYLE'];
+  const toolCallStyle = process.env['CLAUDEX_CODE_TOOL_CALL_STYLE'];
   if (toolCallStyle) {
     switch (toolCallStyle.toLowerCase()) {
-      case 'qwen-coder':
-        return qwenCoderToolCallExamples;
-      case 'qwen-vl':
-        return qwenVlToolCallExamples;
+      case 'claudex-coder':
+        return claudexCoderToolCallExamples;
+      case 'claudex-vl':
+        return claudexVlToolCallExamples;
       case 'general':
         return generalToolCallExamples;
       default:
         debugLogger.warn(
-          `Unknown QWEN_CODE_TOOL_CALL_STYLE value: ${toolCallStyle}. Using model-based detection.`,
+          `Unknown CLAUDEX_CODE_TOOL_CALL_STYLE value: ${toolCallStyle}. Using model-based detection.`,
         );
         break;
     }
@@ -820,17 +820,17 @@ function getToolCallExamples(model?: string): string {
 
   // Enhanced regex-based model detection
   if (model && model.length < 100) {
-    // Match qwen*-coder patterns (e.g., qwen3-coder, qwen2.5-coder, qwen-coder)
-    if (/qwen[^-]*-coder/i.test(model)) {
-      return qwenCoderToolCallExamples;
+    // Match claudex*-coder patterns (e.g., claudex3-coder, claudex2.5-coder, claudex-coder)
+    if (/claudex[^-]*-coder/i.test(model)) {
+      return claudexCoderToolCallExamples;
     }
-    // Match qwen*-vl patterns (e.g., qwen-vl, qwen2-vl, qwen3-vl)
-    if (/qwen[^-]*-vl/i.test(model)) {
-      return qwenVlToolCallExamples;
+    // Match claudex*-vl patterns (e.g., claudex-vl, claudex2-vl, claudex3-vl)
+    if (/claudex[^-]*-vl/i.test(model)) {
+      return claudexVlToolCallExamples;
     }
-    // Match coder-model pattern (same as qwen3-coder)
+    // Match coder-model pattern (same as claudex3-coder)
     if (/coder-model/i.test(model)) {
-      return qwenCoderToolCallExamples;
+      return claudexCoderToolCallExamples;
     }
   }
 
@@ -918,8 +918,8 @@ const INSIGHT_PROMPTS: Record<InsightPromptType, string> = {
 CRITICAL GUIDELINES:
 
 1. **goal_categories**: Count ONLY what the USER explicitly asked for.
-   - DO NOT count Qwen's autonomous codebase exploration
-   - DO NOT count work Qwen decided to do on its own
+   - DO NOT count Claudex's autonomous codebase exploration
+   - DO NOT count work Claudex decided to do on its own
    - ONLY count when user says "can you...", "please...", "I need...", "let's...
    - POSSIBLE CATEGORIES (but be open to others that appear in the data):
       - bug_fix
@@ -938,7 +938,7 @@ CRITICAL GUIDELINES:
    - "this is broken", "I give up" → frustrated
 
 3. **friction_counts**: Be specific about what went wrong.
-   - misunderstood_request: Qwen interpreted incorrectly
+   - misunderstood_request: Claudex interpreted incorrectly
    - wrong_approach: Right goal, wrong solution method
    - buggy_code: Code didn't work correctly
    - user_rejected_action: User said no/stop to a tool call
@@ -1006,10 +1006,10 @@ Find something genuinely interesting or amusing from the session summaries.`,
   improvements: `Analyze this Claudex usage data and suggest improvements.
 
 ## QC FEATURES REFERENCE (pick from these for features_to_try):
-1. **MCP Servers**: Connect Qwen to external tools, databases, and APIs via Model Context Protocol.
-   - How to use: Run \`qwen mcp add --transport http <server-name> <http-url>\`
+1. **MCP Servers**: Connect Claudex to external tools, databases, and APIs via Model Context Protocol.
+   - How to use: Run \`claudex mcp add --transport http <server-name> <http-url>\`
    - Good for: database queries, Slack integration, GitHub issue lookup, connecting to internal APIs
-   - Example: "To connect to GitHub, run \`qwen mcp add --header "Authorization: Bearer your_github_mcp_pat" --transport http github https://api.githubcopilot.com/mcp/\` and set the AUTHORIZATION header with your PAT. Then you can ask Qwen to query issues, PRs, or repos."
+   - Example: "To connect to GitHub, run \`claudex mcp add --header "Authorization: Bearer your_github_mcp_pat" --transport http github https://api.githubcopilot.com/mcp/\` and set the AUTHORIZATION header with your PAT. Then you can ask Claudex to query issues, PRs, or repos."
 
 2. **Custom Skills**: Reusable prompts you define as markdown files that run with a single /command.
    - How to use: Create \`.claudex/skills/commit/SKILL.md\` with instructions. Then type \`/commit\` to run it.
@@ -1035,18 +1035,18 @@ Find something genuinely interesting or amusing from the session summaries.`,
     - If the user didn't specify a branch, default to the current branch.
     \`\`\`
 
-3. **Headless Mode**: Run Qwen non-interactively from scripts and CI/CD.
-   - How to use: \`qwen -p "fix lint errors"\`
+3. **Headless Mode**: Run Claudex non-interactively from scripts and CI/CD.
+   - How to use: \`claudex -p "fix lint errors"\`
    - Good for: CI/CD integration, batch code fixes, automated reviews
 
-4. **Task Agents**: Qwen spawns focused sub-agents for complex exploration or parallel work.
-   - How to use: Qwen auto-invokes when helpful, or ask "use an agent to explore X"
+4. **Task Agents**: Claudex spawns focused sub-agents for complex exploration or parallel work.
+   - How to use: Claudex auto-invokes when helpful, or ask "use an agent to explore X"
    - Good for: codebase exploration, understanding complex systems
 
 Call respond_in_schema function with A VALID JSON OBJECT as argument:
 {
-  "Qwen_md_additions": [
-    {"addition": "A specific line or block to add to QWEN.md based on workflow patterns. E.g., 'Always run tests after modifying auth-related files'", "why": "1 sentence explaining why this would help based on actual sessions", "prompt_scaffold": "Instructions for where to add this in QWEN.md. E.g., 'Add under ## Testing section'"}
+  "Claudex_md_additions": [
+    {"addition": "A specific line or block to add to CLAUDEX.md based on workflow patterns. E.g., 'Always run tests after modifying auth-related files'", "why": "1 sentence explaining why this would help based on actual sessions", "prompt_scaffold": "Instructions for where to add this in CLAUDEX.md. E.g., 'Add under ## Testing section'"}
   ],
   "features_to_try": [
     {"feature": "Feature name from QC FEATURES REFERENCE above", "one_liner": "What it does", "why_for_you": "Why this would help YOU based on your sessions", "example_code": "Actual command or config to copy"}
@@ -1056,7 +1056,7 @@ Call respond_in_schema function with A VALID JSON OBJECT as argument:
   ]
 }
 
-IMPORTANT for Qwen_md_additions: PRIORITIZE instructions that appear MULTIPLE TIMES in the user data. If user told Qwen the same thing in 2+ sessions (e.g., 'always run tests', 'use TypeScript'), that's a PRIME candidate - they shouldn't have to repeat themselves.
+IMPORTANT for Claudex_md_additions: PRIORITIZE instructions that appear MULTIPLE TIMES in the user data. If user told Claudex the same thing in 2+ sessions (e.g., 'always run tests', 'use TypeScript'), that's a PRIME candidate - they shouldn't have to repeat themselves.
 
 IMPORTANT for features_to_try: Pick 2-3 from the QC FEATURES REFERENCE above. Include 2-3 items for each category.`,
 
@@ -1064,20 +1064,20 @@ IMPORTANT for features_to_try: Pick 2-3 from the QC FEATURES REFERENCE above. In
 
 Call respond_in_schema function with A VALID JSON OBJECT as argument:
 {
-  "narrative": "2-3 paragraphs analyzing HOW the user interacts with Claudex. Use second person 'you'. Describe patterns: iterate quickly vs detailed upfront specs? Interrupt often or let Qwen run? Include specific examples. Use **bold** for key insights.",
+  "narrative": "2-3 paragraphs analyzing HOW the user interacts with Claudex. Use second person 'you'. Describe patterns: iterate quickly vs detailed upfront specs? Interrupt often or let Claudex run? Include specific examples. Use **bold** for key insights.",
   "key_pattern": "One sentence summary of most distinctive interaction style"
 }
 `,
 
-  at_a_glance: `You're writing an "At a Glance" summary for a Claudex usage insights report for Claudex users. The goal is to help them understand their usage and improve how they can use Qwen better, especially as models improve.
+  at_a_glance: `You're writing an "At a Glance" summary for a Claudex usage insights report for Claudex users. The goal is to help them understand their usage and improve how they can use Claudex better, especially as models improve.
 
 Use this 4-part structure:
 
-1. **What's working** - What is the user's unique style of interacting with Qwen and what are some impactful things they've done? You can include one or two details, but keep it high level since things might not be fresh in the user's memory. Don't be fluffy or overly complimentary. Also, don't focus on the tool calls they use.
+1. **What's working** - What is the user's unique style of interacting with Claudex and what are some impactful things they've done? You can include one or two details, but keep it high level since things might not be fresh in the user's memory. Don't be fluffy or overly complimentary. Also, don't focus on the tool calls they use.
 
-2. **What's hindering you** - Split into (a) Qwen's fault (misunderstandings, wrong approaches, bugs) and (b) user-side friction (not providing enough context, environment issues -- ideally more general than just one project). Be honest but constructive.
+2. **What's hindering you** - Split into (a) Claudex's fault (misunderstandings, wrong approaches, bugs) and (b) user-side friction (not providing enough context, environment issues -- ideally more general than just one project). Be honest but constructive.
 
-3. **Quick wins to try** - Specific Claudex features they could try from the examples below, or a workflow technique if you think it's really compelling. (Avoid stuff like "Ask Qwen to confirm before taking actions" or "Type out more context up front" which are less compelling.)
+3. **Quick wins to try** - Specific Claudex features they could try from the examples below, or a workflow technique if you think it's really compelling. (Avoid stuff like "Ask Claudex to confirm before taking actions" or "Type out more context up front" which are less compelling.)
 
 4. **Ambitious workflows for better models** - As we move to much more capable models over the next 3-6 months, what should they prepare for? What workflows that seem impossible now will become possible? Draw from the appropriate section below.
 

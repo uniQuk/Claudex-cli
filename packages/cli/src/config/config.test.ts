@@ -9,7 +9,7 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import {
   ToolNames,
-  DEFAULT_QWEN_MODEL,
+  DEFAULT_CLAUDEX_MODEL,
   OutputFormat,
   NativeLspService,
   Storage,
@@ -606,7 +606,7 @@ describe('loadCliConfig', () => {
     vi.restoreAllMocks();
   });
 
-  it('should reset context file names to QWEN.md and AGENTS.md by default', async () => {
+  it('should reset context file names to CLAUDEX.md and AGENTS.md by default', async () => {
     process.argv = ['node', 'script.js'];
     const argv = await parseArguments();
     const settings: Settings = {};
@@ -666,7 +666,7 @@ describe('loadCliConfig', () => {
     process.argv = ['node', 'script.js'];
     const argv = await parseArguments();
     const settings: Settings = {};
-    const defaultContextFiles = ['QWEN.md', 'AGENTS.md'];
+    const defaultContextFiles = ['CLAUDEX.md', 'AGENTS.md'];
     const getAllSpy = vi
       .spyOn(ServerConfig, 'getAllGeminiMdFilenames')
       .mockReturnValue(defaultContextFiles);
@@ -1488,7 +1488,7 @@ describe('loadCliConfig model selection', () => {
     const config = await loadCliConfig(
       {
         model: {
-          name: 'qwen3-coder-plus',
+          name: 'claudex3-coder-plus',
         },
       },
       argv,
@@ -1496,7 +1496,7 @@ describe('loadCliConfig model selection', () => {
       [],
     );
 
-    expect(config.getModel()).toBe('qwen3-coder-plus');
+    expect(config.getModel()).toBe('claudex3-coder-plus');
   });
 
   it.skip('uses the default gemini model if nothing is set', async () => {
@@ -1511,7 +1511,7 @@ describe('loadCliConfig model selection', () => {
       [],
     );
 
-    expect(config.getModel()).toBe(DEFAULT_QWEN_MODEL);
+    expect(config.getModel()).toBe(DEFAULT_CLAUDEX_MODEL);
   });
 
   it('always prefers model from argvs', async () => {
@@ -1521,13 +1521,13 @@ describe('loadCliConfig model selection', () => {
       '--auth-type',
       'openai',
       '--model',
-      'qwen3-coder-plus',
+      'claudex3-coder-plus',
     ];
     const argv = await parseArguments();
     const config = await loadCliConfig(
       {
         model: {
-          name: 'qwen3-coder-flash',
+          name: 'claudex3-coder-flash',
         },
       },
       argv,
@@ -1535,7 +1535,7 @@ describe('loadCliConfig model selection', () => {
       [],
     );
 
-    expect(config.getModel()).toBe('qwen3-coder-plus');
+    expect(config.getModel()).toBe('claudex3-coder-plus');
   });
 
   it('selects the model from argvs if provided', async () => {
@@ -1545,7 +1545,7 @@ describe('loadCliConfig model selection', () => {
       '--auth-type',
       'openai',
       '--model',
-      'qwen3-coder-plus',
+      'claudex3-coder-plus',
     ];
     const argv = await parseArguments();
     const config = await loadCliConfig(
@@ -1557,7 +1557,7 @@ describe('loadCliConfig model selection', () => {
       [],
     );
 
-    expect(config.getModel()).toBe('qwen3-coder-plus');
+    expect(config.getModel()).toBe('claudex3-coder-plus');
   });
 });
 
@@ -2281,12 +2281,12 @@ describe('loadCliConfig fileFiltering', () => {
     },
     {
       property: 'respectClaudexIgnore',
-      getter: (c) => c.getFileFilteringRespectQwenIgnore(),
+      getter: (c) => c.getFileFilteringRespectClaudexIgnore(),
       value: true,
     },
     {
       property: 'respectClaudexIgnore',
-      getter: (c) => c.getFileFilteringRespectQwenIgnore(),
+      getter: (c) => c.getFileFilteringRespectClaudexIgnore(),
       value: false,
     },
     {
@@ -2412,8 +2412,8 @@ describe('parseArguments with positional prompt', () => {
 });
 
 describe('Telemetry configuration via environment variables', () => {
-  it('should prioritize QWEN_TELEMETRY_ENABLED over settings', async () => {
-    vi.stubEnv('QWEN_TELEMETRY_ENABLED', 'true');
+  it('should prioritize CLAUDEX_TELEMETRY_ENABLED over settings', async () => {
+    vi.stubEnv('CLAUDEX_TELEMETRY_ENABLED', 'true');
     process.argv = ['node', 'script.js'];
     const argv = await parseArguments();
     const settings: Settings = { telemetry: { enabled: false } };
@@ -2421,8 +2421,8 @@ describe('Telemetry configuration via environment variables', () => {
     expect(config.getTelemetryEnabled()).toBe(true);
   });
 
-  it('should prioritize QWEN_TELEMETRY_TARGET over settings', async () => {
-    vi.stubEnv('QWEN_TELEMETRY_TARGET', 'gcp');
+  it('should prioritize CLAUDEX_TELEMETRY_TARGET over settings', async () => {
+    vi.stubEnv('CLAUDEX_TELEMETRY_TARGET', 'gcp');
     process.argv = ['node', 'script.js'];
     const argv = await parseArguments();
     const settings: Settings = {
@@ -2432,8 +2432,8 @@ describe('Telemetry configuration via environment variables', () => {
     expect(config.getTelemetryTarget()).toBe('gcp');
   });
 
-  it('should throw when QWEN_TELEMETRY_TARGET is invalid', async () => {
-    vi.stubEnv('QWEN_TELEMETRY_TARGET', 'bogus');
+  it('should throw when CLAUDEX_TELEMETRY_TARGET is invalid', async () => {
+    vi.stubEnv('CLAUDEX_TELEMETRY_TARGET', 'bogus');
     process.argv = ['node', 'script.js'];
     const argv = await parseArguments();
     const settings: Settings = {
@@ -2445,9 +2445,9 @@ describe('Telemetry configuration via environment variables', () => {
     vi.unstubAllEnvs();
   });
 
-  it('should prioritize QWEN_TELEMETRY_OTLP_ENDPOINT over settings and default env var', async () => {
+  it('should prioritize CLAUDEX_TELEMETRY_OTLP_ENDPOINT over settings and default env var', async () => {
     vi.stubEnv('OTEL_EXPORTER_OTLP_ENDPOINT', 'http://default.env.com');
-    vi.stubEnv('QWEN_TELEMETRY_OTLP_ENDPOINT', 'http://gemini.env.com');
+    vi.stubEnv('CLAUDEX_TELEMETRY_OTLP_ENDPOINT', 'http://gemini.env.com');
     process.argv = ['node', 'script.js'];
     const argv = await parseArguments();
     const settings: Settings = {
@@ -2457,8 +2457,8 @@ describe('Telemetry configuration via environment variables', () => {
     expect(config.getTelemetryOtlpEndpoint()).toBe('http://gemini.env.com');
   });
 
-  it('should prioritize QWEN_TELEMETRY_OTLP_PROTOCOL over settings', async () => {
-    vi.stubEnv('QWEN_TELEMETRY_OTLP_PROTOCOL', 'http');
+  it('should prioritize CLAUDEX_TELEMETRY_OTLP_PROTOCOL over settings', async () => {
+    vi.stubEnv('CLAUDEX_TELEMETRY_OTLP_PROTOCOL', 'http');
     process.argv = ['node', 'script.js'];
     const argv = await parseArguments();
     const settings: Settings = { telemetry: { otlpProtocol: 'grpc' } };
@@ -2466,8 +2466,8 @@ describe('Telemetry configuration via environment variables', () => {
     expect(config.getTelemetryOtlpProtocol()).toBe('http');
   });
 
-  it('should prioritize QWEN_TELEMETRY_LOG_PROMPTS over settings', async () => {
-    vi.stubEnv('QWEN_TELEMETRY_LOG_PROMPTS', 'false');
+  it('should prioritize CLAUDEX_TELEMETRY_LOG_PROMPTS over settings', async () => {
+    vi.stubEnv('CLAUDEX_TELEMETRY_LOG_PROMPTS', 'false');
     process.argv = ['node', 'script.js'];
     const argv = await parseArguments();
     const settings: Settings = { telemetry: { logPrompts: true } };
@@ -2475,8 +2475,8 @@ describe('Telemetry configuration via environment variables', () => {
     expect(config.getTelemetryLogPromptsEnabled()).toBe(false);
   });
 
-  it('should prioritize QWEN_TELEMETRY_OUTFILE over settings', async () => {
-    vi.stubEnv('QWEN_TELEMETRY_OUTFILE', '/gemini/env/telemetry.log');
+  it('should prioritize CLAUDEX_TELEMETRY_OUTFILE over settings', async () => {
+    vi.stubEnv('CLAUDEX_TELEMETRY_OUTFILE', '/gemini/env/telemetry.log');
     process.argv = ['node', 'script.js'];
     const argv = await parseArguments();
     const settings: Settings = {
@@ -2486,8 +2486,8 @@ describe('Telemetry configuration via environment variables', () => {
     expect(config.getTelemetryOutfile()).toBe('/gemini/env/telemetry.log');
   });
 
-  it('should prioritize QWEN_TELEMETRY_USE_COLLECTOR over settings', async () => {
-    vi.stubEnv('QWEN_TELEMETRY_USE_COLLECTOR', 'true');
+  it('should prioritize CLAUDEX_TELEMETRY_USE_COLLECTOR over settings', async () => {
+    vi.stubEnv('CLAUDEX_TELEMETRY_USE_COLLECTOR', 'true');
     process.argv = ['node', 'script.js'];
     const argv = await parseArguments();
     const settings: Settings = { telemetry: { useCollector: false } };
@@ -2495,8 +2495,8 @@ describe('Telemetry configuration via environment variables', () => {
     expect(config.getTelemetryUseCollector()).toBe(true);
   });
 
-  it('should use settings value when QWEN_TELEMETRY_ENABLED is not set', async () => {
-    vi.stubEnv('QWEN_TELEMETRY_ENABLED', undefined);
+  it('should use settings value when CLAUDEX_TELEMETRY_ENABLED is not set', async () => {
+    vi.stubEnv('CLAUDEX_TELEMETRY_ENABLED', undefined);
     process.argv = ['node', 'script.js'];
     const argv = await parseArguments();
     const settings: Settings = { telemetry: { enabled: true } };
@@ -2504,8 +2504,8 @@ describe('Telemetry configuration via environment variables', () => {
     expect(config.getTelemetryEnabled()).toBe(true);
   });
 
-  it('should use settings value when QWEN_TELEMETRY_TARGET is not set', async () => {
-    vi.stubEnv('QWEN_TELEMETRY_TARGET', undefined);
+  it('should use settings value when CLAUDEX_TELEMETRY_TARGET is not set', async () => {
+    vi.stubEnv('CLAUDEX_TELEMETRY_TARGET', undefined);
     process.argv = ['node', 'script.js'];
     const argv = await parseArguments();
     const settings: Settings = {
@@ -2515,16 +2515,16 @@ describe('Telemetry configuration via environment variables', () => {
     expect(config.getTelemetryTarget()).toBe('local');
   });
 
-  it("should treat QWEN_TELEMETRY_ENABLED='1' as true", async () => {
-    vi.stubEnv('QWEN_TELEMETRY_ENABLED', '1');
+  it("should treat CLAUDEX_TELEMETRY_ENABLED='1' as true", async () => {
+    vi.stubEnv('CLAUDEX_TELEMETRY_ENABLED', '1');
     process.argv = ['node', 'script.js'];
     const argv = await parseArguments();
     const config = await loadCliConfig({}, argv, undefined, []);
     expect(config.getTelemetryEnabled()).toBe(true);
   });
 
-  it("should treat QWEN_TELEMETRY_ENABLED='0' as false", async () => {
-    vi.stubEnv('QWEN_TELEMETRY_ENABLED', '0');
+  it("should treat CLAUDEX_TELEMETRY_ENABLED='0' as false", async () => {
+    vi.stubEnv('CLAUDEX_TELEMETRY_ENABLED', '0');
     process.argv = ['node', 'script.js'];
     const argv = await parseArguments();
     const config = await loadCliConfig(
@@ -2536,16 +2536,16 @@ describe('Telemetry configuration via environment variables', () => {
     expect(config.getTelemetryEnabled()).toBe(false);
   });
 
-  it("should treat QWEN_TELEMETRY_LOG_PROMPTS='1' as true", async () => {
-    vi.stubEnv('QWEN_TELEMETRY_LOG_PROMPTS', '1');
+  it("should treat CLAUDEX_TELEMETRY_LOG_PROMPTS='1' as true", async () => {
+    vi.stubEnv('CLAUDEX_TELEMETRY_LOG_PROMPTS', '1');
     process.argv = ['node', 'script.js'];
     const argv = await parseArguments();
     const config = await loadCliConfig({}, argv, undefined, []);
     expect(config.getTelemetryLogPromptsEnabled()).toBe(true);
   });
 
-  it("should treat QWEN_TELEMETRY_LOG_PROMPTS='false' as false", async () => {
-    vi.stubEnv('QWEN_TELEMETRY_LOG_PROMPTS', 'false');
+  it("should treat CLAUDEX_TELEMETRY_LOG_PROMPTS='false' as false", async () => {
+    vi.stubEnv('CLAUDEX_TELEMETRY_LOG_PROMPTS', 'false');
     process.argv = ['node', 'script.js'];
     const argv = await parseArguments();
     const config = await loadCliConfig(
@@ -2670,11 +2670,11 @@ describe('loadCliConfig runtimeOutputDir', () => {
   it('should resolve relative runtimeOutputDir against cwd', async () => {
     const argv = await parseArguments();
     const settings: Settings = {
-      advanced: { runtimeOutputDir: '.qwen' },
+      advanced: { runtimeOutputDir: '.claudex' },
     };
     const cwd = path.resolve('workspace', 'my-project');
     await loadCliConfig(settings, argv, cwd);
-    expect(Storage.getRuntimeBaseDir()).toBe(path.join(cwd, '.qwen'));
+    expect(Storage.getRuntimeBaseDir()).toBe(path.join(cwd, '.claudex'));
   });
 
   it('should not set runtime base dir when runtimeOutputDir is absent', async () => {

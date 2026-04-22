@@ -164,7 +164,7 @@ export class IdeClient {
     const workspacePath =
       this.connectionConfig?.workspacePath ??
       (process.env['CLAUDEX_IDE_WORKSPACE_PATH'] ??
-        process.env['QWEN_CODE_IDE_WORKSPACE_PATH']);
+        process.env['CLAUDEX_CODE_IDE_WORKSPACE_PATH']);
 
     const { isValid, error } = IdeClient.validateWorkspacePath(
       workspacePath,
@@ -551,7 +551,7 @@ export class IdeClient {
   private getPortFromEnv(): string | undefined {
     const port =
       process.env['CLAUDEX_IDE_SERVER_PORT'] ??
-      process.env['QWEN_CODE_IDE_SERVER_PORT'];
+      process.env['CLAUDEX_CODE_IDE_SERVER_PORT'];
     if (!port) {
       return undefined;
     }
@@ -561,14 +561,14 @@ export class IdeClient {
   private getStdioConfigFromEnv(): StdioConfig | undefined {
     const command =
       process.env['CLAUDEX_IDE_SERVER_STDIO_COMMAND'] ??
-      process.env['QWEN_CODE_IDE_SERVER_STDIO_COMMAND'];
+      process.env['CLAUDEX_CODE_IDE_SERVER_STDIO_COMMAND'];
     if (!command) {
       return undefined;
     }
 
     const argsStr =
       process.env['CLAUDEX_IDE_SERVER_STDIO_ARGS'] ??
-      process.env['QWEN_CODE_IDE_SERVER_STDIO_ARGS'];
+      process.env['CLAUDEX_CODE_IDE_SERVER_STDIO_ARGS'];
     let args: string[] = [];
     if (argsStr) {
       try {

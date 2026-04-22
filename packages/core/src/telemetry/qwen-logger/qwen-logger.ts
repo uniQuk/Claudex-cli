@@ -1,10 +1,10 @@
 /**
- * Stub QwenLogger — no-op, sends no data to any remote endpoint.
+ * Stub ClaudexLogger — no-op, sends no data to any remote endpoint.
  */
 
-export class QwenLogger {
+export class ClaudexLogger {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static getInstance(_config?: unknown): QwenLogger | undefined {
+  static getInstance(_config?: unknown): ClaudexLogger | undefined {
     return undefined;
   }
 

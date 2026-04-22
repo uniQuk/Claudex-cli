@@ -490,7 +490,7 @@ export const AppContainer = (props: AppContainerProps) => {
     isAuthDialogOpen,
     isAuthenticating,
     pendingAuthType,
-    qwenAuthState,
+    claudexAuthState,
     handleAuthSelect,
     openAuthDialog,
     cancelAuthentication,
@@ -689,7 +689,7 @@ export const AppContainer = (props: AppContainerProps) => {
     historyManager.addItem(
       {
         type: MessageType.INFO,
-        text: 'Refreshing hierarchical memory (QWEN.md or other context files)...',
+        text: 'Refreshing hierarchical memory (CLAUDEX.md or other context files)...',
       },
       Date.now(),
     );
@@ -2020,8 +2020,8 @@ export const AppContainer = (props: AppContainerProps) => {
       authError,
       isAuthDialogOpen,
       pendingAuthType,
-      // Qwen OAuth state
-      qwenAuthState,
+      // Claudex OAuth state
+      claudexAuthState,
       editorError,
       isEditorDialogOpen,
       debugMessage,
@@ -2127,8 +2127,8 @@ export const AppContainer = (props: AppContainerProps) => {
       authError,
       isAuthDialogOpen,
       pendingAuthType,
-      // Qwen OAuth state
-      qwenAuthState,
+      // Claudex OAuth state
+      claudexAuthState,
       editorError,
       isEditorDialogOpen,
       debugMessage,

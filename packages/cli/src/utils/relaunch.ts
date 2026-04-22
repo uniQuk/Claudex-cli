@@ -30,7 +30,7 @@ export async function relaunchAppInChildProcess(
   additionalScriptArgs: string[],
 ) {
   if (
-    process.env['CLAUDEX_NO_RELAUNCH'] ?? process.env['QWEN_CODE_NO_RELAUNCH']
+    process.env['CLAUDEX_NO_RELAUNCH'] ?? process.env['CLAUDEX_CODE_NO_RELAUNCH']
   ) {
     return;
   }

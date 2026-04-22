@@ -19,8 +19,8 @@ const debugLogger = createDebugLogger('Extension:variables');
 export type { HookDefinition };
 
 export const EXTENSIONS_DIRECTORY_NAME = path.join(CLAUDEX_DIR, 'extensions');
-export const EXTENSIONS_CONFIG_FILENAME = 'qwen-extension.json';
-export const INSTALL_METADATA_FILENAME = '.qwen-extension-install.json';
+export const EXTENSIONS_CONFIG_FILENAME = 'claudex-extension.json';
+export const INSTALL_METADATA_FILENAME = '.claudex-extension-install.json';
 export const EXTENSION_SETTINGS_FILENAME = '.env';
 
 export type JsonObject = { [key: string]: JsonValue };

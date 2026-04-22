@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -134,17 +134,17 @@ export const summaryCommand: SlashCommand = {
       filePathForDisplay: string;
       fullPath: string;
     }> => {
-      // Ensure .qwen directory exists
+      // Ensure .claudex directory exists
       const projectRoot = config.getProjectRoot();
-      const qwenDir = path.join(projectRoot, '.claudex');
+      const claudexDir = path.join(projectRoot, '.claudex');
       try {
-        await fsPromises.mkdir(qwenDir, { recursive: true });
+        await fsPromises.mkdir(claudexDir, { recursive: true });
       } catch (_err) {
         // Directory might already exist, ignore error
       }
 
       // Save the summary to PROJECT_SUMMARY.md
-      const summaryPath = path.join(qwenDir, 'PROJECT_SUMMARY.md');
+      const summaryPath = path.join(claudexDir, 'PROJECT_SUMMARY.md');
       const summaryContent = `${markdownSummary}
 
 ---

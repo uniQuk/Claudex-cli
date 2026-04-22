@@ -162,9 +162,9 @@ export function ModelDialog({
       modelsByAuthTypeMap.get(authType)!.push(model);
     }
 
-    // Fixed order: qwen-oauth first, then others in a stable order
+    // Fixed order: claudex-oauth first, then others in a stable order
     const authTypeOrder: AuthType[] = [
-      AuthType.QWEN_OAUTH,
+      AuthType.CLAUDEX_OAUTH,
       AuthType.USE_OPENAI,
       AuthType.USE_ANTHROPIC,
       AuthType.USE_GEMINI,
@@ -213,14 +213,14 @@ export function ModelDialog({
           const value =
             isRuntime && snapshotId ? snapshotId : `${t2}::${model.id}`;
 
-          const isQwenOAuth = t2 === AuthType.QWEN_OAUTH;
+          const isClaudexOAuth = t2 === AuthType.CLAUDEX_OAUTH;
 
           const title = (
             <Text>
               <Text
                 bold
                 color={
-                  isQwenOAuth
+                  isClaudexOAuth
                     ? theme.status.warning
                     : isRuntime
                       ? theme.status.warning
@@ -233,7 +233,7 @@ export function ModelDialog({
               {isRuntime && (
                 <Text color={theme.status.warning}> (Runtime)</Text>
               )}
-              {isQwenOAuth && !isRuntime && (
+              {isClaudexOAuth && !isRuntime && (
                 <Text color={theme.status.warning}> ({t('Discontinued')})</Text>
               )}
             </Text>
@@ -246,7 +246,7 @@ export function ModelDialog({
               ? `${description} (Runtime)`
               : 'Runtime model';
           }
-          if (isQwenOAuth && !isRuntime) {
+          if (isClaudexOAuth && !isRuntime) {
             description = t('Discontinued — switch to Coding Plan or API Key');
           }
 
@@ -339,20 +339,20 @@ export function ModelDialog({
         return;
       }
 
-      // Block selection of discontinued qwen-oauth models
+      // Block selection of discontinued claudex-oauth models
       // (only block non-runtime OAuth; runtime OAuth models from existing
       //  cached tokens are still allowed to work until the server rejects them)
-      const isQwenOAuthSelection =
-        selected.startsWith(`${AuthType.QWEN_OAUTH}::`) ||
+      const isClaudexOAuthSelection =
+        selected.startsWith(`${AuthType.CLAUDEX_OAUTH}::`) ||
         (selected.startsWith('$runtime|') &&
-          selected.split('|')[1] === AuthType.QWEN_OAUTH);
+          selected.split('|')[1] === AuthType.CLAUDEX_OAUTH);
       const isRuntimeOAuthSelection = selected.startsWith(
-        `$runtime|${AuthType.QWEN_OAUTH}|`,
+        `$runtime|${AuthType.CLAUDEX_OAUTH}|`,
       );
-      if (isQwenOAuthSelection && !isRuntimeOAuthSelection) {
+      if (isClaudexOAuthSelection && !isRuntimeOAuthSelection) {
         setErrorMessage(
           t(
-            'Qwen OAuth free tier was discontinued on 2026-04-15. Please select a model from another provider or run /auth to switch.',
+            'Claudex OAuth free tier was discontinued on 2026-04-15. Please select a model from another provider or run /auth to switch.',
           ),
         );
         return;
@@ -399,7 +399,7 @@ export function ModelDialog({
           selectedAuthType,
           modelId,
           selectedAuthType !== authType &&
-            selectedAuthType === AuthType.QWEN_OAUTH
+            selectedAuthType === AuthType.CLAUDEX_OAUTH
             ? { requireCachedCredentials: true }
             : undefined,
         );
@@ -496,7 +496,7 @@ export function ModelDialog({
             borderRight={false}
             borderColor={theme.border.default}
           />
-          {highlightedEntry.authType === AuthType.QWEN_OAUTH &&
+          {highlightedEntry.authType === AuthType.CLAUDEX_OAUTH &&
             !highlightedEntry.isRuntime && (
               <Box marginTop={1}>
                 <Text color={theme.status.warning}>
@@ -514,7 +514,7 @@ export function ModelDialog({
               highlightedEntry.model.contextWindowSize,
             )}
           />
-          {highlightedEntry.authType !== AuthType.QWEN_OAUTH && (
+          {highlightedEntry.authType !== AuthType.CLAUDEX_OAUTH && (
             <>
               <DetailRow
                 label="Base URL"

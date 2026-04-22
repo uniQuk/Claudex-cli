@@ -7,29 +7,29 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   getAvailableModelsForAuthType,
-  getFilteredQwenModels,
+  getFilteredClaudexModels,
   getOpenAIAvailableModelFromEnv,
 } from './availableModels.js';
 import { AuthType, type Config } from '@claudex/core';
 
 describe('availableModels', () => {
-  describe('Qwen models', () => {
-    const qwenModels = getFilteredQwenModels();
+  describe('Claudex models', () => {
+    const claudexModels = getFilteredClaudexModels();
 
     it('should include only coder-model', () => {
-      expect(qwenModels.length).toBe(1);
-      expect(qwenModels[0].id).toBe('coder-model');
+      expect(claudexModels.length).toBe(1);
+      expect(claudexModels[0].id).toBe('coder-model');
     });
 
     it('should have coder-model with vision capability', () => {
-      const coderModel = qwenModels[0];
+      const coderModel = claudexModels[0];
       expect(coderModel.isVision).toBe(true);
     });
   });
 
-  describe('getFilteredQwenModels', () => {
+  describe('getFilteredClaudexModels', () => {
     it('should return coder-model with vision capability', () => {
-      const models = getFilteredQwenModels();
+      const models = getFilteredClaudexModels();
       expect(models.length).toBe(1);
       expect(models[0].id).toBe('coder-model');
       expect(models[0].isVision).toBe(true);
@@ -77,28 +77,28 @@ describe('availableModels', () => {
       process.env = originalEnv;
     });
 
-    it('should return hard-coded qwen models for qwen-oauth', () => {
-      const models = getAvailableModelsForAuthType(AuthType.QWEN_OAUTH);
+    it('should return hard-coded claudex models for claudex-oauth', () => {
+      const models = getAvailableModelsForAuthType(AuthType.CLAUDEX_OAUTH);
       expect(models.length).toBe(1);
       expect(models[0].id).toBe('coder-model');
       expect(models[0].isVision).toBe(true);
     });
 
-    it('should use config models for qwen-oauth when config is provided', () => {
+    it('should use config models for claudex-oauth when config is provided', () => {
       const mockConfig = {
         getAvailableModelsForAuthType: vi.fn().mockReturnValue([
           {
             id: 'custom',
             label: 'Custom',
             description: 'Custom model',
-            authType: AuthType.QWEN_OAUTH,
+            authType: AuthType.CLAUDEX_OAUTH,
             isVision: false,
           },
         ]),
       } as unknown as Config;
 
       const models = getAvailableModelsForAuthType(
-        AuthType.QWEN_OAUTH,
+        AuthType.CLAUDEX_OAUTH,
         mockConfig,
       );
       expect(models).toEqual([

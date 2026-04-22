@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -403,16 +403,16 @@ function setupAcpTest(
         };
       };
 
-      // Choose a qwen-oauth model to trigger auth-required path deterministically.
-      const qwenOauthModel = newSession.models.availableModels.find((model) =>
-        model.modelId.includes('qwen-oauth'),
+      // Choose a claudex-oauth model to trigger auth-required path deterministically.
+      const claudexOauthModel = newSession.models.availableModels.find((model) =>
+        model.modelId.includes('claudex-oauth'),
       );
-      expect(qwenOauthModel).toBeDefined();
+      expect(claudexOauthModel).toBeDefined();
       await expect(
         sendRequest('session/set_config_option', {
           sessionId: newSession.sessionId,
           configId: 'model',
-          value: qwenOauthModel!.modelId,
+          value: claudexOauthModel!.modelId,
         }),
       ).rejects.toMatchObject({
         response: {
@@ -627,7 +627,7 @@ function setupAcpTest(
       expect(initCommand?.description).toBeTruthy();
 
       // Note: We don't test /init execution here because it triggers a complex
-      // multi-step process (listing files, reading up to 10 files, generating QWEN.md)
+      // multi-step process (listing files, reading up to 10 files, generating CLAUDEX.md)
       // that can take 30-60+ seconds, exceeding the request timeout.
       // The slash command execution path is tested via simpler prompts in other tests.
     } catch (e) {

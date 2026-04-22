@@ -4,13 +4,13 @@
 
 
   ✦
-    Here's the architectural overview of the Qwen Code (claudex) codebase:
+    Here's the architectural overview of the Claudex Code (claudex) codebase:
 
     ---
 
     Overview
 
-    Qwen Code (internally named claudex) is an AI-powered CLI agent that acts as a coding assistant. It connects
+    Claudex Code (internally named claudex) is an AI-powered CLI agent that acts as a coding assistant. It connects
      to LLM APIs (via Google's Gemini SDK, with adapters for Anthropic/OpenAI), executes tools (file edits,
     shell commands, git operations, etc.) on the user's behalf, and presents results through either an
     interactive React-based terminal UI or a non-interactive JSON/text mode. The project is structured as an npm
@@ -161,7 +161,7 @@
      - Auto-memory runs on every query — each user message triggers both scheduleExtract() and scheduleDream() as
        background promises consumed later via consumePendingMemoryTaskPromises().
      - Dead-letter stubs exist for removed features — index.ts contains explicit stub implementations for OAuth
-       (QwenOAuth2Event, qwenOAuth2Events) and telemetry (shutdownTelemetry) that were removed but whose exports
+       (ClaudexOAuth2Event, claudexOAuth2Events) and telemetry (shutdownTelemetry) that were removed but whose exports
        are still referenced elsewhere.
      - IDE context is sent as deltas, not full snapshots — after the initial full IDE context (open files, cursor
        position), subsequent updates are computed as diffs to save tokens.

@@ -560,7 +560,7 @@ describe('buildSystemMessage', () => {
       model: 'test-model',
       permission_mode: 'auto',
       slash_commands: ['commit', 'compress', 'init', 'summary'],
-      qwen_code_version: '1.0.0',
+      claudex_code_version: '1.0.0',
       agents: [],
     });
   });
@@ -607,7 +607,7 @@ describe('buildSystemMessage', () => {
       'auto' as PermissionMode,
     );
 
-    expect(result.qwen_code_version).toBe('unknown');
+    expect(result.claudex_code_version).toBe('unknown');
   });
 
   it('should include local commands with ACP supportedModes and prompt commands', async () => {

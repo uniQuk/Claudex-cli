@@ -442,13 +442,13 @@ describe('<StatsDisplay />', () => {
     });
 
     it('labels main rows session-wide when a subagent uses a different model', () => {
-      // Session has two models: glm-5 used only by main, qwen-plus used only by
+      // Session has two models: glm-5 used only by main, claudex-plus used only by
       // a subagent. Even though glm-5 has a single main source, it must still
-      // render with `(main)` because the session-wide rule triggers on qwen-plus.
+      // render with `(main)` because the session-wide rule triggers on claudex-plus.
       const metrics: SessionMetrics = {
         models: {
           'glm-5': mainOnly(coreMetrics(2, 200)),
-          'qwen-plus': {
+          'claudex-plus': {
             api: { totalRequests: 1, totalErrors: 0, totalLatencyMs: 100 },
             tokens: {
               prompt: 40,
@@ -471,7 +471,7 @@ describe('<StatsDisplay />', () => {
       const output = lastFrame();
 
       expect(output).toContain('glm-5 (main)');
-      expect(output).toContain('qwen-plus (researcher)');
+      expect(output).toContain('claudex-plus (researcher)');
       // The bare `glm-5` label (not followed by a space + `(`) must not appear
       // as a row label in this session.
       expect(output).not.toMatch(/glm-5\s{2,}/);

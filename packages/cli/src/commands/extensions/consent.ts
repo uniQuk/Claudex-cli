@@ -149,10 +149,10 @@ export function extensionConsentString(
   commands: string[] = [],
   skills: SkillConfig[] = [],
   subagents: SubagentConfig[] = [],
-  originSource: string = 'QwenCode',
+  originSource: string = 'ClaudexCode',
 ): string {
   const output: string[] = [];
-  if (originSource !== 'QwenCode') {
+  if (originSource !== 'ClaudexCode') {
     output.push(
       t(
         'You are installing an extension from {{originSource}}. Some features may not work perfectly with Claudex.',
@@ -195,7 +195,7 @@ export function extensionConsentString(
       : extensionConfig.contextFileName;
     output.push(
       t(
-        'This extension will append info to your QWEN.md context using {{fileName}}',
+        'This extension will append info to your CLAUDEX.md context using {{fileName}}',
         { fileName },
       ),
     );
@@ -231,7 +231,7 @@ export const requestConsentOrFail = async (
   if (!options) return;
   const {
     extensionConfig,
-    originSource = 'QwenCode',
+    originSource = 'ClaudexCode',
     commands = [],
     skills = [],
     subagents = [],

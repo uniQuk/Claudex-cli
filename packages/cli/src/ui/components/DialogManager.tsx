@@ -15,7 +15,7 @@ import { SettingInputPrompt } from './SettingInputPrompt.js';
 import { PluginChoicePrompt } from './PluginChoicePrompt.js';
 import { ThemeDialog } from './ThemeDialog.js';
 import { SettingsDialog } from './SettingsDialog.js';
-import { QwenOAuthProgress } from './QwenOAuthProgress.js';
+import { ClaudexOAuthProgress } from './ClaudexOAuthProgress.js';
 import { AuthDialog } from '../auth/AuthDialog.js';
 import { EditorSettingsDialog } from './EditorSettingsDialog.js';
 import { TrustDialog } from './TrustDialog.js';
@@ -309,15 +309,15 @@ export const DialogManager = ({
 
   if (uiState.isAuthenticating) {
     // OpenAI authentication now handled through AuthDialog with coding-plan/custom sub-modes
-    // Qwen OAuth remains as a separate flow
-    if (uiState.pendingAuthType === AuthType.QWEN_OAUTH) {
+    // Claudex OAuth remains as a separate flow
+    if (uiState.pendingAuthType === AuthType.CLAUDEX_OAUTH) {
       return (
-        <QwenOAuthProgress
-          deviceAuth={uiState.qwenAuthState.deviceAuth || undefined}
-          authStatus={uiState.qwenAuthState.authStatus}
-          authMessage={uiState.qwenAuthState.authMessage}
+        <ClaudexOAuthProgress
+          deviceAuth={uiState.claudexAuthState.deviceAuth || undefined}
+          authStatus={uiState.claudexAuthState.authStatus}
+          authMessage={uiState.claudexAuthState.authMessage}
           onTimeout={() => {
-            uiActions.onAuthError('Qwen OAuth authentication timed out.');
+            uiActions.onAuthError('Claudex OAuth authentication timed out.');
             uiActions.cancelAuthentication();
             uiActions.setAuthState(AuthState.Updating);
           }}

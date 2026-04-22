@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2026 Qwen Team
+ * Copyright 2026 Claudex Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -87,7 +87,7 @@ function setupAcpCronTest(rig: TestRig) {
       stdio: ['pipe', 'pipe', 'pipe'],
       env: {
         ...process.env,
-        QWEN_CODE_ENABLE_CRON: '1',
+        CLAUDEX_CODE_ENABLE_CRON: '1',
       },
     },
   );

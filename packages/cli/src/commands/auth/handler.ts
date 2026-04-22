@@ -25,7 +25,7 @@ import { loadCliConfig } from '../../config/config.js';
 import type { CliArgs } from '../../config/config.js';
 import { InteractiveSelector } from './interactiveSelector.js';
 
-interface QwenAuthOptions {
+interface ClaudexAuthOptions {
   region?: string;
   key?: string;
 }
@@ -52,9 +52,9 @@ interface MergedSettingsWithCodingPlan {
 /**
  * Handles the authentication process based on the specified command and options
  */
-export async function handleQwenAuth(
-  command: 'qwen-oauth' | 'coding-plan',
-  options: QwenAuthOptions,
+export async function handleClaudexAuth(
+  command: 'claudex-oauth' | 'coding-plan',
+  options: ClaudexAuthOptions,
 ) {
   try {
     const settings = loadSettings();
@@ -121,8 +121,8 @@ export async function handleQwenAuth(
       },
     );
 
-    if (command === 'qwen-oauth') {
-      await handleQwenOAuth(config, settings);
+    if (command === 'claudex-oauth') {
+      await handleClaudexOAuth(config, settings);
     } else if (command === 'coding-plan') {
       await handleCodePlanAuth(config, settings, options);
     }
@@ -137,30 +137,30 @@ export async function handleQwenAuth(
 }
 
 /**
- * Handles Qwen OAuth authentication
+ * Handles Claudex OAuth authentication
  */
-async function handleQwenOAuth(
+async function handleClaudexOAuth(
   config: Config,
   settings: LoadedSettings,
 ): Promise<void> {
-  writeStdoutLine(t('Starting Qwen OAuth authentication...'));
+  writeStdoutLine(t('Starting Claudex OAuth authentication...'));
 
   try {
-    await config.refreshAuth(AuthType.QWEN_OAUTH);
+    await config.refreshAuth(AuthType.CLAUDEX_OAUTH);
 
     // Persist the auth type
     const authTypeScope = getPersistScopeForModelSelection(settings);
     settings.setValue(
       authTypeScope,
       'security.auth.selectedType',
-      AuthType.QWEN_OAUTH,
+      AuthType.CLAUDEX_OAUTH,
     );
 
-    writeStdoutLine(t('Successfully authenticated with Qwen OAuth.'));
+    writeStdoutLine(t('Successfully authenticated with Claudex OAuth.'));
     process.exit(0);
   } catch (error) {
     writeStderrLine(
-      t('Failed to authenticate with Qwen OAuth: {{error}}', {
+      t('Failed to authenticate with Claudex OAuth: {{error}}', {
         error: getErrorMessage(error),
       }),
     );
@@ -174,7 +174,7 @@ async function handleQwenOAuth(
 async function handleCodePlanAuth(
   config: Config,
   settings: LoadedSettings,
-  options: QwenAuthOptions,
+  options: ClaudexAuthOptions,
 ): Promise<void> {
   const { region, key } = options;
 
@@ -376,8 +376,8 @@ export async function runInteractiveAuth() {
         ),
       },
       {
-        value: 'qwen-oauth' as const,
-        label: t('Qwen OAuth'),
+        value: 'claudex-oauth' as const,
+        label: t('Claudex OAuth'),
         description: t('Discontinued — switch to Coding Plan or API Key'),
       },
     ],
@@ -386,18 +386,18 @@ export async function runInteractiveAuth() {
 
   let choice = await selector.select();
 
-  // If user selects discontinued Qwen OAuth, warn and re-prompt
-  while (choice === 'qwen-oauth') {
+  // If user selects discontinued Claudex OAuth, warn and re-prompt
+  while (choice === 'claudex-oauth') {
     writeStdoutLine(
       t(
-        '\n⚠ Qwen OAuth free tier was discontinued on 2026-04-15. Please select another option.\n',
+        '\n⚠ Claudex OAuth free tier was discontinued on 2026-04-15. Please select another option.\n',
       ),
     );
     choice = await selector.select();
   }
 
   if (choice === 'coding-plan') {
-    await handleQwenAuth('coding-plan', {});
+    await handleClaudexAuth('coding-plan', {});
   }
 }
 
@@ -419,27 +419,27 @@ export async function showAuthStatus(): Promise<void> {
       writeStdoutLine(t('Run one of the following commands to get started:\n'));
       writeStdoutLine(
         t(
-          '  qwen auth qwen-oauth     - Authenticate with Qwen OAuth (free tier)',
+          '  claudex auth claudex-oauth     - Authenticate with Claudex OAuth (free tier)',
         ),
       );
       writeStdoutLine(
         t(
-          '  qwen auth coding-plan      - Authenticate with Alibaba Cloud Coding Plan\n',
+          '  claudex auth coding-plan      - Authenticate with Alibaba Cloud Coding Plan\n',
         ),
       );
       writeStdoutLine(t('Or simply run:'));
       writeStdoutLine(
-        t('  qwen auth                - Interactive authentication setup\n'),
+        t('  claudex auth                - Interactive authentication setup\n'),
       );
       process.exit(0);
     }
 
     // Display status based on auth type
-    if (selectedType === AuthType.QWEN_OAUTH) {
-      writeStdoutLine(t('✓ Authentication Method: Qwen OAuth'));
+    if (selectedType === AuthType.CLAUDEX_OAUTH) {
+      writeStdoutLine(t('✓ Authentication Method: Claudex OAuth'));
       writeStdoutLine(t('  Type: Free tier (discontinued 2026-04-15)'));
       writeStdoutLine(t('  Limit: No longer available'));
-      writeStdoutLine(t('  Models: Qwen latest models'));
+      writeStdoutLine(t('  Models: Claudex latest models'));
       writeStdoutLine(
         t('\n  ⚠ Run /auth to switch to Coding Plan or another provider.\n'),
       );
@@ -491,7 +491,7 @@ export async function showAuthStatus(): Promise<void> {
         writeStdoutLine(
           t('  Issue: API key not found in environment or settings\n'),
         );
-        writeStdoutLine(t('  Run `qwen auth coding-plan` to re-configure.\n'));
+        writeStdoutLine(t('  Run `claudex auth coding-plan` to re-configure.\n'));
       }
     } else {
       writeStdoutLine(

@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -126,7 +126,7 @@ export function MemoryDialog({ onClose }: MemoryDialogProps) {
       path.join(
         os.homedir(),
         CLAUDEX_DIR,
-        getAllGeminiMdFilenames()[0] ?? 'QWEN.md',
+        getAllGeminiMdFilenames()[0] ?? 'CLAUDEX.md',
       ),
     [],
   );
@@ -134,7 +134,7 @@ export function MemoryDialog({ onClose }: MemoryDialogProps) {
     () =>
       path.join(
         config.getWorkingDir(),
-        getAllGeminiMdFilenames()[0] ?? 'QWEN.md',
+        getAllGeminiMdFilenames()[0] ?? 'CLAUDEX.md',
       ),
     [config],
   );
@@ -211,12 +211,12 @@ export function MemoryDialog({ onClose }: MemoryDialogProps) {
         case 'project':
           return resolvePreferredMemoryFile(
             config.getWorkingDir(),
-            getAllGeminiMdFilenames()[0] ?? 'QWEN.md',
+            getAllGeminiMdFilenames()[0] ?? 'CLAUDEX.md',
           );
         case 'global':
           return resolvePreferredMemoryFile(
             path.join(os.homedir(), CLAUDEX_DIR),
-            getAllGeminiMdFilenames()[0] ?? 'QWEN.md',
+            getAllGeminiMdFilenames()[0] ?? 'CLAUDEX.md',
           );
         case 'managed':
           return managedMemoryPath;

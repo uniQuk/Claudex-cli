@@ -11,7 +11,7 @@ New users see onboarding-focused tips during their first sessions:
 | Sessions | Example tips                                         |
 | -------- | ---------------------------------------------------- |
 | < 5      | Slash commands (`/`), Tab autocomplete               |
-| < 10     | `QWEN.md` project context, `--continue` / `--resume` |
+| < 10     | `CLAUDEX.md` project context, `--continue` / `--resume` |
 | < 15     | Shell commands with `!` prefix                       |
 
 After that, tips rotate through general features like `/compress`, `/approval-mode`, `/insight`, `/btw`, and more.

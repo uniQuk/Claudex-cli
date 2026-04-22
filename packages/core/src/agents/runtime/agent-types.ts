@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -47,7 +47,7 @@ export interface PromptConfig {
  */
 export interface ModelConfig {
   /**
-   * The name or identifier of the model to be used (e.g., 'qwen3-coder-plus').
+   * The name or identifier of the model to be used (e.g., 'claudex3-coder-plus').
    *
    * TODO: In the future, this needs to support 'auto' or some other string to support routing use cases.
    */

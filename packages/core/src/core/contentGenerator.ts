@@ -56,7 +56,7 @@ export enum AuthType {
   USE_OPENAI = 'openai',
   USE_ANTHROPIC = 'anthropic',
   /** @deprecated Dead-letter value — never selected at runtime. */
-  QWEN_OAUTH = 'qwen-oauth',
+  CLAUDEX_OAUTH = 'claudex-oauth',
   /** @deprecated Dead-letter value — never selected at runtime. */
   USE_GEMINI = '_removed_use_gemini',
   /** @deprecated Dead-letter value — never selected at runtime. */

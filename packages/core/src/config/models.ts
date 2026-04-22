@@ -6,10 +6,10 @@
 
 // Default model when using OpenAI-compatible providers.
 // Override via OPENAI_MODEL or CLAUDEX_MODEL env vars, or --model flag.
-export const MAINLINE_CODER_MODEL = 'qwen3.5-plus';
+export const MAINLINE_CODER_MODEL = 'claudex3.5-plus';
 
 // Legacy aliases kept for compatibility
-export const DEFAULT_QWEN_MODEL = MAINLINE_CODER_MODEL;
-export const DEFAULT_QWEN_FLASH_MODEL = MAINLINE_CODER_MODEL;
-export const DEFAULT_QWEN_EMBEDDING_MODEL = 'text-embedding-v4';
+export const DEFAULT_CLAUDEX_MODEL = MAINLINE_CODER_MODEL;
+export const DEFAULT_CLAUDEX_FLASH_MODEL = MAINLINE_CODER_MODEL;
+export const DEFAULT_CLAUDEX_EMBEDDING_MODEL = 'text-embedding-v4';
 

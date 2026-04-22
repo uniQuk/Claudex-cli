@@ -40,7 +40,7 @@ describe('ReadFileTool', () => {
       getWorkspaceContext: () => createMockWorkspaceContext(tempRootDir),
       storage: {
         getProjectTempDir: () => path.join(tempRootDir, '.temp'),
-        getUserSkillsDirs: () => [path.join(os.homedir(), '.qwen', 'skills')],
+        getUserSkillsDirs: () => [path.join(os.homedir(), '.claudex', 'skills')],
       },
       getTruncateToolOutputThreshold: () => 2500,
       getTruncateToolOutputLines: () => 500,

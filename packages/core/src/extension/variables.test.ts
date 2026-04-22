@@ -266,7 +266,7 @@ describe('performVariableReplacement', () => {
     expect(result).not.toContain('```!');
   });
 
-  it('should replace .claude with .qwen in markdown files', () => {
+  it('should replace .claude with .claudex in markdown files', () => {
     const extDir = path.join(testDir, 'ext');
     fs.mkdirSync(extDir, { recursive: true });
 
@@ -332,7 +332,7 @@ describe('performVariableReplacement', () => {
     expect(result).not.toContain('.message.content');
   });
 
-  it('should replace .claude with .qwen in shell scripts', () => {
+  it('should replace .claude with .claudex in shell scripts', () => {
     const extDir = path.join(testDir, 'ext');
     fs.mkdirSync(extDir, { recursive: true });
 

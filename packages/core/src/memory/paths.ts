@@ -81,11 +81,11 @@ function findCanonicalGitRoot(startPath: string): string | null {
 
 /**
  * Returns the base directory for all auto-memory storage.
- * Defaults to `~/.qwen`; overridable via QWEN_CODE_MEMORY_BASE_DIR for tests.
+ * Defaults to `~/.claudex`; overridable via CLAUDEX_CODE_MEMORY_BASE_DIR for tests.
  */
 export function getMemoryBaseDir(): string {
-  if (process.env['QWEN_CODE_MEMORY_BASE_DIR']) {
-    return process.env['QWEN_CODE_MEMORY_BASE_DIR'];
+  if (process.env['CLAUDEX_CODE_MEMORY_BASE_DIR']) {
+    return process.env['CLAUDEX_CODE_MEMORY_BASE_DIR'];
   }
   return path.join(os.homedir(), CLAUDEX_DIR);
 }
@@ -99,7 +99,7 @@ export function getAutoMemoryRoot(projectRoot: string): string {
   if (cached !== undefined) return cached;
 
   let result: string;
-  if (process.env['QWEN_CODE_MEMORY_LOCAL'] === '1') {
+  if (process.env['CLAUDEX_CODE_MEMORY_LOCAL'] === '1') {
     result = path.join(projectRoot, CLAUDEX_DIR, AUTO_MEMORY_DIRNAME);
   } else {
     const canonicalRoot =

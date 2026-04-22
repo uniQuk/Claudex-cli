@@ -35,8 +35,8 @@ function getAuthDisplayType(
   }
 
   switch (authType) {
-    case AuthType.QWEN_OAUTH:
-      return AuthDisplayType.QWEN_OAUTH;
+    case AuthType.CLAUDEX_OAUTH:
+      return AuthDisplayType.CLAUDEX_OAUTH;
     default:
       return AuthDisplayType.API_KEY;
   }

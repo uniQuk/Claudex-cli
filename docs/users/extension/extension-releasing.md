@@ -139,7 +139,7 @@ A minimal package structure looks like:
 my-extension/
 ├── package.json
 ├── claudex-extension.json
-├── QWEN.md              # optional context file
+├── CLAUDEX.md              # optional context file
 ├── commands/             # optional custom commands
 ├── skills/               # optional custom skills
 └── agents/               # optional custom subagents

@@ -139,7 +139,7 @@ export function migrateLegacyPermissions(
 export function getSystemSettingsPath(): string {
   const envPath =
     process.env['CLAUDEX_SYSTEM_SETTINGS_PATH'] ??
-    process.env['QWEN_CODE_SYSTEM_SETTINGS_PATH'];
+    process.env['CLAUDEX_CODE_SYSTEM_SETTINGS_PATH'];
   if (envPath) return envPath;
   if (platform() === 'darwin') {
     return '/Library/Application Support/Claudex/settings.json';
@@ -153,7 +153,7 @@ export function getSystemSettingsPath(): string {
 export function getSystemDefaultsPath(): string {
   const envPath =
     process.env['CLAUDEX_SYSTEM_DEFAULTS_PATH'] ??
-    process.env['QWEN_CODE_SYSTEM_DEFAULTS_PATH'];
+    process.env['CLAUDEX_CODE_SYSTEM_DEFAULTS_PATH'];
   if (envPath) return envPath;
   return path.join(
     path.dirname(getSystemSettingsPath()),

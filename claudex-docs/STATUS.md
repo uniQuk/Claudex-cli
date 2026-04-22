@@ -1,6 +1,6 @@
 # Claudex CLI — Rebrand Status
 
-> Fork of `qwen-code`, stripped down to a multi-provider API-only CLI (OpenAI-compatible + Anthropic). No telemetry, no cloud login, no Gemini/Vertex.
+> Fork of `claudex-code`, stripped down to a multi-provider API-only CLI (OpenAI-compatible + Anthropic). No telemetry, no cloud login, no Gemini/Vertex.
 
 ---
 
@@ -18,20 +18,20 @@
 - Added no-op stubs for `shutdownTelemetry()` and `isTelemetrySdkInitialized()` in `packages/core/src/index.ts`
 - All telemetry event types / loggers kept as no-op stubs (required by internal code paths)
 
-### Phase 3 — Remove Gemini / Vertex / Qwen OAuth providers
-- Deleted `packages/core/src/qwen/` directory (qwenOAuth2.ts, etc.)
+### Phase 3 — Remove Gemini / Vertex / Claudex OAuth providers
+- Deleted `packages/core/src/claudex/` directory (claudexOAuth2.ts, etc.)
 - Added dead-letter stubs to `packages/core/src/index.ts`:
-  - `clearCachedCredentialFile()`, `QwenOAuth2Event` enum, `qwenOAuth2Events` EventEmitter, `DeviceAuthorizationData` interface
-- Added dead-letter `AuthType` enum values: `USE_GEMINI = '_removed_use_gemini'`, `USE_VERTEX_AI = '_removed_use_vertex_ai'`, `QWEN_OAUTH = 'qwen-oauth'`
+  - `clearCachedCredentialFile()`, `ClaudexOAuth2Event` enum, `claudexOAuth2Events` EventEmitter, `DeviceAuthorizationData` interface
+- Added dead-letter `AuthType` enum values: `USE_GEMINI = '_removed_use_gemini'`, `USE_VERTEX_AI = '_removed_use_vertex_ai'`, `CLAUDEX_OAUTH = 'claudex-oauth'`
 - Changed `AUTH_ENV_MAPPINGS` from `Record<AuthType, ...>` to `Partial<Record<AuthType, ...>>` to accommodate dead-letter keys
 - Added `dashscope-provider.ts` inline stub (replaced deleted import)
 - Stubbed `useCodingPlanUpdates`, `getCodingPlanConfig`, `isCodingPlanConfig` (in `packages/cli/src/constants/codingPlan.ts`)
-- `config.ts`: disabled Qwen OAuth refresh path with `if (false && ...)`
+- `config.ts`: disabled Claudex OAuth refresh path with `if (false && ...)`
 
 ### Phase 4 — Rebrand to Claudex
-- Binary renamed: `qwen` → `claudex`
-- Package names: `@qwen/core` → `@claudex/core`, `@qwen/cli` → `@claudex/cli`
-- Config dir constant in `packages/core/src/memory/const.ts`: `QWEN_CONFIG_DIR = '.claudex'`
+- Binary renamed: `claudex` → `claudex`
+- Package names: `@claudex/core` → `@claudex/core`, `@claudex/cli` → `@claudex/cli`
+- Config dir constant in `packages/core/src/memory/const.ts`: `CLAUDEX_CONFIG_DIR = '.claudex'`
 - Context file: `GEMINI.md` → `CLAUDEX.md`
 - `AGENTS.md` recognized as secondary context file
 - Memory section header: `## Claudex Added Memories`
@@ -65,7 +65,7 @@ node packages/cli/dist/index.js --version  # → 0.14.5
 - `docsCommand.ts`: fixed unterminated template literal
 - `ArenaStartDialog.tsx`: fixed unterminated string literal
 - `read-file.ts`: fixed `getProgrammingLanguage` call signature
-- `qwen-logger.ts`: removed unused `static instance` field
+- `claudex-logger.ts`: removed unused `static instance` field
 
 ---
 
@@ -82,14 +82,14 @@ node packages/cli/dist/index.js --version  # → 0.14.5
 
 | Issue | File | Detail |
 |---|---|---|
-| Storage dir still `.qwen` | `packages/core/src/config/storage.ts:13` | `QWEN_DIR = '.qwen'` — inconsistent with `memory/const.ts` (`QWEN_CONFIG_DIR = '.claudex'`). Global settings and session dirs still use `~/.qwen/` |
-| Auth command description | `packages/cli/src/claudex.tsx` (or similar) | `claudex auth` help still says "Configure Qwen authentication information with Qwen-OAuth or Alibaba Cloud Coding Plan" |
-| Dead `--auth-type` choices | CLI help output | Shows `qwen-oauth`, `_removed_use_gemini`, `_removed_use_vertex_ai` as valid choices |
-| `docsCommand.ts` URL | `packages/cli/src/ui/commands/docsCommand.ts:26` | Still points to `qwenlm.github.io/qwen-code-docs/${langPath}` |
-| `docsCommand` description | same | Says "open full Qwen Code documentation" |
+| Storage dir still `.claudex` | `packages/core/src/config/storage.ts:13` | `CLAUDEX_DIR = '.claudex'` — inconsistent with `memory/const.ts` (`CLAUDEX_CONFIG_DIR = '.claudex'`). Global settings and session dirs still use `~/.claudex/` |
+| Auth command description | `packages/cli/src/claudex.tsx` (or similar) | `claudex auth` help still says "Configure Claudex authentication information with Claudex-OAuth or Alibaba Cloud Coding Plan" |
+| Dead `--auth-type` choices | CLI help output | Shows `claudex-oauth`, `_removed_use_gemini`, `_removed_use_vertex_ai` as valid choices |
+| `docsCommand.ts` URL | `packages/cli/src/ui/commands/docsCommand.ts:26` | Still points to `claudexlm.github.io/claudex-code-docs/${langPath}` |
+| `docsCommand` description | same | Says "open full Claudex Code documentation" |
 | Dead `gemini.tsx` / `gemini.test.tsx` | `packages/cli/src/` | Entry point files left over from Gemini — binary only uses `claudex.tsx` |
 | `const.ts` function name | `packages/core/src/memory/const.ts` | `getCurrentGeminiMdFilename()`, `getAllGeminiMdFilenames()`, `setGeminiMdFilename()` — Gemini-branded function names |
-| `constants.ts` dead entries | `packages/core/src/models/constants.ts` | `AUTH_ENV_MAPPINGS` still has `gemini`, `vertex-ai`, `qwen-oauth` entries |
+| `constants.ts` dead entries | `packages/core/src/models/constants.ts` | `AUTH_ENV_MAPPINGS` still has `gemini`, `vertex-ai`, `claudex-oauth` entries |
 | `auth/handler.ts` dead code | `packages/cli/src/commands/auth/handler.ts` | Coding Plan auth flow is dead code — stub returns nothing, but code still walks through the flow |
 
 ### 🟢 Test suite — not run yet
@@ -129,19 +129,19 @@ const docsUrl = `https://qwenlm.github.io/qwen-code-docs/${langPath}`;
 
 The test should match whatever URL `docsCommand.ts` produces, or the URL in `docsCommand.ts` should first be updated to the real Claudex docs URL.
 
-### Step 3 — Rename storage dir `.qwen` → `.claudex` (30 min)
+### Step 3 — Rename storage dir `.claudex` → `.claudex` (30 min)
 In `packages/core/src/config/storage.ts`:
 
 ```typescript
-export const QWEN_DIR = '.claudex';   // was '.qwen'
+export const CLAUDEX_DIR = '.claudex';   // was '.claudex'
 ```
 
 This changes where global settings (`~/.claudex/settings.json`), session data, MCP tokens, etc. are stored. **Breaking change for existing users** — consider a migration shim.
 
-> Migration path: on first run, if `~/.claudex` doesn't exist but `~/.qwen` does, copy/rename.
+> Migration path: on first run, if `~/.claudex` doesn't exist but `~/.claudex` does, copy/rename.
 
 ### Step 4 — Clean up dead auth choices (15 min)
-- Remove `qwen-oauth`, `_removed_use_gemini`, `_removed_use_vertex_ai` from the `--auth-type` choices in the CLI arg definition.
+- Remove `claudex-oauth`, `_removed_use_gemini`, `_removed_use_vertex_ai` from the `--auth-type` choices in the CLI arg definition.
 - Update `claudex auth` command description.
 - Remove dead entries from `AUTH_ENV_MAPPINGS` in `constants.ts`.
 
@@ -165,9 +165,9 @@ cd packages/cli  && npx vitest run 2>&1 | grep "FAIL"
 ```
 
 Likely failures:
-- Any test that asserts on `~/.qwen` path strings (after Step 3)
+- Any test that asserts on `~/.claudex` path strings (after Step 3)
 - Any test asserting on auth type strings that reference removed types
-- Tests for `useQwenAuth` / `QwenOAuthProgress` (functionality is gone — tests may need to be removed or converted to stubs)
+- Tests for `useClaudexAuth` / `ClaudexOAuthProgress` (functionality is gone — tests may need to be removed or converted to stubs)
 
 ### Step 8 — Remove dead files (10 min)
 - `packages/cli/src/gemini.tsx` — superseded by `claudex.tsx`

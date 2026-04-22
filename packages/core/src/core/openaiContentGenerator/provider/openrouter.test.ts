@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -95,7 +95,7 @@ describe('OpenRouterOpenAICompatibleProvider', () => {
 
       // Should include User-Agent from parent
       expect(headers['User-Agent']).toBe(
-        `QwenCode/1.0.0 (${process.platform}; ${process.arch})`,
+        `ClaudexCode/1.0.0 (${process.platform}; ${process.arch})`,
       );
     });
 
@@ -103,7 +103,7 @@ describe('OpenRouterOpenAICompatibleProvider', () => {
       const headers = provider.buildHeaders();
 
       expect(headers).toEqual({
-        'User-Agent': `QwenCode/1.0.0 (${process.platform}; ${process.arch})`,
+        'User-Agent': `ClaudexCode/1.0.0 (${process.platform}; ${process.arch})`,
         'HTTP-Referer': 'https://github.com/claudex/claudex.git',
         'X-OpenRouter-Title': 'Claudex',
       });
@@ -137,7 +137,7 @@ describe('OpenRouterOpenAICompatibleProvider', () => {
       const headers = provider.buildHeaders();
 
       expect(headers['User-Agent']).toBe(
-        `QwenCode/unknown (${process.platform}; ${process.arch})`,
+        `ClaudexCode/unknown (${process.platform}; ${process.arch})`,
       );
       expect(headers['HTTP-Referer']).toBe(
         'https://github.com/claudex/claudex.git',

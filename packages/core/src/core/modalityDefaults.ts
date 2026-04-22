@@ -38,20 +38,20 @@ const MODALITY_PATTERNS: Array<[RegExp, InputModalities]> = [
   [/^claude-/, { image: true, pdf: true }],
 
   // -------------------
-  // Alibaba / Qwen
+  // Alibaba / Claudex
   // -------------------
-  // Qwen3.5-Plus, Qwen3.6-Plus: image + video support
-  [/^qwen3\.5-plus/, { image: true, video: true }],
-  [/^qwen3\.6-plus/, { image: true, video: true }],
+  // Claudex3.5-Plus, Claudex3.6-Plus: image + video support
+  [/^claudex3\.5-plus/, { image: true, video: true }],
+  [/^claudex3\.6-plus/, { image: true, video: true }],
   [/^coder-model$/, { image: true, video: true }],
 
-  // Qwen VL (vision-language) models: image + video
-  [/^qwen-vl-/, { image: true, video: true }],
-  [/^qwen3-vl-/, { image: true, video: true }],
+  // Claudex VL (vision-language) models: image + video
+  [/^claudex-vl-/, { image: true, video: true }],
+  [/^claudex3-vl-/, { image: true, video: true }],
 
-  // Qwen coder / text models: text-only
-  [/^qwen3-coder-/, {}],
-  [/^qwen/, {}],
+  // Claudex coder / text models: text-only
+  [/^claudex3-coder-/, {}],
+  [/^claudex/, {}],
 
   // -------------------
   // DeepSeek — text-only

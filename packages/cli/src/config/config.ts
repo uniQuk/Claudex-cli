@@ -8,7 +8,7 @@ import {
   ApprovalMode,
   AuthType,
   Config,
-  DEFAULT_QWEN_EMBEDDING_MODEL,
+  DEFAULT_CLAUDEX_EMBEDDING_MODEL,
   FileDiscoveryService,
   getAllGeminiMdFilenames,
   loadServerHierarchicalMemory,
@@ -484,7 +484,7 @@ export async function parseArguments(): Promise<CliArgs> {
           choices: [
             AuthType.USE_OPENAI,
             AuthType.USE_ANTHROPIC,
-            AuthType.QWEN_OAUTH,
+            AuthType.CLAUDEX_OAUTH,
             AuthType.USE_GEMINI,
             AuthType.USE_VERTEX_AI,
           ],
@@ -697,7 +697,7 @@ export async function loadCliConfig(
 
   // Set runtime output directory from settings (env var CLAUDEX_RUNTIME_DIR
   // is auto-detected inside getRuntimeBaseDir() at each call site).
-  // Pass cwd so that relative paths like ".qwen" resolve per-project.
+  // Pass cwd so that relative paths like ".claudex" resolve per-project.
   Storage.setRuntimeBaseDir(settings.advanced?.runtimeOutputDir, cwd);
 
   const ideMode = settings.ide?.enabled ?? false;
@@ -877,7 +877,7 @@ export async function loadCliConfig(
   for (const name of argv.disabledSlashCommands ?? []) addDisabled(name);
   for (const name of (
     process.env['CLAUDEX_DISABLED_SLASH_COMMANDS'] ??
-    process.env['QWEN_DISABLED_SLASH_COMMANDS'] ??
+    process.env['CLAUDEX_DISABLED_SLASH_COMMANDS'] ??
     ''
   ).split(',')) {
     addDisabled(name);
@@ -1007,7 +1007,7 @@ export async function loadCliConfig(
       sessionId = argv.resume;
       sessionData = await sessionService.loadSession(argv.resume);
       if (!sessionData) {
-        const message = `No saved session found with ID ${argv.resume}. Run \`qwen --resume\` without an ID to choose from existing sessions.`;
+        const message = `No saved session found with ID ${argv.resume}. Run \`claudex --resume\` without an ID to choose from existing sessions.`;
         writeStderrLine(message);
         process.exit(1);
       }
@@ -1030,7 +1030,7 @@ export async function loadCliConfig(
   const config = new Config({
     sessionId,
     sessionData,
-    embeddingModel: DEFAULT_QWEN_EMBEDDING_MODEL,
+    embeddingModel: DEFAULT_CLAUDEX_EMBEDDING_MODEL,
     sandbox: sandboxConfig,
     targetDir: cwd,
     includeDirectories,

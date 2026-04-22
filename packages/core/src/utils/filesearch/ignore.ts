@@ -14,7 +14,7 @@ const hasFileExtension = picomatch('**/*[*.]*');
 export interface LoadIgnoreRulesOptions {
   projectRoot: string;
   useGitignore: boolean;
-  useQwenignore: boolean;
+  useClaudexignore: boolean;
   ignoreDirs: string[];
 }
 
@@ -27,7 +27,7 @@ export function loadIgnoreRules(options: LoadIgnoreRulesOptions): Ignore {
     }
   }
 
-  if (options.useQwenignore) {
+  if (options.useClaudexignore) {
     const claudexignorePath = path.join(options.projectRoot, '.claudexignore');
     if (fs.existsSync(claudexignorePath)) {
       ignorer.add(fs.readFileSync(claudexignorePath, 'utf8'));

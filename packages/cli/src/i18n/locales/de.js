@@ -1,11 +1,11 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// German translations for Qwen Code CLI
-// Deutsche Übersetzungen für Qwen Code CLI
+// German translations for Claudex Code CLI
+// Deutsche Übersetzungen für Claudex Code CLI
 
 export default {
   // ============================================================================
@@ -63,16 +63,16 @@ export default {
   'For a full list of shortcuts, see {{docPath}}':
     'Eine vollständige Liste der Tastenkürzel finden Sie unter {{docPath}}',
   'docs/keyboard-shortcuts.md': 'docs/keyboard-shortcuts.md',
-  'for help on Qwen Code': 'für Hilfe zu Qwen Code',
+  'for help on Claudex Code': 'für Hilfe zu Claudex Code',
   'show version info': 'Versionsinformationen anzeigen',
   'submit a bug report': 'Fehlerbericht einreichen',
-  'About Qwen Code': 'Über Qwen Code',
+  'About Claudex Code': 'Über Claudex Code',
   Status: 'Status',
 
   // ============================================================================
   // System Information Fields
   // ============================================================================
-  'Qwen Code': 'Qwen Code',
+  'Claudex Code': 'Claudex Code',
   Runtime: 'Laufzeit',
   OS: 'Betriebssystem',
   Auth: 'Authentifizierung',
@@ -96,12 +96,12 @@ export default {
   // ============================================================================
   // Commands - General
   // ============================================================================
-  'Analyzes the project and creates a tailored QWEN.md file.':
-    'Analysiert das Projekt und erstellt eine maßgeschneiderte QWEN.md-Datei.',
-  'List available Qwen Code tools. Usage: /tools [desc]':
-    'Verfügbare Qwen Code Werkzeuge auflisten. Verwendung: /tools [desc]',
+  'Analyzes the project and creates a tailored CLAUDEX.md file.':
+    'Analysiert das Projekt und erstellt eine maßgeschneiderte CLAUDEX.md-Datei.',
+  'List available Claudex Code tools. Usage: /tools [desc]':
+    'Verfügbare Claudex Code Werkzeuge auflisten. Verwendung: /tools [desc]',
   'List available skills.': 'Verfügbare Skills auflisten.',
-  'Available Qwen Code CLI tools:': 'Verfügbare Qwen Code CLI-Werkzeuge:',
+  'Available Claudex Code CLI tools:': 'Verfügbare Claudex Code CLI-Werkzeuge:',
   'No tools available': 'Keine Werkzeuge verfügbar',
   'View or change the approval mode for tool usage':
     'Genehmigungsmodus für Werkzeugnutzung anzeigen oder ändern',
@@ -123,8 +123,8 @@ export default {
     'Gesprächsverlauf löschen und Kontext freigeben',
   'Compresses the context by replacing it with a summary.':
     'Komprimiert den Kontext durch Ersetzen mit einer Zusammenfassung.',
-  'open full Qwen Code documentation in your browser':
-    'Vollständige Qwen Code Dokumentation im Browser öffnen',
+  'open full Claudex Code documentation in your browser':
+    'Vollständige Claudex Code Dokumentation im Browser öffnen',
   'Configuration not available.': 'Konfiguration nicht verfügbar.',
   'change the auth method': 'Authentifizierungsmethode ändern',
   'Configure authentication information for login':
@@ -190,8 +190,8 @@ export default {
   // ============================================================================
   // Agents - Creation Wizard
   // ============================================================================
-  'Project Level (.qwen/agents/)': 'Projektebene (.qwen/agents/)',
-  'User Level (~/.qwen/agents/)': 'Benutzerebene (~/.qwen/agents/)',
+  'Project Level (.claudex/agents/)': 'Projektebene (.claudex/agents/)',
+  'User Level (~/.claudex/agents/)': 'Benutzerebene (~/.claudex/agents/)',
   '✅ Subagent Created Successfully!': '✅ Unteragent erfolgreich erstellt!',
   'Subagent "{{name}}" has been saved to {{level}} level.':
     'Unteragent "{{name}}" wurde auf {{level}}-Ebene gespeichert.',
@@ -213,8 +213,8 @@ export default {
   'Step {{n}}: Choose Location': 'Schritt {{n}}: Speicherort wählen',
   'Step {{n}}: Choose Generation Method':
     'Schritt {{n}}: Generierungsmethode wählen',
-  'Generate with Qwen Code (Recommended)':
-    'Mit Qwen Code generieren (Empfohlen)',
+  'Generate with Claudex Code (Recommended)':
+    'Mit Claudex Code generieren (Empfohlen)',
   'Manual Creation': 'Manuelle Erstellung',
   'Describe what this subagent should do and when it should be used. (Be comprehensive for best results)':
     'Beschreiben Sie, was dieser Unteragent tun soll und wann er verwendet werden soll. (Ausführliche Beschreibung für beste Ergebnisse)',
@@ -276,11 +276,11 @@ export default {
   // ============================================================================
   // Commands - General (continued)
   // ============================================================================
-  'View and edit Qwen Code settings':
-    'Qwen Code Einstellungen anzeigen und bearbeiten',
+  'View and edit Claudex Code settings':
+    'Claudex Code Einstellungen anzeigen und bearbeiten',
   Settings: 'Einstellungen',
-  'To see changes, Qwen Code must be restarted. Press r to exit and apply changes now.':
-    'Um Änderungen zu sehen, muss Qwen Code neu gestartet werden. Drücken Sie r, um jetzt zu beenden und Änderungen anzuwenden.',
+  'To see changes, Claudex Code must be restarted. Press r to exit and apply changes now.':
+    'Um Änderungen zu sehen, muss Claudex Code neu gestartet werden. Drücken Sie r, um jetzt zu beenden und Änderungen anzuwenden.',
   'The command "/{{command}}" is not supported in non-interactive mode.':
     'Der Befehl "/{{command}}" wird im nicht-interaktiven Modus nicht unterstützt.',
   // ============================================================================
@@ -307,8 +307,8 @@ export default {
   'Custom Witty Phrases': 'Benutzerdefinierte Witzige Sprüche',
   'Show Welcome Back Dialog': 'Willkommen-zurück-Dialog anzeigen',
   'Enable User Feedback': 'Benutzerfeedback aktivieren',
-  'How is Qwen doing this session? (optional)':
-    'Wie macht sich Qwen in dieser Sitzung? (optional)',
+  'How is Claudex doing this session? (optional)':
+    'Wie macht sich Claudex in dieser Sitzung? (optional)',
   Bad: 'Schlecht',
   Fine: 'In Ordnung',
   Good: 'Gut',
@@ -331,7 +331,7 @@ export default {
   'Load Memory From Include Directories':
     'Speicher aus Include-Verzeichnissen laden',
   'Respect .gitignore': '.gitignore beachten',
-  'Respect .qwenignore': '.qwenignore beachten',
+  'Respect .claudexignore': '.claudexignore beachten',
   'Enable Recursive File Search': 'Rekursive Dateisuche aktivieren',
   'Disable Fuzzy Search': 'Unscharfe Suche deaktivieren',
   'Interactive Shell (PTY)': 'Interaktive Shell (PTY)',
@@ -428,8 +428,8 @@ export default {
   remote: 'remote',
   'This extension will add the following commands: {{commands}}.':
     'Diese Erweiterung wird folgende Befehle hinzufügen: {{commands}}.',
-  'This extension will append info to your QWEN.md context using {{fileName}}':
-    'Diese Erweiterung wird Informationen zu Ihrem QWEN.md-Kontext mit {{fileName}} hinzufügen',
+  'This extension will append info to your CLAUDEX.md context using {{fileName}}':
+    'Diese Erweiterung wird Informationen zu Ihrem CLAUDEX.md-Kontext mit {{fileName}} hinzufügen',
   'This extension will exclude the following core tools: {{tools}}':
     'Diese Erweiterung wird folgende Kernwerkzeuge ausschließen: {{tools}}',
   'This extension will install the following skills:':
@@ -438,8 +438,8 @@ export default {
     'Diese Erweiterung wird folgende Unteragenten installieren:',
   'Installation cancelled for "{{name}}".':
     'Installation von "{{name}}" abgebrochen.',
-  'You are installing an extension from {{originSource}}. Some features may not work perfectly with Qwen Code.':
-    'Sie installieren eine Erweiterung von {{originSource}}. Einige Funktionen funktionieren möglicherweise nicht perfekt mit Qwen Code.',
+  'You are installing an extension from {{originSource}}. Some features may not work perfectly with Claudex Code.':
+    'Sie installieren eine Erweiterung von {{originSource}}. Einige Funktionen funktionieren möglicherweise nicht perfekt mit Claudex Code.',
   '--ref and --auto-update are not applicable for marketplace extensions.':
     '--ref und --auto-update sind nicht anwendbar für Marketplace-Erweiterungen.',
   'Extension "{{name}}" installed successfully and enabled.':
@@ -555,8 +555,8 @@ export default {
     'Erforderlichen IDE-Begleiter für {{ideName}} installieren',
   'enable IDE integration': 'IDE-Integration aktivieren',
   'disable IDE integration': 'IDE-Integration deaktivieren',
-  'IDE integration is not supported in your current environment. To use this feature, run Qwen Code in one of these supported IDEs: VS Code or VS Code forks.':
-    'IDE-Integration wird in Ihrer aktuellen Umgebung nicht unterstützt. Um diese Funktion zu nutzen, führen Sie Qwen Code in einer dieser unterstützten IDEs aus: VS Code oder VS Code-Forks.',
+  'IDE integration is not supported in your current environment. To use this feature, run Claudex Code in one of these supported IDEs: VS Code or VS Code forks.':
+    'IDE-Integration wird in Ihrer aktuellen Umgebung nicht unterstützt. Um diese Funktion zu nutzen, führen Sie Claudex Code in einer dieser unterstützten IDEs aus: VS Code oder VS Code-Forks.',
   'Set up GitHub Actions': 'GitHub Actions einrichten',
   'Configure terminal keybindings for multiline input (VS Code, Cursor, Windsurf, Trae)':
     'Terminal-Tastenbelegungen für mehrzeilige Eingabe konfigurieren (VS Code, Cursor, Windsurf, Trae)',
@@ -591,7 +591,7 @@ export default {
   // ============================================================================
   // Commands - Hooks
   // ============================================================================
-  'Manage Qwen Code hooks': 'Qwen Code-Hooks verwalten',
+  'Manage Claudex Code hooks': 'Claudex Code-Hooks verwalten',
   'List all configured hooks': 'Alle konfigurierten Hooks auflisten',
   'Enable a disabled hook': 'Einen deaktivierten Hook aktivieren',
   'Disable an active hook': 'Einen aktiven Hook deaktivieren',
@@ -609,16 +609,16 @@ export default {
   'No hook events found.': 'Keine Hook-Ereignisse gefunden.',
   '{{count}} hook configured': '{{count}} Hook konfiguriert',
   '{{count}} hooks configured': '{{count}} Hooks konfiguriert',
-  'This menu is read-only. To add or modify hooks, edit settings.json directly or ask Qwen Code.':
-    'Dieses Menü ist schreibgeschützt. Um Hooks hinzuzufügen oder zu ändern, bearbeiten Sie settings.json direkt oder fragen Sie Qwen Code.',
+  'This menu is read-only. To add or modify hooks, edit settings.json directly or ask Claudex Code.':
+    'Dieses Menü ist schreibgeschützt. Um Hooks hinzuzufügen oder zu ändern, bearbeiten Sie settings.json direkt oder fragen Sie Claudex Code.',
   'Enter to select · Esc to cancel': 'Enter zum Auswählen · Esc zum Abbrechen',
   // Hooks - Detail Step
   'Exit codes:': 'Exit-Codes:',
   'Configured hooks:': 'Konfigurierte Hooks:',
   'No hooks configured for this event.':
     'Für dieses Ereignis sind keine Hooks konfiguriert.',
-  'To add hooks, edit settings.json directly or ask Qwen.':
-    'Um Hooks hinzuzufügen, bearbeiten Sie settings.json direkt oder fragen Sie Qwen.',
+  'To add hooks, edit settings.json directly or ask Claudex.':
+    'Um Hooks hinzuzufügen, bearbeiten Sie settings.json direkt oder fragen Sie Claudex.',
   'Enter to select · Esc to go back': 'Enter zum Auswählen · Esc zum Zurück',
   // Hooks - Config Detail Step
   'Hook details': 'Hook-Details',
@@ -626,8 +626,8 @@ export default {
   'Extension:': 'Erweiterung:',
   'Desc:': 'Beschreibung:',
   'No hook config selected': 'Keine Hook-Konfiguration ausgewählt',
-  'To modify or remove this hook, edit settings.json directly or ask Qwen to help.':
-    'Um diesen Hook zu ändern oder zu entfernen, bearbeiten Sie settings.json direkt oder fragen Sie Qwen.',
+  'To modify or remove this hook, edit settings.json directly or ask Claudex to help.':
+    'Um diesen Hook zu ändern oder zu entfernen, bearbeiten Sie settings.json direkt oder fragen Sie Claudex.',
   // Hooks - Disabled Step
   'Hook Configuration - Disabled': 'Hook-Konfiguration - Deaktiviert',
   'All hooks are currently disabled. You have {{count}} that are not running.':
@@ -639,8 +639,8 @@ export default {
   'StatusLine will not be displayed': 'StatusLine wird nicht angezeigt',
   'Tool operations will proceed without hook validation':
     'Tool-Operationen werden ohne Hook-Validierung fortgesetzt',
-  'To re-enable hooks, remove "disableAllHooks" from settings.json or ask Qwen Code.':
-    'Um Hooks wieder zu aktivieren, entfernen Sie "disableAllHooks" aus settings.json oder fragen Sie Qwen Code.',
+  'To re-enable hooks, remove "disableAllHooks" from settings.json or ask Claudex Code.':
+    'Um Hooks wieder zu aktivieren, entfernen Sie "disableAllHooks" aus settings.json oder fragen Sie Claudex Code.',
   // Hooks - Source
   Project: 'Projekt',
   User: 'Benutzer',
@@ -661,8 +661,8 @@ export default {
   'When notifications are sent': 'Wenn Benachrichtigungen gesendet werden',
   'When the user submits a prompt': 'Wenn der Benutzer einen Prompt absendet',
   'When a new session is started': 'Wenn eine neue Sitzung gestartet wird',
-  'Right before Qwen Code concludes its response':
-    'Direkt bevor Qwen Code seine Antwort abschließt',
+  'Right before Claudex Code concludes its response':
+    'Direkt bevor Claudex Code seine Antwort abschließt',
   'When a subagent (Agent tool call) is started':
     'Wenn ein Subagent (Agent-Tool-Aufruf) gestartet wird',
   'Right before a subagent concludes its response':
@@ -706,7 +706,7 @@ export default {
     'stderr nur dem Benutzer anzeigen, aber mit Tool-Aufruf fortfahren',
   'block processing, erase original prompt, and show stderr to user only':
     'Verarbeitung blockieren, ursprünglichen Prompt löschen und stderr nur dem Benutzer anzeigen',
-  'stdout shown to Qwen': 'stdout dem Qwen anzeigen',
+  'stdout shown to Claudex': 'stdout dem Claudex anzeigen',
   'show stderr to user only (blocking errors ignored)':
     'stderr nur dem Benutzer anzeigen (Blockierungsfehler ignoriert)',
   'command completes successfully': 'Befehl erfolgreich abgeschlossen',
@@ -1009,8 +1009,8 @@ export default {
   // ============================================================================
   // Commands - Summary
   // ============================================================================
-  'Generate a project summary and save it to .qwen/PROJECT_SUMMARY.md':
-    'Projektzusammenfassung generieren und in .qwen/PROJECT_SUMMARY.md speichern',
+  'Generate a project summary and save it to .claudex/PROJECT_SUMMARY.md':
+    'Projektzusammenfassung generieren und in .claudex/PROJECT_SUMMARY.md speichern',
   'No chat client available to generate summary.':
     'Kein Chat-Client verfügbar, um Zusammenfassung zu generieren.',
   'Already generating summary, wait for previous request to complete':
@@ -1078,8 +1078,8 @@ export default {
     'Der Befehl /directory add wird in restriktiven Sandbox-Profilen nicht unterstützt. Bitte verwenden Sie --include-directories beim Starten der Sitzung.',
   "Error adding '{{path}}': {{error}}":
     "Fehler beim Hinzufügen von '{{path}}': {{error}}",
-  'Successfully added QWEN.md files from the following directories if there are:\n- {{directories}}':
-    'QWEN.md-Dateien aus folgenden Verzeichnissen erfolgreich hinzugefügt, falls vorhanden:\n- {{directories}}',
+  'Successfully added CLAUDEX.md files from the following directories if there are:\n- {{directories}}':
+    'CLAUDEX.md-Dateien aus folgenden Verzeichnissen erfolgreich hinzugefügt, falls vorhanden:\n- {{directories}}',
   'Error refreshing memory: {{error}}':
     'Fehler beim Aktualisieren des Speichers: {{error}}',
   'Successfully added directories:\n- {{directories}}':
@@ -1161,8 +1161,8 @@ export default {
   servers: 'Server',
   'Add MCP servers to your settings to get started.':
     'Fügen Sie MCP-Server zu Ihren Einstellungen hinzu, um zu beginnen.',
-  'Run qwen --debug to see error logs':
-    'Führen Sie qwen --debug aus, um Fehlerprotokolle anzuzeigen',
+  'Run claudex --debug to see error logs':
+    'Führen Sie claudex --debug aus, um Fehlerprotokolle anzuzeigen',
 
   // MCP OAuth Authentication
   'OAuth Authentication': 'OAuth-Authentifizierung',
@@ -1284,17 +1284,17 @@ export default {
     'Sie müssen eine Authentifizierungsmethode wählen, um fortzufahren. Drücken Sie erneut Strg+C zum Beenden.',
   'Terms of Services and Privacy Notice':
     'Nutzungsbedingungen und Datenschutzhinweis',
-  'Qwen OAuth': 'Qwen OAuth',
+  'Claudex OAuth': 'Claudex OAuth',
   'Discontinued — switch to Coding Plan or API Key':
     'Eingestellt — wechseln Sie zu Coding Plan oder API Key',
-  'Qwen OAuth free tier was discontinued on 2026-04-15. Run /auth to switch provider.':
-    'Das kostenlose Qwen OAuth-Kontingent wurde am 2026-04-15 eingestellt. Führen Sie /auth aus, um den Anbieter zu wechseln.',
-  'Qwen OAuth free tier was discontinued on 2026-04-15. Please select Coding Plan or API Key instead.':
-    'Das kostenlose Qwen OAuth-Kontingent wurde am 2026-04-15 eingestellt. Bitte wählen Sie Coding Plan oder API Key.',
-  'Qwen OAuth free tier was discontinued on 2026-04-15. Please select a model from another provider or run /auth to switch.':
-    'Das kostenlose Qwen OAuth-Angebot wurde am 2026-04-15 eingestellt. Bitte wählen Sie ein Modell eines anderen Anbieter oder führen Sie /auth aus, um zu wechseln.',
-  '\n⚠ Qwen OAuth free tier was discontinued on 2026-04-15. Please select another option.\n':
-    '\n⚠ Das kostenlose Qwen OAuth-Kontingent wurde am 2026-04-15 eingestellt. Bitte wählen Sie eine andere Option.\n',
+  'Claudex OAuth free tier was discontinued on 2026-04-15. Run /auth to switch provider.':
+    'Das kostenlose Claudex OAuth-Kontingent wurde am 2026-04-15 eingestellt. Führen Sie /auth aus, um den Anbieter zu wechseln.',
+  'Claudex OAuth free tier was discontinued on 2026-04-15. Please select Coding Plan or API Key instead.':
+    'Das kostenlose Claudex OAuth-Kontingent wurde am 2026-04-15 eingestellt. Bitte wählen Sie Coding Plan oder API Key.',
+  'Claudex OAuth free tier was discontinued on 2026-04-15. Please select a model from another provider or run /auth to switch.':
+    'Das kostenlose Claudex OAuth-Angebot wurde am 2026-04-15 eingestellt. Bitte wählen Sie ein Modell eines anderen Anbieter oder führen Sie /auth aus, um zu wechseln.',
+  '\n⚠ Claudex OAuth free tier was discontinued on 2026-04-15. Please select another option.\n':
+    '\n⚠ Das kostenlose Claudex OAuth-Kontingent wurde am 2026-04-15 eingestellt. Bitte wählen Sie eine andere Option.\n',
   'Paid \u00B7 Up to 6,000 requests/5 hrs \u00B7 All Alibaba Cloud Coding Plan Models':
     'Kostenpflichtig \u00B7 Bis zu 6.000 Anfragen/5 Std. \u00B7 Alle Alibaba Cloud Coding Plan Modelle',
   'Alibaba Cloud Coding Plan': 'Alibaba Cloud Coding Plan',
@@ -1307,29 +1307,29 @@ export default {
     'Anmeldung fehlgeschlagen. Meldung: {{message}}',
   'Authentication is enforced to be {{enforcedType}}, but you are currently using {{currentType}}.':
     'Authentifizierung ist auf {{enforcedType}} festgelegt, aber Sie verwenden derzeit {{currentType}}.',
-  'Qwen OAuth authentication timed out. Please try again.':
-    'Qwen OAuth-Authentifizierung abgelaufen. Bitte versuchen Sie es erneut.',
-  'Qwen OAuth authentication cancelled.':
-    'Qwen OAuth-Authentifizierung abgebrochen.',
-  'Qwen OAuth Authentication': 'Qwen OAuth-Authentifizierung',
+  'Claudex OAuth authentication timed out. Please try again.':
+    'Claudex OAuth-Authentifizierung abgelaufen. Bitte versuchen Sie es erneut.',
+  'Claudex OAuth authentication cancelled.':
+    'Claudex OAuth-Authentifizierung abgebrochen.',
+  'Claudex OAuth Authentication': 'Claudex OAuth-Authentifizierung',
   'Please visit this URL to authorize:':
     'Bitte besuchen Sie diese URL zur Autorisierung:',
   'Or scan the QR code below:': 'Oder scannen Sie den QR-Code unten:',
   'Waiting for authorization': 'Warten auf Autorisierung',
   'Time remaining:': 'Verbleibende Zeit:',
   '(Press ESC or CTRL+C to cancel)': '(ESC oder STRG+C zum Abbrechen drücken)',
-  'Qwen OAuth Authentication Timeout':
-    'Qwen OAuth-Authentifizierung abgelaufen',
+  'Claudex OAuth Authentication Timeout':
+    'Claudex OAuth-Authentifizierung abgelaufen',
   'OAuth token expired (over {{seconds}} seconds). Please select authentication method again.':
     'OAuth-Token abgelaufen (über {{seconds}} Sekunden). Bitte wählen Sie erneut eine Authentifizierungsmethode.',
   'Press any key to return to authentication type selection.':
     'Drücken Sie eine beliebige Taste, um zur Authentifizierungstypauswahl zurückzukehren.',
-  'Waiting for Qwen OAuth authentication...':
-    'Warten auf Qwen OAuth-Authentifizierung...',
-  'Note: Your existing API key in settings.json will not be cleared when using Qwen OAuth. You can switch back to OpenAI authentication later if needed.':
-    'Hinweis: Ihr bestehender API-Schlüssel in settings.json wird bei Verwendung von Qwen OAuth nicht gelöscht. Sie können später bei Bedarf zur OpenAI-Authentifizierung zurückwechseln.',
-  'Note: Your existing API key will not be cleared when using Qwen OAuth.':
-    'Hinweis: Ihr bestehender API-Schlüssel wird bei Verwendung von Qwen OAuth nicht gelöscht.',
+  'Waiting for Claudex OAuth authentication...':
+    'Warten auf Claudex OAuth-Authentifizierung...',
+  'Note: Your existing API key in settings.json will not be cleared when using Claudex OAuth. You can switch back to OpenAI authentication later if needed.':
+    'Hinweis: Ihr bestehender API-Schlüssel in settings.json wird bei Verwendung von Claudex OAuth nicht gelöscht. Sie können später bei Bedarf zur OpenAI-Authentifizierung zurückwechseln.',
+  'Note: Your existing API key will not be cleared when using Claudex OAuth.':
+    'Hinweis: Ihr bestehender API-Schlüssel wird bei Verwendung von Claudex OAuth nicht gelöscht.',
   'Authentication timed out. Please try again.':
     'Authentifizierung abgelaufen. Bitte versuchen Sie es erneut.',
   'Waiting for auth... (Press ESC or CTRL+C to cancel)':
@@ -1354,8 +1354,8 @@ export default {
     'Authentifizierung fehlgeschlagen. Meldung: {{message}}',
   'Authenticated successfully with {{authType}} credentials.':
     'Erfolgreich mit {{authType}}-Anmeldedaten authentifiziert.',
-  'Invalid QWEN_DEFAULT_AUTH_TYPE value: "{{value}}". Valid values are: {{validValues}}':
-    'Ungültiger QWEN_DEFAULT_AUTH_TYPE-Wert: "{{value}}". Gültige Werte sind: {{validValues}}',
+  'Invalid CLAUDEX_DEFAULT_AUTH_TYPE value: "{{value}}". Valid values are: {{validValues}}':
+    'Ungültiger CLAUDEX_DEFAULT_AUTH_TYPE-Wert: "{{value}}". Gültige Werte sind: {{validValues}}',
   'OpenAI Configuration Required': 'OpenAI-Konfiguration erforderlich',
   'Please enter your OpenAI configuration. You can get an API key from':
     'Bitte geben Sie Ihre OpenAI-Konfiguration ein. Sie können einen API-Schlüssel erhalten von',
@@ -1392,10 +1392,10 @@ export default {
   unknown: 'unbekannt',
   "Failed to switch model to '{{modelId}}'.\n\n{{error}}":
     "Modell konnte nicht auf '{{modelId}}' umgestellt werden.\n\n{{error}}",
-  'Qwen 3.6 Plus — efficient hybrid model with leading coding performance':
-    'Qwen 3.6 Plus — effizientes Hybridmodell mit führender Programmierleistung',
-  'The latest Qwen Vision model from Alibaba Cloud ModelStudio (version: qwen3-vl-plus-2025-09-23)':
-    'Das neueste Qwen Vision Modell von Alibaba Cloud ModelStudio (Version: qwen3-vl-plus-2025-09-23)',
+  'Claudex 3.6 Plus — efficient hybrid model with leading coding performance':
+    'Claudex 3.6 Plus — effizientes Hybridmodell mit führender Programmierleistung',
+  'The latest Claudex Vision model from Alibaba Cloud ModelStudio (version: claudex3-vl-plus-2025-09-23)':
+    'Das neueste Claudex Vision Modell von Alibaba Cloud ModelStudio (Version: claudex3-vl-plus-2025-09-23)',
 
   // ============================================================================
   // Dialogs - Permissions
@@ -1406,12 +1406,12 @@ export default {
   Ask: 'Fragen',
   Deny: 'Verweigern',
   Workspace: 'Arbeitsbereich',
-  "Qwen Code won't ask before using allowed tools.":
-    'Qwen Code fragt nicht, bevor erlaubte Tools verwendet werden.',
-  'Qwen Code will ask before using these tools.':
-    'Qwen Code fragt, bevor diese Tools verwendet werden.',
-  'Qwen Code is not allowed to use denied tools.':
-    'Qwen Code darf verweigerte Tools nicht verwenden.',
+  "Claudex Code won't ask before using allowed tools.":
+    'Claudex Code fragt nicht, bevor erlaubte Tools verwendet werden.',
+  'Claudex Code will ask before using these tools.':
+    'Claudex Code fragt, bevor diese Tools verwendet werden.',
+  'Claudex Code is not allowed to use denied tools.':
+    'Claudex Code darf verweigerte Tools nicht verwenden.',
   'Manage trusted directories for this workspace.':
     'Vertrauenswürdige Verzeichnisse für diesen Arbeitsbereich verwalten.',
   'Any use of the {{tool}} tool': 'Jede Verwendung des {{tool}}-Tools',
@@ -1421,12 +1421,12 @@ export default {
   'From project settings': 'Aus Projekteinstellungen',
   'From session': 'Aus Sitzung',
   'Project settings (local)': 'Projekteinstellungen (lokal)',
-  'Saved in .qwen/settings.local.json':
-    'Gespeichert in .qwen/settings.local.json',
+  'Saved in .claudex/settings.local.json':
+    'Gespeichert in .claudex/settings.local.json',
   'Project settings': 'Projekteinstellungen',
-  'Checked in at .qwen/settings.json': 'Eingecheckt in .qwen/settings.json',
+  'Checked in at .claudex/settings.json': 'Eingecheckt in .claudex/settings.json',
   'User settings': 'Benutzereinstellungen',
-  'Saved in at ~/.qwen/settings.json': 'Gespeichert in ~/.qwen/settings.json',
+  'Saved in at ~/.claudex/settings.json': 'Gespeichert in ~/.claudex/settings.json',
   'Add a new rule…': 'Neue Regel hinzufügen…',
   'Add {{type}} permission rule': '{{type}}-Berechtigungsregel hinzufügen',
   'Permission rules are a tool name, optionally followed by a specifier in parentheses.':
@@ -1451,10 +1451,10 @@ export default {
   // Workspace directory management
   'Add directory…': 'Verzeichnis hinzufügen…',
   'Add directory to workspace': 'Verzeichnis zum Arbeitsbereich hinzufügen',
-  'Qwen Code can read files in the workspace, and make edits when auto-accept edits is on.':
-    'Qwen Code kann Dateien im Arbeitsbereich lesen und Bearbeitungen vornehmen, wenn die automatische Akzeptierung aktiviert ist.',
-  'Qwen Code will be able to read files in this directory and make edits when auto-accept edits is on.':
-    'Qwen Code kann Dateien in diesem Verzeichnis lesen und Bearbeitungen vornehmen, wenn die automatische Akzeptierung aktiviert ist.',
+  'Claudex Code can read files in the workspace, and make edits when auto-accept edits is on.':
+    'Claudex Code kann Dateien im Arbeitsbereich lesen und Bearbeitungen vornehmen, wenn die automatische Akzeptierung aktiviert ist.',
+  'Claudex Code will be able to read files in this directory and make edits when auto-accept edits is on.':
+    'Claudex Code kann Dateien in diesem Verzeichnis lesen und Bearbeitungen vornehmen, wenn die automatische Akzeptierung aktiviert ist.',
   'Enter the path to the directory:': 'Pfad zum Verzeichnis eingeben:',
   'Enter directory path…': 'Verzeichnispfad eingeben…',
   'Tab to complete · Enter to add · Esc to cancel':
@@ -1542,8 +1542,8 @@ export default {
     '1. Stellen Sie Fragen, bearbeiten Sie Dateien oder führen Sie Befehle aus.',
   '2. Be specific for the best results.':
     '2. Seien Sie spezifisch für die besten Ergebnisse.',
-  'files to customize your interactions with Qwen Code.':
-    'Dateien, um Ihre Interaktionen mit Qwen Code anzupassen.',
+  'files to customize your interactions with Claudex Code.':
+    'Dateien, um Ihre Interaktionen mit Claudex Code anzupassen.',
   'for more information.': 'für weitere Informationen.',
 
   // ============================================================================
@@ -1815,12 +1815,12 @@ export default {
     'Verwenden Sie /bug, um Probleme an die Betreuer zu melden, wenn etwas schiefgeht.',
   'Switch auth type quickly with /auth.':
     'Wechseln Sie den Authentifizierungstyp schnell mit /auth.',
-  'You can run any shell commands from Qwen Code using ! (e.g. !ls).':
-    'Sie können beliebige Shell-Befehle in Qwen Code mit ! ausführen (z. B. !ls).',
+  'You can run any shell commands from Claudex Code using ! (e.g. !ls).':
+    'Sie können beliebige Shell-Befehle in Claudex Code mit ! ausführen (z. B. !ls).',
   'Type / to open the command popup; Tab autocompletes slash commands and saved prompts.':
     'Geben Sie / ein, um das Befehlsmenü zu öffnen; Tab vervollständigt Slash-Befehle und gespeicherte Prompts.',
-  'You can resume a previous conversation by running qwen --continue or qwen --resume.':
-    'Sie können eine frühere Unterhaltung mit qwen --continue oder qwen --resume fortsetzen.',
+  'You can resume a previous conversation by running claudex --continue or claudex --resume.':
+    'Sie können eine frühere Unterhaltung mit claudex --continue oder claudex --resume fortsetzen.',
   'You can switch permission mode quickly with Shift+Tab or /approval-mode.':
     'Sie können den Berechtigungsmodus schnell mit Shift+Tab oder /approval-mode wechseln.',
   'You can switch permission mode quickly with Tab or /approval-mode.':
@@ -1829,8 +1829,8 @@ export default {
     'Probieren Sie /insight, um personalisierte Erkenntnisse aus Ihrem Chatverlauf zu erstellen.',
   'Press Ctrl+O to toggle compact mode — hide tool output and thinking for a cleaner view.':
     'Strg+O drücken, um den Kompaktmodus umzuschalten — Tool-Ausgabe und Denkprozess ausblenden.',
-  'Add a QWEN.md file to give Qwen Code persistent project context.':
-    'Fügen Sie eine QWEN.md-Datei hinzu, um Qwen Code dauerhaften Projektkontext zu geben.',
+  'Add a CLAUDEX.md file to give Claudex Code persistent project context.':
+    'Fügen Sie eine CLAUDEX.md-Datei hinzu, um Claudex Code dauerhaften Projektkontext zu geben.',
   'Use /btw to ask a quick side question without disrupting the conversation.':
     'Verwenden Sie /btw, um eine kurze Nebenfrage zu stellen, ohne die Unterhaltung zu unterbrechen.',
   'Context is almost full! Run /compress now or start /new to continue.':
@@ -1964,9 +1964,9 @@ export default {
   // ============================================================================
   // Commands - Auth
   // ============================================================================
-  'Configure Qwen authentication information with Qwen-OAuth or Alibaba Cloud Coding Plan':
-    'Qwen-Authentifizierung mit Qwen-OAuth oder Alibaba Cloud Coding Plan konfigurieren',
-  'Authenticate using Qwen OAuth': 'Mit Qwen OAuth authentifizieren',
+  'Configure Claudex authentication information with Claudex-OAuth or Alibaba Cloud Coding Plan':
+    'Claudex-Authentifizierung mit Claudex-OAuth oder Alibaba Cloud Coding Plan konfigurieren',
+  'Authenticate using Claudex OAuth': 'Mit Claudex OAuth authentifizieren',
   'Authenticate using Alibaba Cloud Coding Plan':
     'Mit Alibaba Cloud Coding Plan authentifizieren',
   'Region for Coding Plan (china/global)':
@@ -1976,12 +1976,12 @@ export default {
     'Aktuellen Authentifizierungsstatus anzeigen',
   'Authentication completed successfully.':
     'Authentifizierung erfolgreich abgeschlossen.',
-  'Starting Qwen OAuth authentication...':
-    'Qwen OAuth-Authentifizierung wird gestartet...',
-  'Successfully authenticated with Qwen OAuth.':
-    'Erfolgreich mit Qwen OAuth authentifiziert.',
-  'Failed to authenticate with Qwen OAuth: {{error}}':
-    'Authentifizierung mit Qwen OAuth fehlgeschlagen: {{error}}',
+  'Starting Claudex OAuth authentication...':
+    'Claudex OAuth-Authentifizierung wird gestartet...',
+  'Successfully authenticated with Claudex OAuth.':
+    'Erfolgreich mit Claudex OAuth authentifiziert.',
+  'Failed to authenticate with Claudex OAuth: {{error}}':
+    'Authentifizierung mit Claudex OAuth fehlgeschlagen: {{error}}',
   'Processing Alibaba Cloud Coding Plan authentication...':
     'Alibaba Cloud Coding Plan-Authentifizierung wird verarbeitet...',
   'Successfully authenticated with Alibaba Cloud Coding Plan.':
@@ -2001,21 +2001,21 @@ export default {
     '⚠️  Keine Authentifizierungsmethode konfiguriert.\n',
   'Run one of the following commands to get started:\n':
     'Führen Sie einen der folgenden Befehle aus, um zu beginnen:\n',
-  '  qwen auth qwen-oauth     - Authenticate with Qwen OAuth (discontinued)':
-    '  qwen auth qwen-oauth     - Mit Qwen OAuth authentifizieren (eingestellt)',
-  '  qwen auth coding-plan      - Authenticate with Alibaba Cloud Coding Plan\n':
-    '  qwen auth coding-plan      - Mit Alibaba Cloud Coding Plan authentifizieren\n',
+  '  claudex auth claudex-oauth     - Authenticate with Claudex OAuth (discontinued)':
+    '  claudex auth claudex-oauth     - Mit Claudex OAuth authentifizieren (eingestellt)',
+  '  claudex auth coding-plan      - Authenticate with Alibaba Cloud Coding Plan\n':
+    '  claudex auth coding-plan      - Mit Alibaba Cloud Coding Plan authentifizieren\n',
   'Or simply run:': 'Oder einfach ausführen:',
-  '  qwen auth                - Interactive authentication setup\n':
-    '  qwen auth                - Interaktive Authentifizierungseinrichtung\n',
-  '✓ Authentication Method: Qwen OAuth':
-    '✓ Authentifizierungsmethode: Qwen OAuth',
+  '  claudex auth                - Interactive authentication setup\n':
+    '  claudex auth                - Interaktive Authentifizierungseinrichtung\n',
+  '✓ Authentication Method: Claudex OAuth':
+    '✓ Authentifizierungsmethode: Claudex OAuth',
   '  Type: Free tier (discontinued 2026-04-15)':
     '  Typ: Kostenloses Kontingent (eingestellt 2026-04-15)',
   '  Limit: No longer available': '  Limit: Nicht mehr verfügbar',
-  'Qwen OAuth free tier was discontinued on 2026-04-15. Run /auth to switch to Coding Plan, OpenRouter, Fireworks AI, or another provider.':
-    'Das kostenlose Qwen OAuth-Kontingent wurde am 2026-04-15 eingestellt. Führen Sie /auth aus, um zu Coding Plan, OpenRouter, Fireworks AI oder einem anderen Anbieter zu wechseln.',
-  '  Models: Qwen latest models\n': '  Modelle: Qwen neueste Modelle\n',
+  'Claudex OAuth free tier was discontinued on 2026-04-15. Run /auth to switch to Coding Plan, OpenRouter, Fireworks AI, or another provider.':
+    'Das kostenlose Claudex OAuth-Kontingent wurde am 2026-04-15 eingestellt. Führen Sie /auth aus, um zu Coding Plan, OpenRouter, Fireworks AI oder einem anderen Anbieter zu wechseln.',
+  '  Models: Claudex latest models\n': '  Modelle: Claudex neueste Modelle\n',
   '✓ Authentication Method: Alibaba Cloud Coding Plan':
     '✓ Authentifizierungsmethode: Alibaba Cloud Coding Plan',
   '中国 (China) - 阿里云百炼': '中国 (China) - 阿里云百炼',
@@ -2028,8 +2028,8 @@ export default {
     '⚠️  Authentifizierungsmethode: Alibaba Cloud Coding Plan (Unvollständig)',
   '  Issue: API key not found in environment or settings\n':
     '  Problem: API-Schlüssel nicht in Umgebung oder Einstellungen gefunden\n',
-  '  Run `qwen auth coding-plan` to re-configure.\n':
-    '  Führen Sie `qwen auth coding-plan` aus, um neu zu konfigurieren.\n',
+  '  Run `claudex auth coding-plan` to re-configure.\n':
+    '  Führen Sie `claudex auth coding-plan` aus, um neu zu konfigurieren.\n',
   '✓ Authentication Method: {{type}}': '✓ Authentifizierungsmethode: {{type}}',
   '  Status: Configured\n': '  Status: Konfiguriert\n',
   'Failed to check authentication status: {{error}}':
@@ -2058,5 +2058,5 @@ export default {
   'Not in plan mode. Use "/plan" to enter plan mode first.':
     'Not in plan mode. Use "/plan" to enter plan mode first.',
 
-  "Set up Qwen Code's status line UI": "Set up Qwen Code's status line UI",
+  "Set up Claudex Code's status line UI": "Set up Claudex Code's status line UI",
 };

@@ -80,7 +80,7 @@ Read **all** applicable rule sources below and combine their contents:
 1. `.claudex/review-rules.md` (Claudex native)
 2. Copilot-compatible: prefer `.github/copilot-instructions.md`; if it does not exist, fall back to `copilot-instructions.md`. Do **not** load both.
 3. `AGENTS.md` — extract only the `## Code Review` section if present
-4. `QWEN.md` — extract only the `## Code Review` section if present
+4. `CLAUDEX.md` — extract only the `## Code Review` section if present
 
 If any rules were found, prepend the combined content to each **LLM-based review agent's** (Agents 1-4) instructions:
 "In addition to the standard review criteria, you MUST also enforce these project-specific rules:

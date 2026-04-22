@@ -270,7 +270,7 @@ Exclamation commands allow you to execute system commands directly within Claude
 | `!<shell command>` | Execute command in sub-Shell                                       | `!ls -la`, `!git status`               |
 | Standalone `!`     | Switch Shell mode, any input is executed directly as Shell command | `!`(enter) → Input command → `!`(exit) |
 
-Environment Variables: Commands executed via `!` will set the `QWEN_CODE=1` environment variable.
+Environment Variables: Commands executed via `!` will set the `CLAUDEX_CODE=1` environment variable.
 
 ## 4. Custom Commands
 

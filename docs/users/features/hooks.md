@@ -67,7 +67,7 @@ Command hooks execute commands via child processes. Input JSON is passed through
         "hooks": [
           {
             "type": "command",
-            "command": "$QWEN_PROJECT_DIR/.claudex/hooks/security-check.sh",
+            "command": "$CLAUDEX_PROJECT_DIR/.claudex/hooks/security-check.sh",
             "name": "security-check",
             "timeout": 10000
           }
@@ -820,7 +820,7 @@ Only `command` type supports asynchronous execution. Setting `"async": true` run
         "hooks": [
           {
             "type": "command",
-            "command": "$QWEN_PROJECT_DIR/.claudex/hooks/run-tests-async.sh",
+            "command": "$CLAUDEX_PROJECT_DIR/.claudex/hooks/run-tests-async.sh",
             "async": true,
             "timeout": 300000
           }

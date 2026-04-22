@@ -35,7 +35,7 @@ const argv = yargs(hideBin(process.argv)).option('q', {
 let claudexSandbox = process.env.CLAUDEX_SANDBOX;
 
 if (!claudexSandbox) {
-  const userSettingsFile = join(os.homedir(), '.qwen', 'settings.json');
+  const userSettingsFile = join(os.homedir(), '.claudex', 'settings.json');
   if (existsSync(userSettingsFile)) {
     const settings = JSON.parse(
       stripJsonComments(readFileSync(userSettingsFile, 'utf-8')),
@@ -49,10 +49,10 @@ if (!claudexSandbox) {
 if (!claudexSandbox) {
   let currentDir = process.cwd();
   while (true) {
-    const qwenEnv = join(currentDir, '.qwen', '.env');
+    const claudexEnv = join(currentDir, '.claudex', '.env');
     const regularEnv = join(currentDir, '.env');
-    if (existsSync(qwenEnv)) {
-      dotenv.config({ path: qwenEnv, quiet: true });
+    if (existsSync(claudexEnv)) {
+      dotenv.config({ path: claudexEnv, quiet: true });
       break;
     } else if (existsSync(regularEnv)) {
       dotenv.config({ path: regularEnv, quiet: true });

@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -79,10 +79,10 @@ describe('modelCommand', () => {
     });
   });
 
-  it('should return dialog action for QWEN_OAUTH auth type', async () => {
+  it('should return dialog action for CLAUDEX_OAUTH auth type', async () => {
     const mockConfig = createMockConfig({
       model: 'test-model',
-      authType: AuthType.QWEN_OAUTH,
+      authType: AuthType.CLAUDEX_OAUTH,
     });
     mockContext.services.config = mockConfig as Config;
 

@@ -17,9 +17,9 @@ export * from './permissions/index.js';
 
 // Model configuration
 export {
-  DEFAULT_QWEN_MODEL,
-  DEFAULT_QWEN_FLASH_MODEL,
-  DEFAULT_QWEN_EMBEDDING_MODEL,
+  DEFAULT_CLAUDEX_MODEL,
+  DEFAULT_CLAUDEX_FLASH_MODEL,
+  DEFAULT_CLAUDEX_EMBEDDING_MODEL,
   MAINLINE_CODER_MODEL,
 } from './config/models.js';
 export {
@@ -38,7 +38,7 @@ export {
   type ModelProvidersConfig,
   type ModelSwitchMetadata,
   type OnModelChangeCallback,
-  QWEN_OAUTH_MODELS,
+  CLAUDEX_OAUTH_MODELS,
   resolveModelConfig,
   type ResolvedModelConfig,
   validateModelConfig,
@@ -211,7 +211,7 @@ export type {
 // Telemetry
 // ============================================================================
 
-export { QwenLogger } from './telemetry/qwen-logger/qwen-logger.js';
+export { ClaudexLogger } from './telemetry/claudex-logger/claudex-logger.js';
 export * from './telemetry/index.js';
 export {
   logAuth,
@@ -351,11 +351,11 @@ export {
   generateToolUseId,
 } from './core/toolHookTriggers.js';
 
-// Dead-letter stubs for removed OAuth/Qwen functionality
+// Dead-letter stubs for removed OAuth/Claudex functionality
 import EventEmitter from 'node:events';
 export async function clearCachedCredentialFile(): Promise<void> {}
-export enum QwenOAuth2Event { AuthUri = 'auth_uri', TokenRefreshed = 'token_refreshed', AuthProgress = 'auth_progress' }
-export const qwenOAuth2Events = new EventEmitter();
+export enum ClaudexOAuth2Event { AuthUri = 'auth_uri', TokenRefreshed = 'token_refreshed', AuthProgress = 'auth_progress' }
+export const claudexOAuth2Events = new EventEmitter();
 export interface DeviceAuthorizationData {
   device_code: string;
   user_code: string;

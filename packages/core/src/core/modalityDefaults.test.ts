@@ -105,42 +105,42 @@ describe('defaultModalities', () => {
     });
   });
 
-  describe('Qwen', () => {
-    it('returns image + video for qwen-vl-max', () => {
-      const m = defaultModalities('qwen-vl-max');
+  describe('Claudex', () => {
+    it('returns image + video for claudex-vl-max', () => {
+      const m = defaultModalities('claudex-vl-max');
       expect(m.image).toBe(true);
       expect(m.video).toBe(true);
       expect(m.pdf).toBeUndefined();
       expect(m.audio).toBeUndefined();
     });
 
-    it('returns image + video for qwen3-vl-plus', () => {
-      const m = defaultModalities('qwen3-vl-plus');
+    it('returns image + video for claudex3-vl-plus', () => {
+      const m = defaultModalities('claudex3-vl-plus');
       expect(m.image).toBe(true);
       expect(m.video).toBe(true);
     });
 
-    it('returns text-only for qwen3-coder-plus', () => {
-      expect(defaultModalities('qwen3-coder-plus')).toEqual({});
+    it('returns text-only for claudex3-coder-plus', () => {
+      expect(defaultModalities('claudex3-coder-plus')).toEqual({});
     });
 
-    it('returns image + video for coder-model (same as qwen3.5-plus)', () => {
+    it('returns image + video for coder-model (same as claudex3.5-plus)', () => {
       expect(defaultModalities('coder-model')).toEqual({
         image: true,
         video: true,
       });
     });
 
-    it('returns image + video for qwen3.5-plus', () => {
-      const m = defaultModalities('qwen3.5-plus');
+    it('returns image + video for claudex3.5-plus', () => {
+      const m = defaultModalities('claudex3.5-plus');
       expect(m.image).toBe(true);
       expect(m.video).toBe(true);
       expect(m.pdf).toBeUndefined();
       expect(m.audio).toBeUndefined();
     });
 
-    it('returns text-only for qwen-turbo', () => {
-      expect(defaultModalities('qwen-turbo')).toEqual({});
+    it('returns text-only for claudex-turbo', () => {
+      expect(defaultModalities('claudex-turbo')).toEqual({});
     });
   });
 

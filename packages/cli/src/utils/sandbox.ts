@@ -165,8 +165,8 @@ function entrypoint(workdir: string, cliArgs: string[]): string[] {
         ? 'npm run debug --'
         : 'npm rebuild && npm run start --'
       : process.env['DEBUG']
-        ? `node --inspect-brk=0.0.0.0:${process.env['DEBUG_PORT'] || '9229'} $(which qwen)`
-        : 'qwen';
+        ? `node --inspect-brk=0.0.0.0:${process.env['DEBUG_PORT'] || '9229'} $(which claudex)`
+        : 'claudex';
 
   const args = [...shellCmds, cliCmd, ...quotedCliArgs];
   return ['bash', '-c', args.join(' ')];
@@ -265,7 +265,7 @@ export async function start_sandbox(
     );
     // start and set up proxy if CLAUDEX_SANDBOX_PROXY_COMMAND is set
     const proxyCommand =
-      process.env['CLAUDEX_SANDBOX_PROXY_COMMAND'] ?? process.env['QWEN_SANDBOX_PROXY_COMMAND'];
+      process.env['CLAUDEX_SANDBOX_PROXY_COMMAND'] ?? process.env['CLAUDEX_SANDBOX_PROXY_COMMAND'];
     let proxyProcess: ChildProcess | undefined = undefined;
     let sandboxProcess: ChildProcess | undefined = undefined;
     const sandboxEnv = { ...process.env };
@@ -338,7 +338,7 @@ export async function start_sandbox(
 
   writeStderrLine(`hopping into sandbox (command: ${config.command}) ...`);
 
-  // determine full path for qwen-code to distinguish linked vs installed setting
+  // determine full path for claudex-code to distinguish linked vs installed setting
   const gcPath = fs.realpathSync(process.argv[1]);
 
   const projectSandboxDockerfile = path.join(
@@ -358,7 +358,7 @@ export async function start_sandbox(
     if (!gcPath.includes('claudex/packages/')) {
       throw new FatalSandboxError(
         'Cannot build sandbox using installed Claudex binary; ' +
-          'run `npm link ./packages/cli` under QwenCode-cli repo to switch to linked binary.',
+          'run `npm link ./packages/cli` under ClaudexCode-cli repo to switch to linked binary.',
       );
     } else {
       writeStderrLine('building sandbox ...');
@@ -501,7 +501,7 @@ export async function start_sandbox(
   // copy as both upper-case and lower-case as is required by some utilities
   // CLAUDEX_SANDBOX_PROXY_COMMAND implies HTTPS_PROXY unless HTTP_PROXY is set
   const proxyCommand =
-    process.env['CLAUDEX_SANDBOX_PROXY_COMMAND'] ?? process.env['QWEN_SANDBOX_PROXY_COMMAND'];
+    process.env['CLAUDEX_SANDBOX_PROXY_COMMAND'] ?? process.env['CLAUDEX_SANDBOX_PROXY_COMMAND'];
 
   if (proxyCommand) {
     let proxy =
@@ -543,7 +543,7 @@ export async function start_sandbox(
   // name container after image, plus random suffix to avoid conflicts
   const imageName = parseImageName(image);
   const isIntegrationTest =
-    (process.env['CLAUDEX_INTEGRATION_TEST'] ?? process.env['QWEN_CODE_INTEGRATION_TEST']) === 'true';
+    (process.env['CLAUDEX_INTEGRATION_TEST'] ?? process.env['CLAUDEX_CODE_INTEGRATION_TEST']) === 'true';
   let containerName;
   if (isIntegrationTest) {
     containerName = `claudex-integration-test-${randomBytes(4).toString(
@@ -567,7 +567,7 @@ export async function start_sandbox(
 
   // copy CLAUDEX_TEST_VAR for integration tests
   const testVar =
-    process.env['CLAUDEX_TEST_VAR'] ?? process.env['QWEN_CODE_TEST_VAR'];
+    process.env['CLAUDEX_TEST_VAR'] ?? process.env['CLAUDEX_CODE_TEST_VAR'];
   if (testVar) {
     args.push('--env', `CLAUDEX_TEST_VAR=${testVar}`);
   }
@@ -580,7 +580,7 @@ export async function start_sandbox(
     args.push('--env', `GOOGLE_API_KEY=${process.env['GOOGLE_API_KEY']}`);
   }
 
-  // copy OPENAI_API_KEY and related env vars for Qwen
+  // copy OPENAI_API_KEY and related env vars for Claudex
   if (process.env['OPENAI_API_KEY']) {
     args.push('--env', `OPENAI_API_KEY=${process.env['OPENAI_API_KEY']}`);
   }
@@ -719,13 +719,13 @@ export async function start_sandbox(
 
   // Check if we should use current user's UID/GID in sandbox
   // In integration test mode, we still respect SANDBOX_SET_UID_GID to allow
-  // tests that need to access host's ~/.qwen (e.g., --resume functionality)
+  // tests that need to access host's ~/.claudex (e.g., --resume functionality)
   const useCurrentUser = await shouldUseCurrentUserInSandbox();
 
   if (useCurrentUser) {
     // SANDBOX_SET_UID_GID is enabled: create user with host's UID/GID
     // This includes integration test mode with SANDBOX_SET_UID_GID=true,
-    // allowing tests that need to access host's ~/.qwen (e.g., --resume) to work.
+    // allowing tests that need to access host's ~/.claudex (e.g., --resume) to work.
     // For the user-creation logic to work, the container must start as root.
     // The entrypoint script then handles dropping privileges to the correct user.
     args.push('--user', 'root');
@@ -735,10 +735,10 @@ export async function start_sandbox(
 
     // Instead of passing --user to the main sandbox container, we let it
     // start as root, then create a user with the host's UID/GID, and
-    // finally switch to that user to run the qwen process. This is
+    // finally switch to that user to run the claudex process. This is
     // necessary on Linux to ensure the user exists within the
     // container's /etc/passwd file, which is required by os.userInfo().
-    const username = 'qwen';
+    const username = 'claudex';
     const homeDir = getContainerPath(os.homedir());
 
     const setupUserCommands = [

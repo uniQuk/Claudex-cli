@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -304,7 +304,7 @@ Valid skill.
 
   describe('parseModelField', () => {
     it('should return the model string for a valid model', () => {
-      expect(parseModelField({ model: 'qwen-max' })).toBe('qwen-max');
+      expect(parseModelField({ model: 'claudex-max' })).toBe('claudex-max');
     });
 
     it('should return undefined when model is omitted', () => {
@@ -324,7 +324,7 @@ Valid skill.
     });
 
     it('should trim whitespace from model string', () => {
-      expect(parseModelField({ model: '  qwen-max  ' })).toBe('qwen-max');
+      expect(parseModelField({ model: '  claudex-max  ' })).toBe('claudex-max');
     });
 
     it('should throw for non-string types', () => {
@@ -349,15 +349,15 @@ Valid skill.
       mockParseYaml.mockReturnValue({
         name: 'model-test',
         description: 'Test skill with model',
-        model: 'qwen-max',
+        model: 'claudex-max',
       });
 
       const config = parseSkillContent(
-        `---\nname: model-test\ndescription: Test skill with model\nmodel: qwen-max\n---\n\nBody text.`,
+        `---\nname: model-test\ndescription: Test skill with model\nmodel: claudex-max\n---\n\nBody text.`,
         testFilePath,
       );
 
-      expect(config.model).toBe('qwen-max');
+      expect(config.model).toBe('claudex-max');
     });
 
     it('should set model to undefined when omitted', () => {

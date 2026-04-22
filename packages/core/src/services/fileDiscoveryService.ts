@@ -49,7 +49,7 @@ export class FileDiscoveryService {
       if (options.respectGitIgnore && this.shouldGitIgnoreFile(filePath)) {
         return false;
       }
-      if (options.respectClaudexIgnore && this.shouldQwenIgnoreFile(filePath)) {
+      if (options.respectClaudexIgnore && this.shouldClaudexIgnoreFile(filePath)) {
         return false;
       }
       return true;
@@ -77,7 +77,7 @@ export class FileDiscoveryService {
         continue;
       }
 
-      if (opts.respectClaudexIgnore && this.shouldQwenIgnoreFile(filePath)) {
+      if (opts.respectClaudexIgnore && this.shouldClaudexIgnoreFile(filePath)) {
         claudexIgnoredCount++;
         continue;
       }
@@ -103,9 +103,9 @@ export class FileDiscoveryService {
   }
 
   /**
-   * Checks if a single file should be qwen-ignored
+   * Checks if a single file should be claudex-ignored
    */
-  shouldQwenIgnoreFile(filePath: string): boolean {
+  shouldClaudexIgnoreFile(filePath: string): boolean {
     if (this.claudexIgnoreFilter) {
       return this.claudexIgnoreFilter.isIgnored(filePath);
     }
@@ -127,7 +127,7 @@ export class FileDiscoveryService {
     if (respectGitIgnore && this.shouldGitIgnoreFile(filePath)) {
       return true;
     }
-    if (respectClaudexIgnore && this.shouldQwenIgnoreFile(filePath)) {
+    if (respectClaudexIgnore && this.shouldClaudexIgnoreFile(filePath)) {
       return true;
     }
     return false;
@@ -136,7 +136,7 @@ export class FileDiscoveryService {
   /**
    * Returns loaded patterns from .claudexignore
    */
-  getQwenIgnorePatterns(): string[] {
+  getClaudexIgnorePatterns(): string[] {
     return this.claudexIgnoreFilter?.getPatterns() ?? [];
   }
 }

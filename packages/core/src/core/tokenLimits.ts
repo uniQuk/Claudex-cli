@@ -57,10 +57,10 @@ export function normalize(model: string): string {
   // - dates (e.g., -20250219), -v1, version numbers, 'latest', 'preview' etc.
   s = s.replace(/-preview/g, '');
   // Special handling for model names that include date/version as part of the model identifier
-  // - Qwen models: qwen-plus-latest, qwen-flash-latest, qwen-vl-max-latest
+  // - Claudex models: claudex-plus-latest, claudex-flash-latest, claudex-vl-max-latest
   // - Kimi models: kimi-k2-0905, kimi-k2-0711, etc. (keep date for version distinction)
   if (
-    !s.match(/^qwen-(?:plus|flash|vl-max)-latest$/) &&
+    !s.match(/^claudex-(?:plus|flash|vl-max)-latest$/) &&
     !s.match(/^kimi-k2-\d{4}$/)
   ) {
     // Regex breakdown:
@@ -106,21 +106,21 @@ const PATTERNS: Array<[RegExp, TokenCount]> = [
   [/^claude-/, LIMITS['200k']], // All Claude models: 200K
 
   // -------------------
-  // Alibaba / Qwen
+  // Alibaba / Claudex
   // -------------------
   // Commercial API models (1,000,000 context)
-  [/^qwen3-coder-plus/, LIMITS['1m']],
-  [/^qwen3-coder-flash/, LIMITS['1m']],
-  [/^qwen3\.\d/, LIMITS['1m']],
-  [/^qwen-plus-latest$/, LIMITS['1m']],
-  [/^qwen-flash-latest$/, LIMITS['1m']],
+  [/^claudex3-coder-plus/, LIMITS['1m']],
+  [/^claudex3-coder-flash/, LIMITS['1m']],
+  [/^claudex3\.\d/, LIMITS['1m']],
+  [/^claudex-plus-latest$/, LIMITS['1m']],
+  [/^claudex-flash-latest$/, LIMITS['1m']],
   [/^coder-model$/, LIMITS['1m']],
   // Commercial API models (256K context)
-  [/^qwen3-max/, LIMITS['256k']],
-  // Open-source Qwen3 variants: 256K native
-  [/^qwen3-coder-/, LIMITS['256k']],
-  // Qwen fallback (VL, turbo, plus, 2.5, etc.): 128K
-  [/^qwen/, LIMITS['256k']],
+  [/^claudex3-max/, LIMITS['256k']],
+  // Open-source Claudex3 variants: 256K native
+  [/^claudex3-coder-/, LIMITS['256k']],
+  // Claudex fallback (VL, turbo, plus, 2.5, etc.): 128K
+  [/^claudex/, LIMITS['256k']],
 
   // -------------------
   // DeepSeek
@@ -170,10 +170,10 @@ const OUTPUT_PATTERNS: Array<[RegExp, TokenCount]> = [
   [/^claude-sonnet-4-6/, LIMITS['64k']], // Sonnet 4.6: 64K
   [/^claude-/, LIMITS['64k']], // Claude fallback: 64K
 
-  // Alibaba / Qwen
-  [/^qwen3\.\d/, LIMITS['64k']],
+  // Alibaba / Claudex
+  [/^claudex3\.\d/, LIMITS['64k']],
   [/^coder-model$/, LIMITS['64k']],
-  [/^qwen/, LIMITS['32k']], // Qwen fallback (VL, turbo, plus, etc.): 8K
+  [/^claudex/, LIMITS['32k']], // Claudex fallback (VL, turbo, plus, etc.): 8K
 
   // DeepSeek
   [/^deepseek-reasoner/, LIMITS['64k']],

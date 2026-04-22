@@ -16,8 +16,8 @@ export * from './loggers.js';
 export * from './types.js';
 export * from './uiTelemetry.js';
 
-/** @deprecated Dead-letter stub for QwenLogger — no-op class. */
-export class QwenLogger {
+/** @deprecated Dead-letter stub for ClaudexLogger — no-op class. */
+export class ClaudexLogger {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   logStartSessionEvent(_args: unknown): void {}
 }

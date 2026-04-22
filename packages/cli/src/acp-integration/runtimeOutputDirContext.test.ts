@@ -20,13 +20,13 @@ describe('runWithAcpRuntimeOutputDir', () => {
     const settings = {
       merged: {
         advanced: {
-          runtimeOutputDir: '.qwen-runtime',
+          runtimeOutputDir: '.claudex-runtime',
         },
       },
     } as LoadedSettings;
 
     await runWithAcpRuntimeOutputDir(settings, cwd, async () => {
-      expect(Storage.getRuntimeBaseDir()).toBe(path.join(cwd, '.qwen-runtime'));
+      expect(Storage.getRuntimeBaseDir()).toBe(path.join(cwd, '.claudex-runtime'));
     });
 
     expect(Storage.getRuntimeBaseDir()).toBe(Storage.getGlobalClaudexDir());

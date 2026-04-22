@@ -57,20 +57,20 @@ describe('showAuthStatus', () => {
       expect.stringContaining('No authentication method configured'),
     );
     expect(writeStdoutLine).toHaveBeenCalledWith(
-      expect.stringContaining('qwen auth qwen-oauth'),
+      expect.stringContaining('claudex auth claudex-oauth'),
     );
     expect(writeStdoutLine).toHaveBeenCalledWith(
-      expect.stringContaining('qwen auth coding-plan'),
+      expect.stringContaining('claudex auth coding-plan'),
     );
     expect(process.exit).toHaveBeenCalledWith(0);
   });
 
-  it('should show Qwen OAuth status when configured', async () => {
+  it('should show Claudex OAuth status when configured', async () => {
     vi.mocked(loadSettings).mockReturnValue(
       createMockSettings({
         security: {
           auth: {
-            selectedType: AuthType.QWEN_OAUTH,
+            selectedType: AuthType.CLAUDEX_OAUTH,
           },
         },
       }),
@@ -79,7 +79,7 @@ describe('showAuthStatus', () => {
     await showAuthStatus();
 
     expect(writeStdoutLine).toHaveBeenCalledWith(
-      expect.stringContaining('Qwen OAuth'),
+      expect.stringContaining('Claudex OAuth'),
     );
     expect(writeStdoutLine).toHaveBeenCalledWith(
       expect.stringContaining('Free tier (discontinued 2026-04-15)'),
@@ -105,7 +105,7 @@ describe('showAuthStatus', () => {
           version: 'abc123def456',
         },
         model: {
-          name: 'qwen3.5-plus',
+          name: 'claudex3.5-plus',
         },
       }),
     );
@@ -159,7 +159,7 @@ describe('showAuthStatus', () => {
           region: 'china',
         },
         model: {
-          name: 'qwen3.5-plus',
+          name: 'claudex3.5-plus',
         },
       }),
     );
@@ -185,7 +185,7 @@ describe('showAuthStatus', () => {
           region: 'global',
         },
         model: {
-          name: 'qwen3-coder-plus',
+          name: 'claudex3-coder-plus',
         },
       }),
     );
@@ -211,7 +211,7 @@ describe('showAuthStatus', () => {
           region: 'china',
         },
         model: {
-          name: 'qwen3.5-plus',
+          name: 'claudex3.5-plus',
         },
       }),
     );
@@ -219,7 +219,7 @@ describe('showAuthStatus', () => {
     await showAuthStatus();
 
     expect(writeStdoutLine).toHaveBeenCalledWith(
-      expect.stringContaining('qwen3.5-plus'),
+      expect.stringContaining('claudex3.5-plus'),
     );
   });
 
@@ -238,7 +238,7 @@ describe('showAuthStatus', () => {
           version: 'abc123def456789',
         },
         model: {
-          name: 'qwen3.5-plus',
+          name: 'claudex3.5-plus',
         },
       }),
     );

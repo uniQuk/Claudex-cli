@@ -60,7 +60,7 @@ For additional environment variables, configure them in your Zed settings:
   "agent_servers": {
     "claudex": {
       "env": {
-        "QWEN_LOG_LEVEL": "info",
+        "CLAUDEX_LOG_LEVEL": "info",
         "YOUR_CUSTOM_VAR": "value"
       }
     }

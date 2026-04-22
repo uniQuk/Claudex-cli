@@ -14,7 +14,7 @@ import { setGeminiMdFilename as mockSetGeminiMdFilename } from '../memory/const.
 import {
   DEFAULT_TELEMETRY_TARGET,
   DEFAULT_OTLP_ENDPOINT,
-  QwenLogger,
+  ClaudexLogger,
 } from '../telemetry/index.js';
 import type {
   ContentGenerator,
@@ -147,19 +147,19 @@ vi.mock('../tools/read-many-files', () => ({
 }));
 vi.mock('../memory/const.js', () => ({
   setGeminiMdFilename: vi.fn(),
-  getCurrentGeminiMdFilename: vi.fn(() => 'QWEN.md'), // Mock the original filename
-  getAllGeminiMdFilenames: vi.fn(() => ['QWEN.md', 'AGENTS.md']),
-  DEFAULT_CONTEXT_FILENAME: 'QWEN.md',
-  CLAUDEX_CONFIG_DIR: '.qwen',
+  getCurrentGeminiMdFilename: vi.fn(() => 'CLAUDEX.md'), // Mock the original filename
+  getAllGeminiMdFilenames: vi.fn(() => ['CLAUDEX.md', 'AGENTS.md']),
+  DEFAULT_CONTEXT_FILENAME: 'CLAUDEX.md',
+  CLAUDEX_CONFIG_DIR: '.claudex',
 }));
 vi.mock('../tools/memory-config', () => ({
   setGeminiMdFilename: vi.fn(),
-  getCurrentGeminiMdFilename: vi.fn(() => 'QWEN.md'),
-  getAllGeminiMdFilenames: vi.fn(() => ['QWEN.md', 'AGENTS.md']),
-  DEFAULT_CONTEXT_FILENAME: 'QWEN.md',
+  getCurrentGeminiMdFilename: vi.fn(() => 'CLAUDEX.md'),
+  getAllGeminiMdFilenames: vi.fn(() => ['CLAUDEX.md', 'AGENTS.md']),
+  DEFAULT_CONTEXT_FILENAME: 'CLAUDEX.md',
   AGENT_CONTEXT_FILENAME: 'AGENTS.md',
-  CLAUDEX_CONFIG_DIR: '.qwen',
-  MEMORY_SECTION_HEADER: '## Qwen Added Memories',
+  CLAUDEX_CONFIG_DIR: '.claudex',
+  MEMORY_SECTION_HEADER: '## Claudex Added Memories',
 }));
 
 vi.mock('../core/contentGenerator.js');
@@ -243,7 +243,7 @@ vi.mock('../core/toolHookTriggers.js', () => ({
 }));
 
 describe('Server Config (config.ts)', () => {
-  const MODEL = 'qwen3-coder-plus';
+  const MODEL = 'claudex3-coder-plus';
 
   // Default mock for canUseRipgrep to return true (tests that care about ripgrep will override this)
   beforeEach(() => {
@@ -276,7 +276,7 @@ describe('Server Config (config.ts)', () => {
   beforeEach(() => {
     // Reset mocks if necessary
     vi.clearAllMocks();
-    vi.spyOn(QwenLogger.prototype, 'logStartSessionEvent').mockImplementation(
+    vi.spyOn(ClaudexLogger.prototype, 'logStartSessionEvent').mockImplementation(
       async () => undefined,
     );
 
@@ -383,7 +383,7 @@ describe('Server Config (config.ts)', () => {
       const authType = AuthType.USE_GEMINI;
       const mockContentConfig = {
         apiKey: 'test-key',
-        model: 'qwen3-coder-plus',
+        model: 'claudex3-coder-plus',
         authType,
       };
 
@@ -420,7 +420,7 @@ describe('Server Config (config.ts)', () => {
       const authType = AuthType.USE_GEMINI;
       const mockContentConfig = {
         apiKey: 'test-key',
-        model: 'qwen3-coder-plus',
+        model: 'claudex3-coder-plus',
         authType,
       };
 
@@ -448,7 +448,7 @@ describe('Server Config (config.ts)', () => {
       const authType = AuthType.USE_GEMINI;
       const mockContentConfig = {
         apiKey: 'test-key',
-        model: 'qwen3-coder-plus',
+        model: 'claudex3-coder-plus',
         authType,
       };
 
@@ -484,14 +484,14 @@ describe('Server Config (config.ts)', () => {
     });
   });
 
-  describe('model switching optimization (QWEN_OAUTH)', () => {
-    it('should switch qwen-oauth model in-place without refreshing auth when safe', async () => {
+  describe('model switching optimization (CLAUDEX_OAUTH)', () => {
+    it('should switch claudex-oauth model in-place without refreshing auth when safe', async () => {
       const config = new Config(baseParams);
 
       const mockContentConfig: ContentGeneratorConfig = {
-        authType: AuthType.QWEN_OAUTH,
+        authType: AuthType.CLAUDEX_OAUTH,
         model: 'coder-model',
-        apiKey: 'QWEN_OAUTH_DYNAMIC_TOKEN',
+        apiKey: 'CLAUDEX_OAUTH_DYNAMIC_TOKEN',
         baseUrl: DEFAULT_DASHSCOPE_BASE_URL,
         timeout: 60000,
         maxRetries: 3,
@@ -514,13 +514,13 @@ describe('Server Config (config.ts)', () => {
         embedContent: vi.fn(),
       } as unknown as ContentGenerator);
 
-      // Establish initial qwen-oauth content generator config/content generator.
-      await config.refreshAuth(AuthType.QWEN_OAUTH);
+      // Establish initial claudex-oauth content generator config/content generator.
+      await config.refreshAuth(AuthType.CLAUDEX_OAUTH);
 
       // Spy after initial refresh to ensure model switch does not re-trigger refreshAuth.
       const refreshSpy = vi.spyOn(config, 'refreshAuth');
 
-      await config.switchModel(AuthType.QWEN_OAUTH, 'coder-model');
+      await config.switchModel(AuthType.CLAUDEX_OAUTH, 'coder-model');
 
       expect(config.getModel()).toBe('coder-model');
       expect(refreshSpy).not.toHaveBeenCalled();
@@ -535,9 +535,9 @@ describe('Server Config (config.ts)', () => {
       const config = new Config(baseParams);
 
       const mockContentConfig: ContentGeneratorConfig = {
-        authType: AuthType.QWEN_OAUTH,
+        authType: AuthType.CLAUDEX_OAUTH,
         model: 'coder-model',
-        apiKey: 'QWEN_OAUTH_DYNAMIC_TOKEN',
+        apiKey: 'CLAUDEX_OAUTH_DYNAMIC_TOKEN',
         baseUrl: DEFAULT_DASHSCOPE_BASE_URL,
         timeout: 60000,
         maxRetries: 3,
@@ -560,12 +560,12 @@ describe('Server Config (config.ts)', () => {
         embedContent: vi.fn(),
       } as unknown as ContentGenerator);
 
-      await config.refreshAuth(AuthType.QWEN_OAUTH);
+      await config.refreshAuth(AuthType.CLAUDEX_OAUTH);
 
       const stripSpy = config.getGeminiClient().stripThoughtsFromHistory;
       vi.mocked(stripSpy).mockClear();
 
-      await config.switchModel(AuthType.QWEN_OAUTH, 'coder-model');
+      await config.switchModel(AuthType.CLAUDEX_OAUTH, 'coder-model');
 
       expect(stripSpy).toHaveBeenCalledTimes(1);
     });
@@ -666,7 +666,7 @@ describe('Server Config (config.ts)', () => {
     const config = new Config(baseParams);
 
     vi.mocked(loadServerHierarchicalMemory).mockResolvedValue({
-      memoryContent: '--- Context from: QWEN.md ---\nProject rules',
+      memoryContent: '--- Context from: CLAUDEX.md ---\nProject rules',
       fileCount: 1,
       ruleCount: 0,
       conditionalRules: [],
@@ -687,7 +687,7 @@ describe('Server Config (config.ts)', () => {
     const config = new Config(baseParams);
 
     vi.mocked(loadServerHierarchicalMemory).mockResolvedValue({
-      memoryContent: '--- Context from: QWEN.md ---\nProject rules',
+      memoryContent: '--- Context from: CLAUDEX.md ---\nProject rules',
       fileCount: 1,
       ruleCount: 0,
       conditionalRules: [],
@@ -709,7 +709,7 @@ describe('Server Config (config.ts)', () => {
     });
 
     vi.mocked(loadServerHierarchicalMemory).mockResolvedValue({
-      memoryContent: '--- Context from: QWEN.md ---\nProject rules',
+      memoryContent: '--- Context from: CLAUDEX.md ---\nProject rules',
       fileCount: 1,
       ruleCount: 0,
       conditionalRules: [],
@@ -736,7 +736,7 @@ describe('Server Config (config.ts)', () => {
     });
 
     vi.mocked(loadServerHierarchicalMemory).mockResolvedValue({
-      memoryContent: '--- Context from: QWEN.md ---\nProject rules',
+      memoryContent: '--- Context from: CLAUDEX.md ---\nProject rules',
       fileCount: 1,
       ruleCount: 0,
       conditionalRules: [],
@@ -884,7 +884,7 @@ describe('Server Config (config.ts)', () => {
       });
       await config.initialize();
 
-      expect(QwenLogger.prototype.logStartSessionEvent).toHaveBeenCalledOnce();
+      expect(ClaudexLogger.prototype.logStartSessionEvent).toHaveBeenCalledOnce();
     });
   });
 
@@ -1692,7 +1692,7 @@ describe('Model Switching and Config Updates', () => {
     cwd: '/tmp',
     targetDir: '/path/to/target',
     debugMode: false,
-    model: 'qwen3-coder-plus',
+    model: 'claudex3-coder-plus',
     usageStatisticsEnabled: false,
     telemetry: { enabled: false },
   };
@@ -1706,8 +1706,8 @@ describe('Model Switching and Config Updates', () => {
 
     // Initialize with first model
     const initialConfig: ContentGeneratorConfig = {
-      ['model']: 'qwen3-coder-plus',
-      ['authType']: AuthType.QWEN_OAUTH,
+      ['model']: 'claudex3-coder-plus',
+      ['authType']: AuthType.CLAUDEX_OAUTH,
       ['apiKey']: 'test-key',
       ['contextWindowSize']: 1_000_000,
       ['samplingParams']: { temperature: 0.7 },
@@ -1722,17 +1722,17 @@ describe('Model Switching and Config Updates', () => {
       },
     });
 
-    await config.refreshAuth(AuthType.QWEN_OAUTH);
+    await config.refreshAuth(AuthType.CLAUDEX_OAUTH);
 
     // Verify initial config
     const contentGenConfig = config.getContentGeneratorConfig();
-    expect(contentGenConfig['model']).toBe('qwen3-coder-plus');
+    expect(contentGenConfig['model']).toBe('claudex3-coder-plus');
     expect(contentGenConfig['contextWindowSize']).toBe(1_000_000);
 
     // Switch to a different model with different token limits
     const newConfig: ContentGeneratorConfig = {
-      ['model']: 'qwen-max',
-      ['authType']: AuthType.QWEN_OAUTH,
+      ['model']: 'claudex-max',
+      ['authType']: AuthType.CLAUDEX_OAUTH,
       ['apiKey']: 'test-key',
       ['contextWindowSize']: 128_000,
       ['samplingParams']: { temperature: 0.8 },
@@ -1757,11 +1757,11 @@ describe('Model Switching and Config Updates', () => {
           requiresRefresh: boolean,
         ) => Promise<void>;
       }
-    ).handleModelChange(AuthType.QWEN_OAUTH, false);
+    ).handleModelChange(AuthType.CLAUDEX_OAUTH, false);
 
     // Verify all fields are updated
     const updatedConfig = config.getContentGeneratorConfig();
-    expect(updatedConfig['model']).toBe('qwen-max');
+    expect(updatedConfig['model']).toBe('claudex-max');
     expect(updatedConfig['contextWindowSize']).toBe(128_000);
     expect(updatedConfig['samplingParams']?.temperature).toBe(0.8);
     expect(updatedConfig['enableCacheControl']).toBe(false);
@@ -1776,13 +1776,13 @@ describe('Model Switching and Config Updates', () => {
     expect(sources['enableCacheControl']?.kind).toBe('settings');
   });
 
-  it('should trigger full refresh when switching to non-qwen-oauth provider', async () => {
+  it('should trigger full refresh when switching to non-claudex-oauth provider', async () => {
     const config = new Config(baseParams);
 
-    // Initialize with qwen-oauth
+    // Initialize with claudex-oauth
     const initialConfig: ContentGeneratorConfig = {
-      ['model']: 'qwen3-coder-plus',
-      ['authType']: AuthType.QWEN_OAUTH,
+      ['model']: 'claudex3-coder-plus',
+      ['authType']: AuthType.CLAUDEX_OAUTH,
       ['apiKey']: 'test-key',
       ['contextWindowSize']: 1_000_000,
     };
@@ -1792,7 +1792,7 @@ describe('Model Switching and Config Updates', () => {
       sources: {},
     });
 
-    await config.refreshAuth(AuthType.QWEN_OAUTH);
+    await config.refreshAuth(AuthType.CLAUDEX_OAUTH);
 
     // Switch to different auth type (should trigger full refresh)
     const newConfig: ContentGeneratorConfig = {
@@ -1833,8 +1833,8 @@ describe('Model Switching and Config Updates', () => {
 
     // Initialize with config that has undefined token limits
     const initialConfig: ContentGeneratorConfig = {
-      ['model']: 'qwen3-coder-plus',
-      ['authType']: AuthType.QWEN_OAUTH,
+      ['model']: 'claudex3-coder-plus',
+      ['authType']: AuthType.CLAUDEX_OAUTH,
       ['apiKey']: 'test-key',
       ['contextWindowSize']: undefined,
     };
@@ -1844,12 +1844,12 @@ describe('Model Switching and Config Updates', () => {
       sources: {},
     });
 
-    await config.refreshAuth(AuthType.QWEN_OAUTH);
+    await config.refreshAuth(AuthType.CLAUDEX_OAUTH);
 
     // Switch to model with defined limits
     const newConfig: ContentGeneratorConfig = {
-      ['model']: 'qwen-max',
-      ['authType']: AuthType.QWEN_OAUTH,
+      ['model']: 'claudex-max',
+      ['authType']: AuthType.CLAUDEX_OAUTH,
       ['apiKey']: 'test-key',
       ['contextWindowSize']: 128_000,
     };
@@ -1866,7 +1866,7 @@ describe('Model Switching and Config Updates', () => {
           requiresRefresh: boolean,
         ) => Promise<void>;
       }
-    ).handleModelChange(AuthType.QWEN_OAUTH, false);
+    ).handleModelChange(AuthType.CLAUDEX_OAUTH, false);
 
     // Verify limits are now defined
     const updatedConfig = config.getContentGeneratorConfig();

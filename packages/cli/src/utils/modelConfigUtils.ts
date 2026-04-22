@@ -69,7 +69,7 @@ export function getAuthTypeFromEnv(): AuthType | undefined {
  * Unified resolver for CLI generation config.
  *
  * Precedence (for OpenAI auth):
- * - model: argv.model > OPENAI_MODEL > QWEN_MODEL > settings.model.name
+ * - model: argv.model > OPENAI_MODEL > CLAUDEX_MODEL > settings.model.name
  * - apiKey: argv.openaiApiKey > OPENAI_API_KEY > settings.security.auth.apiKey
  * - baseUrl: argv.openaiBaseUrl > OPENAI_BASE_URL > settings.security.auth.baseUrl
  *

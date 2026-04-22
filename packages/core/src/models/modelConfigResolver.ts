@@ -20,7 +20,7 @@
 
 import { AuthType } from '../core/contentGenerator.js';
 import type { ContentGeneratorConfig } from '../core/contentGenerator.js';
-import { DEFAULT_QWEN_MODEL } from '../config/models.js';
+import { DEFAULT_CLAUDEX_MODEL } from '../config/models.js';
 import {
   resolveField,
   resolveOptionalField,
@@ -38,7 +38,7 @@ import {
 import {
   AUTH_ENV_MAPPINGS,
   DEFAULT_MODELS,
-  QWEN_OAUTH_ALLOWED_MODELS,
+  CLAUDEX_OAUTH_ALLOWED_MODELS,
   MODEL_GENERATION_CONFIG_FIELDS,
   type AuthEnvMapping,
 } from './constants.js';
@@ -124,9 +124,9 @@ export function resolveModelConfig(
   const warnings: string[] = [];
   const sources: ConfigSources = {};
 
-  // Special handling for Qwen OAuth
-  if (authType === AuthType.QWEN_OAUTH) {
-    return resolveQwenOAuthConfig(input, warnings);
+  // Special handling for Claudex OAuth
+  if (authType === AuthType.CLAUDEX_OAUTH) {
+    return resolveClaudexOAuthConfig(input, warnings);
   }
 
   // Get auth-specific env var mappings.
@@ -271,18 +271,18 @@ export function resolveModelConfig(
 }
 
 /**
- * Special resolver for Qwen OAuth authentication.
- * Qwen OAuth has fixed model options and uses dynamic tokens.
+ * Special resolver for Claudex OAuth authentication.
+ * Claudex OAuth has fixed model options and uses dynamic tokens.
  */
-function resolveQwenOAuthConfig(
+function resolveClaudexOAuthConfig(
   input: ModelConfigSourcesInput,
   warnings: string[],
 ): ModelConfigResolutionResult {
   const { cli, settings, proxy, modelProvider } = input;
   const sources: ConfigSources = {};
 
-  // Qwen OAuth only allows specific models
-  const allowedModels = new Set<string>(QWEN_OAUTH_ALLOWED_MODELS);
+  // Claudex OAuth only allows specific models
+  const allowedModels = new Set<string>(CLAUDEX_OAUTH_ALLOWED_MODELS);
 
   // Determine requested model
   const requestedModel = cli?.model || settings?.model;
@@ -302,15 +302,15 @@ function resolveQwenOAuthConfig(
         ? ` Note: vision-model has been removed since coder-model now supports vision capabilities.`
         : '';
       warnings.push(
-        `Warning: Unsupported Qwen OAuth model '${requestedModel}', falling back to '${DEFAULT_QWEN_MODEL}'.${extraMessage}`,
+        `Warning: Unsupported Claudex OAuth model '${requestedModel}', falling back to '${DEFAULT_CLAUDEX_MODEL}'.${extraMessage}`,
       );
     }
-    resolvedModel = DEFAULT_QWEN_MODEL;
-    modelSource = defaultSource(`fallback to '${DEFAULT_QWEN_MODEL}'`);
+    resolvedModel = DEFAULT_CLAUDEX_MODEL;
+    modelSource = defaultSource(`fallback to '${DEFAULT_CLAUDEX_MODEL}'`);
   }
 
   sources['model'] = modelSource;
-  sources['apiKey'] = computedSource('Qwen OAuth dynamic token');
+  sources['apiKey'] = computedSource('Claudex OAuth dynamic token');
   sources['authType'] = computedSource('provided by caller');
 
   if (proxy) {
@@ -321,15 +321,15 @@ function resolveQwenOAuthConfig(
   const generationConfig = resolveGenerationConfig(
     settings?.generationConfig,
     modelProvider?.generationConfig,
-    AuthType.QWEN_OAUTH,
+    AuthType.CLAUDEX_OAUTH,
     resolvedModel,
     sources,
   );
 
   const config: ContentGeneratorConfig = {
-    authType: AuthType.QWEN_OAUTH,
+    authType: AuthType.CLAUDEX_OAUTH,
     model: resolvedModel,
-    apiKey: 'QWEN_OAUTH_DYNAMIC_TOKEN',
+    apiKey: 'CLAUDEX_OAUTH_DYNAMIC_TOKEN',
     proxy,
     ...generationConfig,
   };

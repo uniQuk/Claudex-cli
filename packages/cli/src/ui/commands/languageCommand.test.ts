@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 Claudex
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -64,7 +64,7 @@ vi.mock('@claudex/core', async (importOriginal) => {
   return {
     ...actual,
     Storage: {
-      getGlobalClaudexDir: vi.fn().mockReturnValue('/mock/.qwen'),
+      getGlobalClaudexDir: vi.fn().mockReturnValue('/mock/.claudex'),
       getGlobalSettingsPath: vi
         .fn()
         .mockReturnValue('/mock/.claudex/settings.json'),

@@ -4,25 +4,25 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/** Stub — Qwen OAuth removed. */
-export interface QwenAuthState {
+/** Stub — Claudex OAuth removed. */
+export interface ClaudexAuthState {
   deviceAuth: null;
   authStatus: 'idle';
   errorMessage: null;
   authMessage?: string;
 }
 
-export function useQwenAuth(
+export function useClaudexAuth(
   _pendingAuthType: unknown,
   _isAuthenticating: boolean,
-): { qwenAuthState: QwenAuthState; cancelQwenAuth: () => void } {
+): { claudexAuthState: ClaudexAuthState; cancelClaudexAuth: () => void } {
   return {
-    qwenAuthState: {
+    claudexAuthState: {
       deviceAuth: null,
       authStatus: 'idle',
       errorMessage: null,
       authMessage: undefined,
     },
-    cancelQwenAuth: () => {},
+    cancelClaudexAuth: () => {},
   };
 }

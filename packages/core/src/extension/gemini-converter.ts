@@ -30,9 +30,9 @@ export interface GeminiExtensionConfig {
 /**
  * Converts a Gemini extension config to Claudex format.
  * @param extensionDir Path to the Gemini extension directory
- * @returns Qwen ExtensionConfig
+ * @returns Claudex ExtensionConfig
  */
-export function convertGeminiToQwenConfig(
+export function convertGeminiToClaudexConfig(
   extensionDir: string,
 ): ExtensionConfig {
   const configFilePath = path.join(extensionDir, 'gemini-extension.json');
@@ -60,7 +60,7 @@ export function convertGeminiToQwenConfig(
 /**
  * Converts a complete Gemini extension package to Claudex format.
  * Creates a new temporary directory with:
- * 1. Converted qwen-extension.json
+ * 1. Converted claudex-extension.json
  * 2. Commands converted from TOML to MD
  * 3. All other files/folders preserved
  *
@@ -70,7 +70,7 @@ export function convertGeminiToQwenConfig(
 export async function convertGeminiExtensionPackage(
   extensionDir: string,
 ): Promise<{ config: ExtensionConfig; convertedDir: string }> {
-  const geminiConfig = convertGeminiToQwenConfig(extensionDir);
+  const geminiConfig = convertGeminiToClaudexConfig(extensionDir);
 
   // Create temporary directory for converted extension
   const tmpDir = await ExtensionStorage.createTmpDir();
@@ -85,10 +85,10 @@ export async function convertGeminiExtensionPackage(
       await convertCommandsDirectory(commandsDir);
     }
 
-    // Step 3: Create qwen-extension.json with converted config
-    const qwenConfigPath = path.join(tmpDir, 'qwen-extension.json');
+    // Step 3: Create claudex-extension.json with converted config
+    const claudexConfigPath = path.join(tmpDir, 'claudex-extension.json');
     fs.writeFileSync(
-      qwenConfigPath,
+      claudexConfigPath,
       JSON.stringify(geminiConfig, null, 2),
       'utf-8',
     );
@@ -229,6 +229,6 @@ export function isGeminiExtensionConfig(extensionDir: string) {
     }
   }
 
-  // If it has Gemini-specific fields but not Qwen-specific fields, likely Gemini
+  // If it has Gemini-specific fields but not Claudex-specific fields, likely Gemini
   return true;
 }

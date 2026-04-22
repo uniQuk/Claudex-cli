@@ -26,11 +26,11 @@ import { createDebugLogger } from '@claudex/core';
 const debugLogger = createDebugLogger('SETUP_GITHUB');
 
 export const GITHUB_WORKFLOW_PATHS = [
-  'qwen-dispatch/qwen-dispatch.yml',
-  'qwen-assistant/qwen-invoke.yml',
-  'issue-triage/qwen-triage.yml',
-  'issue-triage/qwen-scheduled-triage.yml',
-  'pr-review/qwen-review.yml',
+  'claudex-dispatch/claudex-dispatch.yml',
+  'claudex-assistant/claudex-invoke.yml',
+  'issue-triage/claudex-triage.yml',
+  'issue-triage/claudex-scheduled-triage.yml',
+  'pr-review/claudex-review.yml',
 ];
 
 // Generate OS-specific commands to open the GitHub pages needed for setup.
@@ -217,7 +217,7 @@ export const setupGithubCommand: SlashCommand = {
       toolName: 'run_shell_command',
       toolArgs: {
         description:
-          'Setting up GitHub Actions to triage issues and review PRs with Qwen.',
+          'Setting up GitHub Actions to triage issues and review PRs with Claudex.',
         command,
         is_background: false,
       },

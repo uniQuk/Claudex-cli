@@ -12,7 +12,7 @@ import { getProjectHash, sanitizeCwd } from '../utils/paths.js';
 
 export const CLAUDEX_DIR = '.claudex';
 /** @deprecated Use CLAUDEX_DIR */
-export const QWEN_DIR = CLAUDEX_DIR;
+export const CLAUDEX_DIR = CLAUDEX_DIR;
 export const GOOGLE_ACCOUNTS_FILENAME = 'google_accounts.json';
 export const OAUTH_FILE = 'oauth_creds.json';
 export const SKILL_PROVIDER_CONFIG_DIRS = ['.claudex', '.agents'];
@@ -104,7 +104,7 @@ export class Storage {
    */
   static getRuntimeBaseDir(): string {
     const envDir =
-      process.env['CLAUDEX_RUNTIME_DIR'] ?? process.env['QWEN_RUNTIME_DIR'];
+      process.env['CLAUDEX_RUNTIME_DIR'] ?? process.env['CLAUDEX_RUNTIME_DIR'];
     if (envDir) {
       return (
         Storage.resolveRuntimeBaseDir(envDir) ?? Storage.getGlobalClaudexDir()
@@ -130,7 +130,7 @@ export class Storage {
   }
 
   /** @deprecated Use getGlobalClaudexDir() */
-  static getGlobalQwenDir(): string {
+  static getGlobalClaudexDir(): string {
     return Storage.getGlobalClaudexDir();
   }
 
@@ -195,7 +195,7 @@ export class Storage {
   }
 
   /** @deprecated Use getClaudexDir() */
-  getQwenDir(): string {
+  getClaudexDir(): string {
     return this.getClaudexDir();
   }
 

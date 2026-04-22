@@ -89,7 +89,7 @@ claudex -p "Summarize this repository" \
 > [!note]
 >
 > - `--system-prompt` applies only to the current run's main session.
-> - Loaded memory and context files such as `QWEN.md` are still appended after `--system-prompt`.
+> - Loaded memory and context files such as `CLAUDEX.md` are still appended after `--system-prompt`.
 > - `--append-system-prompt` is applied after the built-in prompt and loaded memory, and can be used together with `--system-prompt`.
 
 ## Output Formats

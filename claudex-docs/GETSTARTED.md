@@ -17,7 +17,7 @@ Claudex is an AI coding agent for the terminal. It supports any OpenAI-compatibl
 
 ```bash
 git clone <this-repo>
-cd qwen-code
+cd claudex-code
 npm install
 npm run build && npm run bundle
 ```
@@ -26,7 +26,7 @@ Then create a global alias:
 
 ```bash
 # Add to your shell profile, or run once:
-alias claudex="node /path/to/qwen-code/packages/cli/dist/cli.js"
+alias claudex="node /path/to/claudex-code/packages/cli/dist/cli.js"
 ```
 
 Or link it:
@@ -41,14 +41,14 @@ npm link --workspace=packages/cli
 
 | Path | Purpose |
 |---|---|
-| `~/.qwen/settings.json` | Global user settings (auth type, model, preferences) |
-| `~/.qwen/mcp-oauth-tokens.json` | MCP server OAuth tokens |
-| `~/.qwen/installation_id` | Anonymous install identifier |
-| `./.qwen/` | Project-level settings (when inside a project dir) |
+| `~/.claudex/settings.json` | Global user settings (auth type, model, preferences) |
+| `~/.claudex/mcp-oauth-tokens.json` | MCP server OAuth tokens |
+| `~/.claudex/installation_id` | Anonymous install identifier |
+| `./.claudex/` | Project-level settings (when inside a project dir) |
 | `./CLAUDEX.md` | Project context file — Claudex reads this automatically |
 | `./AGENTS.md` | Alternative project context file (also read automatically) |
 
-> **Note:** The global config directory is currently `~/.qwen/`. A future release will migrate this to `~/.claudex/`.
+> **Note:** The global config directory is currently `~/.claudex/`. A future release will migrate this to `~/.claudex/`.
 
 ### settings.json structure
 
@@ -75,7 +75,7 @@ npm link --workspace=packages/cli
 }
 ```
 
-Settings cascade: project-level `.qwen/settings.json` overrides `~/.qwen/settings.json`.
+Settings cascade: project-level `.claudex/settings.json` overrides `~/.claudex/settings.json`.
 
 ---
 
@@ -188,7 +188,7 @@ claudex mcp add
 claudex mcp list
 ```
 
-MCP server configs are stored in `~/.qwen/settings.json` under the `mcpServers` key.
+MCP server configs are stored in `~/.claudex/settings.json` under the `mcpServers` key.
 
 ---
 
@@ -204,5 +204,5 @@ MCP server configs are stored in `~/.qwen/settings.json` under the `mcpServers` 
 | `ANTHROPIC_MODEL` | `anthropic` | Default model override |
 | `TAVILY_API_KEY` | any | Enable web search via Tavily |
 | `GOOGLE_API_KEY` | any | Enable web search via Google Custom Search |
-| `QWEN_RUNTIME_DIR` | any | Override the runtime data directory |
+| `CLAUDEX_RUNTIME_DIR` | any | Override the runtime data directory |
 | `SANDBOX` | any | Set to `sandbox-exec` to enable sandbox mode |

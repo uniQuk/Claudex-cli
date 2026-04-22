@@ -1516,7 +1516,7 @@ export class CoreToolScheduler {
     signal: AbortSignal,
   ): Promise<void> {
     const parsed = parseInt(
-      process.env['QWEN_CODE_MAX_TOOL_CONCURRENCY'] || '',
+      process.env['CLAUDEX_CODE_MAX_TOOL_CONCURRENCY'] || '',
       10,
     );
     const maxConcurrency = Number.isFinite(parsed) && parsed >= 1 ? parsed : 10;

@@ -6,7 +6,7 @@
 
 export const CLAUDEX_CONFIG_DIR = '.claudex';
 /** @deprecated Use CLAUDEX_CONFIG_DIR */
-export const QWEN_CONFIG_DIR = CLAUDEX_CONFIG_DIR;
+export const CLAUDEX_CONFIG_DIR = CLAUDEX_CONFIG_DIR;
 export const DEFAULT_CONTEXT_FILENAME = 'CLAUDEX.md';
 export const AGENT_CONTEXT_FILENAME = 'AGENTS.md';
 export const MEMORY_SECTION_HEADER = '## Claudex Added Memories';

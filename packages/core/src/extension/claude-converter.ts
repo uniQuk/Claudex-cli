@@ -163,37 +163,37 @@ export function convertClaudeAgentConfig(
   claudeAgent: ClaudeAgentConfig,
 ): Record<string, unknown> {
   // Base config with required fields
-  const qwenAgent: Record<string, unknown> = {
+  const claudexAgent: Record<string, unknown> = {
     name: claudeAgent.name,
     description: claudeAgent.description,
   };
 
   if (claudeAgent.color) {
-    qwenAgent['color'] = claudeAgent.color;
+    claudexAgent['color'] = claudeAgent.color;
   }
 
   // Convert system prompt if present
   if (claudeAgent.systemPrompt) {
-    qwenAgent['systemPrompt'] = claudeAgent.systemPrompt;
+    claudexAgent['systemPrompt'] = claudeAgent.systemPrompt;
   }
 
   // Convert tools using claudeBuildInToolsTransform
   if (claudeAgent.tools && claudeAgent.tools.length > 0) {
-    qwenAgent['tools'] = claudeBuildInToolsTransform(claudeAgent.tools);
+    claudexAgent['tools'] = claudeBuildInToolsTransform(claudeAgent.tools);
   }
 
   // Preserve Claude's top-level model selector.
   if (claudeAgent.model) {
-    qwenAgent['model'] = claudeAgent.model;
+    claudexAgent['model'] = claudeAgent.model;
   }
 
-  // Map Claude permission mode aliases to Qwen ApprovalMode values.
+  // Map Claude permission mode aliases to Claudex ApprovalMode values.
   // Note: Claude's `dontAsk` denies any tool call that would prompt the user,
   // making it restrictive. We map it to `default` (which also requires approval)
   // rather than `auto-edit` (which auto-approves), preserving the restrictive
   // intent. `bypassPermissions` is the Claude mode that auto-approves everything.
   if (claudeAgent.permissionMode) {
-    const claudeToQwenMode: Record<string, string> = {
+    const claudeToClaudexMode: Record<string, string> = {
       default: 'default',
       plan: 'plan',
       acceptEdits: 'auto-edit',
@@ -202,25 +202,25 @@ export function convertClaudeAgentConfig(
       auto: 'auto-edit',
     };
     const mapped =
-      claudeToQwenMode[claudeAgent.permissionMode] ??
+      claudeToClaudexMode[claudeAgent.permissionMode] ??
       claudeAgent.permissionMode;
-    qwenAgent['approvalMode'] = mapped;
+    claudexAgent['approvalMode'] = mapped;
   }
   if (claudeAgent.hooks) {
-    qwenAgent['hooks'] = claudeAgent.hooks;
+    claudexAgent['hooks'] = claudeAgent.hooks;
   }
   if (claudeAgent.skills && claudeAgent.skills.length > 0) {
-    qwenAgent['skills'] = claudeAgent.skills;
+    claudexAgent['skills'] = claudeAgent.skills;
   }
   if (claudeAgent.disallowedTools && claudeAgent.disallowedTools.length > 0) {
-    qwenAgent['disallowedTools'] = claudeAgent.disallowedTools;
+    claudexAgent['disallowedTools'] = claudeAgent.disallowedTools;
   }
 
-  return qwenAgent;
+  return claudexAgent;
 }
 
 /**
- * Converts all agent files in a directory from Claude format to Qwen format.
+ * Converts all agent files in a directory from Claude format to Claudex format.
  * Parses the YAML frontmatter, converts the configuration, and writes back.
  * @param agentsDir Directory containing agent markdown files
  */
@@ -267,12 +267,12 @@ async function convertAgentFiles(agentsDir: string): Promise<void> {
         systemPrompt: body.trim(),
       };
 
-      // Convert to Qwen format
-      const qwenAgent = convertClaudeAgentConfig(claudeAgent);
+      // Convert to Claudex format
+      const claudexAgent = convertClaudeAgentConfig(claudeAgent);
 
       // Build new frontmatter (excluding systemPrompt as it goes in body)
       const newFrontmatter: Record<string, unknown> = {};
-      for (const [key, value] of Object.entries(qwenAgent)) {
+      for (const [key, value] of Object.entries(claudexAgent)) {
         if (key !== 'systemPrompt' && value !== undefined) {
           newFrontmatter[key] = value;
         }
@@ -280,7 +280,7 @@ async function convertAgentFiles(agentsDir: string): Promise<void> {
 
       // Write converted content back
       const newYaml = stringifyYaml(newFrontmatter);
-      const systemPrompt = (qwenAgent['systemPrompt'] as string) || body.trim();
+      const systemPrompt = (claudexAgent['systemPrompt'] as string) || body.trim();
       const newContent = `---
 ${newYaml}
 ---
@@ -300,9 +300,9 @@ ${systemPrompt}
 /**
  * Converts a Claude plugin config to Claudex format.
  * @param claudeConfig Claude plugin configuration
- * @returns Qwen ExtensionConfig
+ * @returns Claudex ExtensionConfig
  */
-export function convertClaudeToQwenConfig(
+export function convertClaudeToClaudexConfig(
   claudeConfig: ClaudePluginConfig,
 ): ExtensionConfig {
   // Validate required fields
@@ -356,7 +356,7 @@ export function convertClaudeToQwenConfig(
 /**
  * Converts a complete Claude plugin package to Claudex format.
  * Creates a new temporary directory with:
- * 1. Converted qwen-extension.json
+ * 1. Converted claudex-extension.json
  * 2. Commands, skills, and agents collected to respective folders
  * 3. MCP servers resolved from JSON files if needed
  * 4. All other files preserved
@@ -517,23 +517,23 @@ export async function convertClaudePluginPackage(
       }
     }
 
-    // Step 9: Convert collected agent files from Claude format to Qwen format
+    // Step 9: Convert collected agent files from Claude format to Claudex format
     const agentsDestDir = path.join(tmpDir, 'agents');
     await convertAgentFiles(agentsDestDir);
 
-    // Step 10: Convert to Qwen format config
-    const qwenConfig = convertClaudeToQwenConfig(mergedConfig);
+    // Step 10: Convert to Claudex format config
+    const claudexConfig = convertClaudeToClaudexConfig(mergedConfig);
 
-    // Step 11: Write qwen-extension.json
-    const qwenConfigPath = path.join(tmpDir, 'qwen-extension.json');
+    // Step 11: Write claudex-extension.json
+    const claudexConfigPath = path.join(tmpDir, 'claudex-extension.json');
     fs.writeFileSync(
-      qwenConfigPath,
-      JSON.stringify(qwenConfig, null, 2),
+      claudexConfigPath,
+      JSON.stringify(claudexConfig, null, 2),
       'utf-8',
     );
 
     return {
-      config: qwenConfig,
+      config: claudexConfig,
       convertedDir: tmpDir,
     };
   } catch (error) {

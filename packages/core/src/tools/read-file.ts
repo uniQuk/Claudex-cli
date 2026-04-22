@@ -109,7 +109,7 @@ class ReadFileToolInvocation extends BaseToolInvocation<
 
     // Auto-allow reads of files within the managed auto-memory root for this
     // project only — using the narrower isAutoMemPath check instead of the
-    // broad getMemoryBaseDir() to avoid exposing sensitive ~/.qwen files such
+    // broad getMemoryBaseDir() to avoid exposing sensitive ~/.claudex files such
     // as settings.json or OAuth credentials.
     if (
       workspaceContext.isPathWithinWorkspace(filePath) ||
@@ -277,7 +277,7 @@ export class ReadFileTool extends BaseDeclarativeTool<
     }
 
     const fileService = this.config.getFileService();
-    if (fileService.shouldQwenIgnoreFile(params.file_path)) {
+    if (fileService.shouldClaudexIgnoreFile(params.file_path)) {
       return `File path '${filePath}' is ignored by .claudexignore pattern(s).`;
     }
 
