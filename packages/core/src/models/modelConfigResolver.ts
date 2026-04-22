@@ -30,7 +30,6 @@ import {
   modelProvidersSource,
   defaultSource,
   computedSource,
-  type ConfigSource,
   type ConfigSources,
   type ConfigLayer,
 } from '../utils/configResolver.js';

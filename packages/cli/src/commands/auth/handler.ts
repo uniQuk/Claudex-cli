@@ -53,7 +53,7 @@ interface MergedSettingsWithCodingPlan {
  * Handles the authentication process based on the specified command and options
  */
 export async function handleClaudexAuth(
-  command: 'claudex-oauth' | 'coding-plan',
+  command: 'coding-plan',
   options: ClaudexAuthOptions,
 ) {
   try {
@@ -121,9 +121,7 @@ export async function handleClaudexAuth(
       },
     );
 
-    if (command === 'claudex-oauth') {
-      await handleClaudexOAuth(config, settings);
-    } else if (command === 'coding-plan') {
+    if (command === 'coding-plan') {
       await handleCodePlanAuth(config, settings, options);
     }
 
@@ -132,38 +130,6 @@ export async function handleClaudexAuth(
     process.exit(0);
   } catch (error) {
     writeStderrLine(getErrorMessage(error));
-    process.exit(1);
-  }
-}
-
-/**
- * Handles Claudex OAuth authentication
- */
-async function handleClaudexOAuth(
-  config: Config,
-  settings: LoadedSettings,
-): Promise<void> {
-  writeStdoutLine(t('Starting Claudex OAuth authentication...'));
-
-  try {
-    await config.refreshAuth(AuthType.CLAUDEX_OAUTH);
-
-    // Persist the auth type
-    const authTypeScope = getPersistScopeForModelSelection(settings);
-    settings.setValue(
-      authTypeScope,
-      'security.auth.selectedType',
-      AuthType.CLAUDEX_OAUTH,
-    );
-
-    writeStdoutLine(t('Successfully authenticated with Claudex OAuth.'));
-    process.exit(0);
-  } catch (error) {
-    writeStderrLine(
-      t('Failed to authenticate with Claudex OAuth: {{error}}', {
-        error: getErrorMessage(error),
-      }),
-    );
     process.exit(1);
   }
 }
@@ -435,15 +401,7 @@ export async function showAuthStatus(): Promise<void> {
     }
 
     // Display status based on auth type
-    if (selectedType === AuthType.CLAUDEX_OAUTH) {
-      writeStdoutLine(t('✓ Authentication Method: Claudex OAuth'));
-      writeStdoutLine(t('  Type: Free tier (discontinued 2026-04-15)'));
-      writeStdoutLine(t('  Limit: No longer available'));
-      writeStdoutLine(t('  Models: Claudex latest models'));
-      writeStdoutLine(
-        t('\n  ⚠ Run /auth to switch to Coding Plan or another provider.\n'),
-      );
-    } else if (selectedType === AuthType.USE_OPENAI) {
+    if (selectedType === AuthType.USE_OPENAI) {
       // Check for Coding Plan configuration
       const codingPlanRegion = mergedSettings.codingPlan?.region;
       const codingPlanVersion = mergedSettings.codingPlan?.version;

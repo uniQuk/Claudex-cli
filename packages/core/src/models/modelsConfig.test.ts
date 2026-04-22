@@ -444,22 +444,6 @@ describe('ModelsConfig', () => {
     // it should be re-resolved by other layers in refreshAuth
   });
 
-  it('should always force Claudex OAuth apiKey placeholder when applying model defaults', async () => {
-    // Simulate a stale/explicit apiKey existing before switching models.
-    const modelsConfig = new ModelsConfig({
-      initialAuthType: AuthType.CLAUDEX_OAUTH,
-      generationConfig: {
-        apiKey: 'manual-key-should-not-leak',
-      },
-    });
-
-    // Switching within claudex-oauth triggers applyResolvedModelDefaults().
-    await modelsConfig.switchModel(AuthType.CLAUDEX_OAUTH, 'coder-model');
-
-    const gc = currentGenerationConfig(modelsConfig);
-    expect(gc.apiKey).toBe('CLAUDEX_OAUTH_DYNAMIC_TOKEN');
-    expect(gc.apiKeyEnvKey).toBeUndefined();
-  });
 
   it('should apply extra_body and customHeaders from model provider config', async () => {
     const modelProvidersConfig: ModelProvidersConfig = {
@@ -496,75 +480,7 @@ describe('ModelsConfig', () => {
     expect(sources['customHeaders']?.kind).toBe('modelProviders');
   });
 
-  it('should apply Claudex OAuth apiKey placeholder during syncAfterAuthRefresh for fresh users', () => {
-    // Fresh user: authType not selected yet (currentAuthType undefined).
-    const modelsConfig = new ModelsConfig();
 
-    // Config.refreshAuth passes modelId from modelsConfig.getModel(), which falls back to DEFAULT_CLAUDEX_MODEL.
-    modelsConfig.syncAfterAuthRefresh(
-      AuthType.CLAUDEX_OAUTH,
-      modelsConfig.getModel(),
-    );
-
-    const gc = currentGenerationConfig(modelsConfig);
-    expect(gc.model).toBe('coder-model');
-    expect(gc.apiKey).toBe('CLAUDEX_OAUTH_DYNAMIC_TOKEN');
-    expect(gc.apiKeyEnvKey).toBeUndefined();
-  });
-
-  it('should use default model for new authType when switching from different authType with env vars', () => {
-    // Simulate cold start with OPENAI env vars (OPENAI_MODEL and OPENAI_API_KEY)
-    // This sets the model in generationConfig but no authType is selected yet
-    const modelsConfig = new ModelsConfig({
-      generationConfig: {
-        model: 'gpt-4o', // From OPENAI_MODEL env var
-        apiKey: 'openai-key-from-env',
-      },
-    });
-
-    // User switches to claudex-oauth via AuthDialog
-    // refreshAuth calls syncAfterAuthRefresh with the current model (gpt-4o)
-    // which doesn't exist in claudex-oauth registry, so it should use default
-    modelsConfig.syncAfterAuthRefresh(AuthType.CLAUDEX_OAUTH, 'gpt-4o');
-
-    const gc = currentGenerationConfig(modelsConfig);
-    // Should use default claudex-oauth model (coder-model), not the OPENAI model
-    expect(gc.model).toBe('coder-model');
-    expect(gc.apiKey).toBe('CLAUDEX_OAUTH_DYNAMIC_TOKEN');
-    expect(gc.apiKeyEnvKey).toBeUndefined();
-  });
-
-  it('should clear manual credentials when switching from USE_OPENAI to CLAUDEX_OAUTH', () => {
-    // User manually set credentials for OpenAI
-    const modelsConfig = new ModelsConfig({
-      initialAuthType: AuthType.USE_OPENAI,
-      generationConfig: {
-        model: 'gpt-4o',
-        apiKey: 'manual-openai-key',
-        baseUrl: 'https://manual.example.com/v1',
-      },
-    });
-
-    // Manually set credentials via updateCredentials
-    modelsConfig.updateCredentials({
-      apiKey: 'manual-openai-key',
-      baseUrl: 'https://manual.example.com/v1',
-      model: 'gpt-4o',
-    });
-
-    // User switches to claudex-oauth
-    // Since authType is not USE_OPENAI, manual credentials should be cleared
-    // and default claudex-oauth model should be applied
-    modelsConfig.syncAfterAuthRefresh(AuthType.CLAUDEX_OAUTH, 'gpt-4o');
-
-    const gc = currentGenerationConfig(modelsConfig);
-    // Should use default claudex-oauth model, not preserve manual OpenAI credentials
-    expect(gc.model).toBe('coder-model');
-    expect(gc.apiKey).toBe('CLAUDEX_OAUTH_DYNAMIC_TOKEN');
-    // baseUrl should be set to claudex-oauth default, not preserved from manual OpenAI config
-    expect(gc.baseUrl).toBe('DYNAMIC_CLAUDEX_OAUTH_BASE_URL');
-    expect(gc.apiKeyEnvKey).toBeUndefined();
-  });
 
   it('should preserve manual credentials when switching to USE_OPENAI', () => {
     // User manually set credentials
@@ -715,7 +631,7 @@ describe('ModelsConfig', () => {
   });
 
   describe('getAllConfiguredModels', () => {
-    it('should return all models across all authTypes and put claudex-oauth first', () => {
+    it('should return all models across all authTypes', () => {
       const modelProvidersConfig: ModelProvidersConfig = {
         openai: [
           {
@@ -755,28 +671,6 @@ describe('ModelsConfig', () => {
 
       const allModels = modelsConfig.getAllConfiguredModels();
 
-      // claudex-oauth models should be ordered first
-      const firstNonClaudexIndex = allModels.findIndex(
-        (m) => m.authType !== AuthType.CLAUDEX_OAUTH,
-      );
-      expect(firstNonClaudexIndex).toBeGreaterThan(0);
-      expect(
-        allModels
-          .slice(0, firstNonClaudexIndex)
-          .every((m) => m.authType === AuthType.CLAUDEX_OAUTH),
-      ).toBe(true);
-      expect(
-        allModels
-          .slice(firstNonClaudexIndex)
-          .every((m) => m.authType !== AuthType.CLAUDEX_OAUTH),
-      ).toBe(true);
-
-      // Should include claudex-oauth models (hard-coded)
-      const claudexModels = allModels.filter(
-        (m) => m.authType === AuthType.CLAUDEX_OAUTH,
-      );
-      expect(claudexModels.length).toBeGreaterThan(0);
-
       // Should include openai models
       const openaiModels = allModels.filter(
         (m) => m.authType === AuthType.USE_OPENAI,
@@ -791,13 +685,6 @@ describe('ModelsConfig', () => {
       );
       expect(anthropicModels.length).toBe(1);
       expect(anthropicModels[0].id).toBe('anthropic-model-1');
-
-      // Should include gemini models
-      const geminiModels = allModels.filter(
-        (m) => m.authType === AuthType.USE_OPENAI,
-      );
-      expect(geminiModels.length).toBe(1);
-      expect(geminiModels[0].id).toBe('gemini-model-1');
     });
 
     it('should return empty array when no models are registered', () => {
@@ -805,12 +692,8 @@ describe('ModelsConfig', () => {
 
       const allModels = modelsConfig.getAllConfiguredModels();
 
-      // Should still include claudex-oauth models (hard-coded)
-      expect(allModels.length).toBeGreaterThan(0);
-      const claudexModels = allModels.filter(
-        (m) => m.authType === AuthType.CLAUDEX_OAUTH,
-      );
-      expect(claudexModels.length).toBeGreaterThan(0);
+      // No models registered = empty list
+      expect(allModels.length).toBe(0);
     });
 
     it('should return models with correct structure', () => {
@@ -845,7 +728,7 @@ describe('ModelsConfig', () => {
       expect(testModel?.capabilities?.vision).toBe(true);
     });
 
-    it('should support filtering by authTypes and still put claudex-oauth first when included', () => {
+    it('should support filtering by authTypes', () => {
       const modelProvidersConfig: ModelProvidersConfig = {
         openai: [
           {
@@ -869,7 +752,7 @@ describe('ModelsConfig', () => {
         modelProvidersConfig,
       });
 
-      // Filter: OpenAI only (should not include claudex-oauth)
+      // Filter: OpenAI only
       const openaiOnly = modelsConfig.getAllConfiguredModels([
         AuthType.USE_OPENAI,
       ]);
@@ -878,22 +761,14 @@ describe('ModelsConfig', () => {
       );
       expect(openaiOnly.map((m) => m.id)).toContain('openai-model-1');
 
-      // Filter: include claudex-oauth but request it later -> still ordered first
-      const withClaudex = modelsConfig.getAllConfiguredModels([
+      // Filter: OpenAI + Anthropic
+      const both = modelsConfig.getAllConfiguredModels([
         AuthType.USE_OPENAI,
-        AuthType.CLAUDEX_OAUTH,
         AuthType.USE_ANTHROPIC,
       ]);
-      expect(withClaudex.length).toBeGreaterThan(0);
-      const firstNonClaudexIndex = withClaudex.findIndex(
-        (m) => m.authType !== AuthType.CLAUDEX_OAUTH,
-      );
-      expect(firstNonClaudexIndex).toBeGreaterThan(0);
-      expect(
-        withClaudex
-          .slice(0, firstNonClaudexIndex)
-          .every((m) => m.authType === AuthType.CLAUDEX_OAUTH),
-      ).toBe(true);
+      expect(both.length).toBe(2);
+      expect(both.map((m) => m.id)).toContain('openai-model-1');
+      expect(both.map((m) => m.id)).toContain('anthropic-model-1');
     });
   });
 
@@ -1389,37 +1264,15 @@ describe('ModelsConfig', () => {
       expect(
         modelsConfig
           .getAllConfiguredModels()
-          .filter((m) => m.authType !== 'claudex-oauth').length,
+          .filter((m) => m.authType === 'openai').length,
       ).toBeGreaterThan(0);
 
       // Reload with empty config
       modelsConfig.reloadModelProvidersConfig({});
 
-      // Only claudex-oauth models should remain
+      // All models should be cleared
       const models = modelsConfig.getAllConfiguredModels();
-      expect(models.every((m) => m.authType === 'claudex-oauth')).toBe(true);
-    });
-
-    it('should preserve claudex-oauth models after reload', () => {
-      const modelsConfig = new ModelsConfig({
-        modelProvidersConfig: {
-          openai: [{ id: 'gpt-4', name: 'GPT-4' }],
-        },
-      });
-
-      const initialClaudexModels = modelsConfig
-        .getAllConfiguredModels()
-        .filter((m) => m.authType === 'claudex-oauth');
-
-      modelsConfig.reloadModelProvidersConfig({
-        gemini: [{ id: 'gemini-pro', name: 'Gemini Pro' }],
-      });
-
-      // claudex-oauth models should still exist
-      const claudexModelsAfterReload = modelsConfig
-        .getAllConfiguredModels()
-        .filter((m) => m.authType === 'claudex-oauth');
-      expect(claudexModelsAfterReload.length).toBe(initialClaudexModels.length);
+      expect(models.length).toBe(0);
     });
 
     it('should handle reload with undefined config', () => {

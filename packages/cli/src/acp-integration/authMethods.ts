@@ -18,15 +18,6 @@ export function buildAuthMethods(): AuthMethod[] {
         args: ['--auth-type=openai'],
       },
     },
-    {
-      id: AuthType.CLAUDEX_OAUTH,
-      name: 'Claudex OAuth',
-      description: 'Claudex OAuth (free tier discontinued 2026-04-15)',
-      _meta: {
-        type: 'terminal',
-        args: ['--auth-type=claudex-oauth'],
-      },
-    },
   ];
 }
 
@@ -41,10 +32,6 @@ export function pickAuthMethodsForDetails(details?: string): AuthMethod[] {
   const authMethods = buildAuthMethods();
   if (!details) {
     return authMethods;
-  }
-  if (details.includes('claudex-oauth') || details.includes('Claudex OAuth')) {
-    const narrowed = filterAuthMethodsById(authMethods, AuthType.CLAUDEX_OAUTH);
-    return narrowed.length ? narrowed : authMethods;
   }
   return authMethods;
 }

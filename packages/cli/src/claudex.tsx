@@ -544,12 +544,6 @@ export async function main() {
         })),
         ...getSettingsWarnings(settings),
         ...config.getWarnings(),
-        ...(config.getModelsConfig().getCurrentAuthType() ===
-        AuthType.CLAUDEX_OAUTH
-          ? [
-              'Claudex OAuth free tier was discontinued on 2026-04-15. Run /auth to switch to Coding Plan or another provider.',
-            ]
-          : []),
       ]),
     ];
 

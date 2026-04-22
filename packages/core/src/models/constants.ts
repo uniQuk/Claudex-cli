@@ -6,8 +6,6 @@
 
 import { MAINLINE_CODER_MODEL } from '../config/models.js';
 
-import type { ModelConfig } from './types.js';
-
 type AuthType = import('../core/contentGenerator.js').AuthType;
 type ContentGeneratorConfig =
   import('../core/contentGenerator.js').ContentGeneratorConfig;

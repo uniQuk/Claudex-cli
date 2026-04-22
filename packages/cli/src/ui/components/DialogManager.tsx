@@ -14,7 +14,6 @@ import { SettingInputPrompt } from './SettingInputPrompt.js';
 import { PluginChoicePrompt } from './PluginChoicePrompt.js';
 import { ThemeDialog } from './ThemeDialog.js';
 import { SettingsDialog } from './SettingsDialog.js';
-import { ClaudexOAuthProgress } from './ClaudexOAuthProgress.js';
 import { AuthDialog } from '../auth/AuthDialog.js';
 import { EditorSettingsDialog } from './EditorSettingsDialog.js';
 import { TrustDialog } from './TrustDialog.js';
@@ -26,8 +25,6 @@ import { useUIState } from '../contexts/UIStateContext.js';
 import { useUIActions } from '../contexts/UIActionsContext.js';
 import { useConfig } from '../contexts/ConfigContext.js';
 import { useSettings } from '../contexts/SettingsContext.js';
-import { AuthState } from '../types.js';
-import { AuthType } from '@claudex/core';
 import process from 'node:process';
 import { type UseHistoryManagerReturn } from '../hooks/useHistoryManager.js';
 import { IdeTrustChangeDialog } from './IdeTrustChangeDialog.js';
@@ -251,28 +248,6 @@ export const DialogManager = ({
     );
   }
 
-  if (uiState.isAuthenticating) {
-    // OpenAI authentication now handled through AuthDialog with coding-plan/custom sub-modes
-    // Claudex OAuth remains as a separate flow
-    if (uiState.pendingAuthType === AuthType.CLAUDEX_OAUTH) {
-      return (
-        <ClaudexOAuthProgress
-          deviceAuth={uiState.claudexAuthState.deviceAuth || undefined}
-          authStatus={uiState.claudexAuthState.authStatus}
-          authMessage={uiState.claudexAuthState.authMessage}
-          onTimeout={() => {
-            uiActions.onAuthError('Claudex OAuth authentication timed out.');
-            uiActions.cancelAuthentication();
-            uiActions.setAuthState(AuthState.Updating);
-          }}
-          onCancel={() => {
-            uiActions.cancelAuthentication();
-            uiActions.setAuthState(AuthState.Updating);
-          }}
-        />
-      );
-    }
-  }
   if (uiState.isTrustDialogOpen) {
     return (
       <TrustDialog onExit={uiActions.closeTrustDialog} addItem={addItem} />

@@ -7,7 +7,6 @@ import {
   UserFeedbackEvent,
   type UserFeedbackRating,
   isNodeError,
-  AuthType,
 } from '@claudex/core';
 import { StreamingState, MessageType, type HistoryItem } from '../types.js';
 import {
@@ -145,33 +144,9 @@ export const useFeedbackDialog = ({
 
   useEffect(() => {
     const checkAndShowFeedback = () => {
-      if (streamingState === StreamingState.Idle && history.length > 0) {
-        // Show feedback dialog if:
-        // 1. User is authenticated via CLAUDEX_OAUTH
-        // 2. Claudex logger is enabled (required for feedback submission)
-        // 3. User feedback is enabled in settings
-        // 4. The last message is an AI response
-        // 5. Random chance (25% probability)
-        // 6. Meets minimum requirements (tool calls > 10 OR user messages > 5)
-        // 7. Fatigue mechanism allows showing (not shown recently across sessions)
-        // 8. Not temporarily dismissed
-        if (
-          config.getAuthType() !== AuthType.CLAUDEX_OAUTH ||
-          !config.getUsageStatisticsEnabled() ||
-          settings.merged.ui?.enableUserFeedback === false ||
-          !lastMessageIsAIResponse(history) ||
-          Math.random() > FEEDBACK_SHOW_PROBABILITY ||
-          !meetsMinimumSessionRequirements(sessionStats) ||
-          isFeedbackDismissedTemporarily
-        ) {
-          return;
-        }
-
-        // Check fatigue mechanism (synchronous)
-        if (shouldShowFeedbackBasedOnFatigue()) {
-          openFeedbackDialog();
-        }
-      }
+      // Feedback dialog is disabled (was gated on CLAUDEX_OAUTH which is removed)
+      void streamingState;
+      void history;
     };
 
     checkAndShowFeedback();

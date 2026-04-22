@@ -162,9 +162,8 @@ export function ModelDialog({
       modelsByAuthTypeMap.get(authType)!.push(model);
     }
 
-    // Fixed order: claudex-oauth first, then others in a stable order
+    // Stable order for authTypes
     const authTypeOrder: AuthType[] = [
-      AuthType.CLAUDEX_OAUTH,
       AuthType.USE_OPENAI,
       AuthType.USE_ANTHROPIC,
     ];
@@ -211,18 +210,14 @@ export function ModelDialog({
           const value =
             isRuntime && snapshotId ? snapshotId : `${t2}::${model.id}`;
 
-          const isClaudexOAuth = t2 === AuthType.CLAUDEX_OAUTH;
-
           const title = (
             <Text>
               <Text
                 bold
                 color={
-                  isClaudexOAuth
+                  isRuntime
                     ? theme.status.warning
-                    : isRuntime
-                      ? theme.status.warning
-                      : theme.text.accent
+                    : theme.text.accent
                 }
               >
                 [{t2}]
@@ -231,21 +226,15 @@ export function ModelDialog({
               {isRuntime && (
                 <Text color={theme.status.warning}> (Runtime)</Text>
               )}
-              {isClaudexOAuth && !isRuntime && (
-                <Text color={theme.status.warning}> ({t('Discontinued')})</Text>
-              )}
             </Text>
           );
 
-          // Include runtime / discontinued indicator in description
+          // Include runtime indicator in description
           let description = model.description || '';
           if (isRuntime) {
             description = description
               ? `${description} (Runtime)`
               : 'Runtime model';
-          }
-          if (isClaudexOAuth && !isRuntime) {
-            description = t('Discontinued — switch to Coding Plan or API Key');
           }
 
           return {
@@ -337,25 +326,6 @@ export function ModelDialog({
         return;
       }
 
-      // Block selection of discontinued claudex-oauth models
-      // (only block non-runtime OAuth; runtime OAuth models from existing
-      //  cached tokens are still allowed to work until the server rejects them)
-      const isClaudexOAuthSelection =
-        selected.startsWith(`${AuthType.CLAUDEX_OAUTH}::`) ||
-        (selected.startsWith('$runtime|') &&
-          selected.split('|')[1] === AuthType.CLAUDEX_OAUTH);
-      const isRuntimeOAuthSelection = selected.startsWith(
-        `$runtime|${AuthType.CLAUDEX_OAUTH}|`,
-      );
-      if (isClaudexOAuthSelection && !isRuntimeOAuthSelection) {
-        setErrorMessage(
-          t(
-            'Claudex OAuth free tier was discontinued on 2026-04-15. Please select a model from another provider or run /auth to switch.',
-          ),
-        );
-        return;
-      }
-
       let after: ContentGeneratorConfig | undefined;
       let effectiveAuthType: AuthType | undefined;
       let effectiveModelId = selected;
@@ -393,14 +363,7 @@ export function ModelDialog({
           modelId = idx >= 0 ? selected.slice(idx + sep.length) : selected;
         }
 
-        await config.switchModel(
-          selectedAuthType,
-          modelId,
-          selectedAuthType !== authType &&
-            selectedAuthType === AuthType.CLAUDEX_OAUTH
-            ? { requireCachedCredentials: true }
-            : undefined,
-        );
+        await config.switchModel(selectedAuthType, modelId);
 
         if (!isRuntime) {
           const event = new ModelSlashCommandEvent(modelId);
@@ -494,14 +457,6 @@ export function ModelDialog({
             borderRight={false}
             borderColor={theme.border.default}
           />
-          {highlightedEntry.authType === AuthType.CLAUDEX_OAUTH &&
-            !highlightedEntry.isRuntime && (
-              <Box marginTop={1}>
-                <Text color={theme.status.warning}>
-                  ⚠ {t('Discontinued — switch to Coding Plan or API Key')}
-                </Text>
-              </Box>
-            )}
           <DetailRow
             label={t('Modality')}
             value={formatModalities(highlightedEntry.model.modalities)}
@@ -512,18 +467,14 @@ export function ModelDialog({
               highlightedEntry.model.contextWindowSize,
             )}
           />
-          {highlightedEntry.authType !== AuthType.CLAUDEX_OAUTH && (
-            <>
-              <DetailRow
-                label="Base URL"
-                value={highlightedEntry.model.baseUrl ?? t('(default)')}
-              />
-              <DetailRow
-                label="API Key"
-                value={highlightedEntry.model.envKey ?? t('(not set)')}
-              />
-            </>
-          )}
+          <DetailRow
+            label="Base URL"
+            value={highlightedEntry.model.baseUrl ?? t('(default)')}
+          />
+          <DetailRow
+            label="API Key"
+            value={highlightedEntry.model.envKey ?? t('(not set)')}
+          />
         </Box>
       )}
 

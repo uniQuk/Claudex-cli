@@ -18,7 +18,6 @@ import { useTerminalSize } from '../hooks/useTerminalSize.js';
  * Simplified representation of authentication method shown to users.
  */
 export enum AuthDisplayType {
-  CLAUDEX_OAUTH = 'Claudex OAuth',
   CODING_PLAN = 'Coding Plan',
   API_KEY = 'API Key',
   UNKNOWN = 'Unknown',

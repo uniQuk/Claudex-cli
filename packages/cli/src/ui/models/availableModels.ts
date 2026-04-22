@@ -8,7 +8,6 @@ import {
   AuthType,
   type Config,
   type AvailableModel as CoreAvailableModel,
-  CLAUDEX_OAUTH_MODELS,
 } from '@claudex/core';
 import { t } from '../../i18n/index.js';
 
@@ -19,26 +18,6 @@ export type AvailableModel = {
   isVision?: boolean;
 };
 
-const CACHED_CLAUDEX_OAUTH_MODELS: AvailableModel[] = CLAUDEX_OAUTH_MODELS.map(
-  (model) => ({
-    id: model.id,
-    label: model.name ?? model.id,
-    description: model.description,
-    isVision: model.capabilities?.vision ?? false,
-  }),
-);
-
-function getClaudexOAuthModels(): readonly AvailableModel[] {
-  return CACHED_CLAUDEX_OAUTH_MODELS;
-}
-
-/**
- * Get available Claudex models
- * coder-model now has vision capabilities by default.
- */
-export function getFilteredClaudexModels(): AvailableModel[] {
-  return [...getClaudexOAuthModels()];
-}
 
 /**
  * Currently we use the single model of `OPENAI_MODEL` in the env.
@@ -112,9 +91,6 @@ export function getAvailableModelsForAuthType(
 
   // Fall back to environment variables for specific auth types (no config provided)
   switch (authType) {
-    case AuthType.CLAUDEX_OAUTH: {
-      return [...getClaudexOAuthModels()];
-    }
     case AuthType.USE_OPENAI: {
       const openAIModel = getOpenAIAvailableModelFromEnv();
       return openAIModel ? [openAIModel] : [];

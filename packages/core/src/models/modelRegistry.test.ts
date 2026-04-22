@@ -5,25 +5,14 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { ModelRegistry, CLAUDEX_OAUTH_MODELS } from './modelRegistry.js';
+import { ModelRegistry } from './modelRegistry.js';
 import { AuthType } from '../core/contentGenerator.js';
 import type { ModelProvidersConfig } from './types.js';
 
 describe('ModelRegistry', () => {
   describe('initialization', () => {
-    it('should always include hard-coded claudex-oauth models', () => {
-      const registry = new ModelRegistry();
-
-      const claudexModels = registry.getModelsForAuthType(AuthType.CLAUDEX_OAUTH);
-      expect(claudexModels.length).toBe(CLAUDEX_OAUTH_MODELS.length);
-      expect(claudexModels[0].id).toBe('coder-model');
-    });
-
     it('should initialize with empty config', () => {
       const registry = new ModelRegistry();
-      expect(registry.getModelsForAuthType(AuthType.CLAUDEX_OAUTH).length).toBe(
-        CLAUDEX_OAUTH_MODELS.length,
-      );
       expect(registry.getModelsForAuthType(AuthType.USE_OPENAI).length).toBe(0);
     });
 
@@ -45,22 +34,21 @@ describe('ModelRegistry', () => {
       expect(openaiModels[0].id).toBe('gpt-4-turbo');
     });
 
-    it('should ignore claudex-oauth models in config (hard-coded)', () => {
+    it('should ignore unknown authType keys in config', () => {
       const modelProvidersConfig: ModelProvidersConfig = {
-        'claudex-oauth': [
+        openai: [
           {
-            id: 'custom-claudex',
-            name: 'Custom Claudex',
+            id: 'gpt-4-turbo',
+            name: 'GPT-4 Turbo',
           },
         ],
       };
 
       const registry = new ModelRegistry(modelProvidersConfig);
 
-      // Should still use hard-coded claudex-oauth models
-      const claudexModels = registry.getModelsForAuthType(AuthType.CLAUDEX_OAUTH);
-      expect(claudexModels.length).toBe(CLAUDEX_OAUTH_MODELS.length);
-      expect(claudexModels.find((m) => m.id === 'custom-claudex')).toBeUndefined();
+      const openaiModels = registry.getModelsForAuthType(AuthType.USE_OPENAI);
+      expect(openaiModels.length).toBe(1);
+      expect(openaiModels[0].id).toBe('gpt-4-turbo');
     });
   });
 
@@ -93,7 +81,7 @@ describe('ModelRegistry', () => {
     });
 
     it('should return empty array for non-existent authType', () => {
-      const models = registry.getModelsForAuthType(AuthType.USE_OPENAI);
+      const models = registry.getModelsForAuthType(AuthType.USE_ANTHROPIC);
       expect(models.length).toBe(0);
     });
 
@@ -157,7 +145,7 @@ describe('ModelRegistry', () => {
     });
 
     it('should return undefined for non-existent authType', () => {
-      const model = registry.getModel(AuthType.USE_OPENAI, 'some-model');
+      const model = registry.getModel(AuthType.USE_ANTHROPIC, 'some-model');
       expect(model).toBeUndefined();
     });
   });
@@ -182,20 +170,12 @@ describe('ModelRegistry', () => {
     });
 
     it('should return false for non-existent authType', () => {
-      expect(registry.hasModel(AuthType.USE_OPENAI, 'gpt-4')).toBe(false);
+      expect(registry.hasModel(AuthType.USE_ANTHROPIC, 'gpt-4')).toBe(false);
     });
   });
 
   describe('getDefaultModelForAuthType', () => {
-    it('should return coder-model for claudex-oauth', () => {
-      const registry = new ModelRegistry();
-      const defaultModel = registry.getDefaultModelForAuthType(
-        AuthType.CLAUDEX_OAUTH,
-      );
-      expect(defaultModel?.id).toBe('coder-model');
-    });
-
-    it('should return first model for other authTypes', () => {
+    it('should return first model for authType', () => {
       const registry = new ModelRegistry({
         openai: [
           { id: 'gpt-4', name: 'GPT-4' },
@@ -207,6 +187,14 @@ describe('ModelRegistry', () => {
         AuthType.USE_OPENAI,
       );
       expect(defaultModel?.id).toBe('gpt-4');
+    });
+
+    it('should return undefined for authType with no models', () => {
+      const registry = new ModelRegistry();
+      const defaultModel = registry.getDefaultModelForAuthType(
+        AuthType.USE_OPENAI,
+      );
+      expect(defaultModel).toBeUndefined();
     });
   });
 
@@ -222,12 +210,6 @@ describe('ModelRegistry', () => {
   });
 
   describe('default base URLs', () => {
-    it('should apply default dashscope URL for claudex-oauth', () => {
-      const registry = new ModelRegistry();
-      const model = registry.getModel(AuthType.CLAUDEX_OAUTH, 'coder-model');
-      expect(model?.baseUrl).toBe('DYNAMIC_CLAUDEX_OAUTH_BASE_URL');
-    });
-
     it('should apply default openai URL when not specified', () => {
       const registry = new ModelRegistry({
         openai: [{ id: 'gpt-4', name: 'GPT-4' }],
@@ -264,9 +246,9 @@ describe('ModelRegistry', () => {
       expect(openaiModels.length).toBe(1);
       expect(openaiModels[0].id).toBe('gpt-4');
 
-      const geminiModels = registry.getModelsForAuthType(AuthType.USE_ANTHROPIC);
-      expect(geminiModels.length).toBe(1);
-      expect(geminiModels[0].id).toBe('gemini-pro');
+      const anthropicModels = registry.getModelsForAuthType(AuthType.USE_ANTHROPIC);
+      expect(anthropicModels.length).toBe(1);
+      expect(anthropicModels[0].id).toBe('claude-3');
     });
 
     it('should skip invalid authType keys', () => {
@@ -299,8 +281,8 @@ describe('ModelRegistry', () => {
       const openaiModels = registry.getModelsForAuthType(AuthType.USE_OPENAI);
       expect(openaiModels.length).toBe(1);
 
-      const geminiModels = registry.getModelsForAuthType(AuthType.USE_ANTHROPIC);
-      expect(geminiModels.length).toBe(1);
+      const anthropicModels = registry.getModelsForAuthType(AuthType.USE_ANTHROPIC);
+      expect(anthropicModels.length).toBe(1);
     });
 
     it('should work correctly with getModelsForAuthType after validation', () => {
@@ -367,20 +349,20 @@ describe('ModelRegistry', () => {
     it('should treat same id in different authTypes as different models', () => {
       const registry = new ModelRegistry({
         openai: [{ id: 'shared-model', name: 'OpenAI Shared' }],
-        gemini: [{ id: 'shared-model', name: 'Gemini Shared' }],
+        anthropic: [{ id: 'shared-model', name: 'Anthropic Shared' }],
       });
 
       const openaiModel = registry.getModel(
         AuthType.USE_OPENAI,
         'shared-model',
       );
-      const geminiModel = registry.getModel(
+      const anthropicModel = registry.getModel(
         AuthType.USE_ANTHROPIC,
         'shared-model',
       );
 
       expect(openaiModel?.name).toBe('OpenAI Shared');
-      expect(geminiModel?.name).toBe('Gemini Shared');
+      expect(anthropicModel?.name).toBe('Anthropic Shared');
     });
   });
 
@@ -404,29 +386,7 @@ describe('ModelRegistry', () => {
       expect(registry.getModel(AuthType.USE_OPENAI, 'gpt-3.5')).toBeDefined();
     });
 
-    it('should preserve hard-coded claudex-oauth models after reload', () => {
-      const registry = new ModelRegistry({
-        openai: [{ id: 'gpt-4', name: 'GPT-4' }],
-      });
-
-      expect(registry.getModelsForAuthType(AuthType.CLAUDEX_OAUTH).length).toBe(
-        CLAUDEX_OAUTH_MODELS.length,
-      );
-
-      registry.reloadModels({
-        openai: [{ id: 'gpt-3.5', name: 'GPT-3.5' }],
-      });
-
-      // claudex-oauth models should still exist
-      expect(registry.getModelsForAuthType(AuthType.CLAUDEX_OAUTH).length).toBe(
-        CLAUDEX_OAUTH_MODELS.length,
-      );
-      expect(
-        registry.getModel(AuthType.CLAUDEX_OAUTH, 'coder-model'),
-      ).toBeDefined();
-    });
-
-    it('should clear user-configured models when reload with empty config', () => {
+    it('should clear all models after reload with empty config', () => {
       const registry = new ModelRegistry({
         openai: [{ id: 'gpt-4', name: 'GPT-4' }],
         anthropic: [{ id: 'claude-3', name: 'Claude 3' }],
@@ -437,27 +397,9 @@ describe('ModelRegistry', () => {
 
       registry.reloadModels({});
 
-      // All user-configured models should be cleared
+      // All models should be cleared
       expect(registry.getModelsForAuthType(AuthType.USE_OPENAI).length).toBe(0);
       expect(registry.getModelsForAuthType(AuthType.USE_ANTHROPIC).length).toBe(0);
-
-      // claudex-oauth models should still exist
-      expect(registry.getModelsForAuthType(AuthType.CLAUDEX_OAUTH).length).toBe(
-        CLAUDEX_OAUTH_MODELS.length,
-      );
-    });
-
-    it('should ignore claudex-oauth models in reload config', () => {
-      const registry = new ModelRegistry();
-
-      registry.reloadModels({
-        'claudex-oauth': [{ id: 'custom-claudex', name: 'Custom Claudex' }],
-      });
-
-      // claudex-oauth should still use hard-coded models
-      const claudexModels = registry.getModelsForAuthType(AuthType.CLAUDEX_OAUTH);
-      expect(claudexModels.length).toBe(CLAUDEX_OAUTH_MODELS.length);
-      expect(claudexModels.find((m) => m.id === 'custom-claudex')).toBeUndefined();
     });
 
     it('should handle reload with multiple authTypes', () => {
@@ -479,8 +421,8 @@ describe('ModelRegistry', () => {
         'GPT-4 Updated',
       );
 
-      const geminiModels = registry.getModelsForAuthType(AuthType.USE_ANTHROPIC);
-      expect(geminiModels.length).toBe(1);
+      const anthropicModels = registry.getModelsForAuthType(AuthType.USE_ANTHROPIC);
+      expect(anthropicModels.length).toBe(1);
     });
 
     it('should skip invalid authType keys during reload', () => {
@@ -507,10 +449,6 @@ describe('ModelRegistry', () => {
 
       // All user-configured models should be cleared
       expect(registry.getModelsForAuthType(AuthType.USE_OPENAI).length).toBe(0);
-      // claudex-oauth models should still exist
-      expect(registry.getModelsForAuthType(AuthType.CLAUDEX_OAUTH).length).toBe(
-        CLAUDEX_OAUTH_MODELS.length,
-      );
     });
 
     it('should apply duplicate model id handling during reload', () => {

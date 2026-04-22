@@ -34,12 +34,7 @@ function getAuthDisplayType(
     return AuthDisplayType.CODING_PLAN;
   }
 
-  switch (authType) {
-    case AuthType.CLAUDEX_OAUTH:
-      return AuthDisplayType.CLAUDEX_OAUTH;
-    default:
-      return AuthDisplayType.API_KEY;
-  }
+  return AuthDisplayType.API_KEY;
 }
 
 export const AppHeader = ({ version }: AppHeaderProps) => {

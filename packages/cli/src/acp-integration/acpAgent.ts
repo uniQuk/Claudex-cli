@@ -10,14 +10,11 @@ import {
   AuthType,
   clearCachedCredentialFile,
   createDebugLogger,
-  ClaudexOAuth2Event,
-  claudexOAuth2Events,
   MCPServerConfig,
   SessionService,
   tokenLimit,
   type Config,
   type ConversationRecord,
-  type DeviceAuthorizationData,
   SessionStartSource,
   SessionEndReason,
   type PermissionMode,
@@ -210,31 +207,13 @@ class ClaudexAgent implements Agent {
   async authenticate({ methodId }: AuthenticateRequest): Promise<void> {
     const method = z.nativeEnum(AuthType).parse(methodId);
 
-    let authUri: string | undefined;
-    const authUriHandler = (deviceAuth: DeviceAuthorizationData) => {
-      authUri = deviceAuth.verification_uri_complete;
-      void this.connection.extNotification('authenticate/update', {
-        _meta: { authUri },
-      });
-    };
-
-    if (method === AuthType.CLAUDEX_OAUTH) {
-      claudexOAuth2Events.once(ClaudexOAuth2Event.AuthUri, authUriHandler);
-    }
-
     await clearCachedCredentialFile();
-    try {
-      await this.config.refreshAuth(method);
-      this.settings.setValue(
-        SettingScope.User,
-        'security.auth.selectedType',
-        method,
-      );
-    } finally {
-      if (method === AuthType.CLAUDEX_OAUTH) {
-        claudexOAuth2Events.off(ClaudexOAuth2Event.AuthUri, authUriHandler);
-      }
-    }
+    await this.config.refreshAuth(method);
+    this.settings.setValue(
+      SettingScope.User,
+      'security.auth.selectedType',
+      method,
+    );
   }
 
   async newSession({
@@ -494,16 +473,7 @@ class ClaudexAgent implements Agent {
     error?: unknown,
   ): AuthMethod[] {
     const authMethods = buildAuthMethods();
-    const errorMessage = this.extractErrorMessage(error);
-    if (
-      errorMessage?.includes('claudex-oauth') ||
-      errorMessage?.includes('Claudex OAuth')
-    ) {
-      const claudexOAuthMethods = authMethods.filter(
-        (m) => m.id === AuthType.CLAUDEX_OAUTH,
-      );
-      return claudexOAuthMethods.length ? claudexOAuthMethods : authMethods;
-    }
+    void error; // error message was previously used to filter claudex-oauth methods
 
     if (selectedType) {
       const matched = authMethods.filter((m) => m.id === selectedType);

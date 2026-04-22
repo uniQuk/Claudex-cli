@@ -484,7 +484,6 @@ export async function parseArguments(): Promise<CliArgs> {
           choices: [
             AuthType.USE_OPENAI,
             AuthType.USE_ANTHROPIC,
-            AuthType.CLAUDEX_OAUTH,
           ],
           description: 'Authentication type',
         })
