@@ -20,7 +20,6 @@
 
 import { AuthType } from '../core/contentGenerator.js';
 import type { ContentGeneratorConfig } from '../core/contentGenerator.js';
-import { DEFAULT_CLAUDEX_MODEL } from '../config/models.js';
 import {
   resolveField,
   resolveOptionalField,
@@ -38,7 +37,6 @@ import {
 import {
   AUTH_ENV_MAPPINGS,
   DEFAULT_MODELS,
-  CLAUDEX_OAUTH_ALLOWED_MODELS,
   MODEL_GENERATION_CONFIG_FIELDS,
   type AuthEnvMapping,
 } from './constants.js';
@@ -123,11 +121,6 @@ export function resolveModelConfig(
   const { authType, cli, settings, env, modelProvider, proxy } = input;
   const warnings: string[] = [];
   const sources: ConfigSources = {};
-
-  // Special handling for Claudex OAuth
-  if (authType === AuthType.CLAUDEX_OAUTH) {
-    return resolveClaudexOAuthConfig(input, warnings);
-  }
 
   // Get auth-specific env var mappings.
   // If authType is not provided, do not read any auth env vars.
@@ -266,73 +259,6 @@ export function resolveModelConfig(
 
   // Add authType source
   sources['authType'] = computedSource('provided by caller');
-
-  return { config, sources, warnings };
-}
-
-/**
- * Special resolver for Claudex OAuth authentication.
- * Claudex OAuth has fixed model options and uses dynamic tokens.
- */
-function resolveClaudexOAuthConfig(
-  input: ModelConfigSourcesInput,
-  warnings: string[],
-): ModelConfigResolutionResult {
-  const { cli, settings, proxy, modelProvider } = input;
-  const sources: ConfigSources = {};
-
-  // Claudex OAuth only allows specific models
-  const allowedModels = new Set<string>(CLAUDEX_OAUTH_ALLOWED_MODELS);
-
-  // Determine requested model
-  const requestedModel = cli?.model || settings?.model;
-  let resolvedModel: string;
-  let modelSource: ConfigSource;
-
-  if (requestedModel && allowedModels.has(requestedModel)) {
-    resolvedModel = requestedModel;
-    modelSource = cli?.model
-      ? cliSource('--model')
-      : settingsSource('model.name');
-  } else {
-    if (requestedModel) {
-      const isVisionModel =
-        requestedModel.includes('vl') || requestedModel.includes('vision');
-      const extraMessage = isVisionModel
-        ? ` Note: vision-model has been removed since coder-model now supports vision capabilities.`
-        : '';
-      warnings.push(
-        `Warning: Unsupported Claudex OAuth model '${requestedModel}', falling back to '${DEFAULT_CLAUDEX_MODEL}'.${extraMessage}`,
-      );
-    }
-    resolvedModel = DEFAULT_CLAUDEX_MODEL;
-    modelSource = defaultSource(`fallback to '${DEFAULT_CLAUDEX_MODEL}'`);
-  }
-
-  sources['model'] = modelSource;
-  sources['apiKey'] = computedSource('Claudex OAuth dynamic token');
-  sources['authType'] = computedSource('provided by caller');
-
-  if (proxy) {
-    sources['proxy'] = computedSource('Config.getProxy()');
-  }
-
-  // Resolve generation config from settings and modelProvider
-  const generationConfig = resolveGenerationConfig(
-    settings?.generationConfig,
-    modelProvider?.generationConfig,
-    AuthType.CLAUDEX_OAUTH,
-    resolvedModel,
-    sources,
-  );
-
-  const config: ContentGeneratorConfig = {
-    authType: AuthType.CLAUDEX_OAUTH,
-    model: resolvedModel,
-    apiKey: 'CLAUDEX_OAUTH_DYNAMIC_TOKEN',
-    proxy,
-    ...generationConfig,
-  };
 
   return { config, sources, warnings };
 }

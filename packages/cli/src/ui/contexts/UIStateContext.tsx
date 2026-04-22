@@ -17,7 +17,7 @@ import type {
   SettingInputRequest,
   PluginChoiceRequest,
 } from '../types.js';
-import type { ClaudexAuthState } from '../hooks/useQwenAuth.js';
+import type { ClaudexAuthState } from '../hooks/useClaudexAuth.js';
 import type { CommandContext, SlashCommand } from '../commands/types.js';
 import type { TextBuffer } from '../components/shared/text-buffer.js';
 import type {

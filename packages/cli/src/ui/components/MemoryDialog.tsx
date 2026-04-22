@@ -11,7 +11,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import {
-  getAllGeminiMdFilenames,
+  getAllContextFilenames,
   CLAUDEX_DIR,
   getAutoMemoryRoot,
   getAutoMemoryProjectStateDir,
@@ -41,7 +41,7 @@ async function resolvePreferredMemoryFile(
   dir: string,
   fallbackFilename: string,
 ): Promise<string> {
-  for (const filename of getAllGeminiMdFilenames()) {
+  for (const filename of getAllContextFilenames()) {
     const filePath = path.join(dir, filename);
     try {
       await fs.access(filePath);
@@ -126,7 +126,7 @@ export function MemoryDialog({ onClose }: MemoryDialogProps) {
       path.join(
         os.homedir(),
         CLAUDEX_DIR,
-        getAllGeminiMdFilenames()[0] ?? 'CLAUDEX.md',
+        getAllContextFilenames()[0] ?? 'CLAUDEX.md',
       ),
     [],
   );
@@ -134,7 +134,7 @@ export function MemoryDialog({ onClose }: MemoryDialogProps) {
     () =>
       path.join(
         config.getWorkingDir(),
-        getAllGeminiMdFilenames()[0] ?? 'CLAUDEX.md',
+        getAllContextFilenames()[0] ?? 'CLAUDEX.md',
       ),
     [config],
   );
@@ -211,12 +211,12 @@ export function MemoryDialog({ onClose }: MemoryDialogProps) {
         case 'project':
           return resolvePreferredMemoryFile(
             config.getWorkingDir(),
-            getAllGeminiMdFilenames()[0] ?? 'CLAUDEX.md',
+            getAllContextFilenames()[0] ?? 'CLAUDEX.md',
           );
         case 'global':
           return resolvePreferredMemoryFile(
             path.join(os.homedir(), CLAUDEX_DIR),
-            getAllGeminiMdFilenames()[0] ?? 'CLAUDEX.md',
+            getAllContextFilenames()[0] ?? 'CLAUDEX.md',
           );
         case 'managed':
           return managedMemoryPath;

@@ -1,4 +1,164 @@
-# Claudex CLI — Rebrand Status
+# Claudex CLI — Rebrand & Cleanup Status
+
+> Fork of `qwen-code` (QwenLM), stripped to a multi-provider API-only CLI (OpenAI-compatible + Anthropic). No telemetry, no cloud login, no Gemini/Vertex.
+>
+> Build: ✅ `npm run build && npm run bundle` passes cleanly.
+> Tests: ⚠️ Not fully verified (see below).
+
+---
+
+## Completed Work
+
+### Phase 7 — Delete docs-site
+Deleted `docs-site/` entirely (Next.js docs app). Not relevant to a CLI tool.
+
+### Phase 2 — Remove dead providers (Gemini / Vertex / Dashscope)
+- Removed `AuthType.USE_GEMINI` and `AuthType.USE_VERTEX_AI` enum values from `AuthType`
+- Removed `dashscope` from `webSearch` provider type union (`settingsSchema.ts`)
+- Removed `dashscope` from `providerPriority` array (`webSearch.ts`)
+- Removed dead `AuthProviderType.GOOGLE_CREDENTIALS` and `AuthProviderType.SERVICE_ACCOUNT_IMPERSONATION` from `systemController.ts`
+- Removed dead Google-credential `--auth-type` choices from CLI arg definition
+
+### Phase 4 — Remove Google MCP auth
+- Removed `targetAudience` / `targetServiceAccount` params from `MCPServerConfig` constructor calls in `systemController.ts`
+
+### Phase 5 — Remove Arena (multi-model competitive execution)
+- Deleted `packages/core/src/core/arena/` directory
+- Removed `arena.*` settings fields from `settingsSchema.ts` (worktreeBaseDir, preserveArtifacts, timeout, etc.)
+- Removed arena settings mapping from `config.ts`
+- Removed `AgentsCollabSettings.arena` property
+- Removed `ARENA_DIR_NAME` constant and `getGlobalArenaDir()` from `storage.ts`
+- Fixed all resulting TypeScript errors (unused vars, wrong import paths, etc.)
+
+### Phase 6 — Remove TOML migration
+- Deleted: `services/command-migration-tool.ts`, `useCommandMigration.ts`, `useTomlMigration.ts`, `CommandFormatMigrationNudge.tsx`
+- Removed `@iarna/toml` and `z`/zod imports from `FileCommandLoader.ts`; removed `parseAndAdaptTomlFile()` method
+- Cleaned up `AppContainer.tsx`, `DialogManager.tsx`, `UIStateContext.tsx`, `UIActionsContext.tsx`
+
+### Phase 3 — Delete telemetry stubs
+- Deleted `packages/core/src/telemetry/qwen-logger/` directory (dead no-op `ClaudexLogger` class)
+- Note: `loggers.ts` (89 no-op call sites), `uiTelemetry.ts` (real session metrics), `LoopType` enum, `FileOperation` enum, etc. are **kept** — they are real in-use code, not stubs
+
+### Phase 1 — Centralise `@google/genai` imports
+- Created `packages/core/src/types/llm-types.ts` as an `export * from '@google/genai'` shim
+- Added selective re-exports in `packages/core/src/index.ts` (avoids name collisions with local types)
+- Replaced all direct `@google/genai` imports in **96 core source files** with `../types/llm-types.js` relative paths
+- Replaced all direct `@google/genai` imports in **33 CLI source files** with `@claudex/core`
+- Removed `@google/genai` from `packages/cli/package.json` (CLI now gets these types transitively via `@claudex/core`)
+
+### Phase 8 — Dead code cleanup / renames
+- Renamed `useGeminiStream.ts` → `useLLMStream.ts` (export `useLLMStream`)
+- Renamed `useGeminiStream.test.tsx` → `useLLMStream.test.tsx`
+- Renamed component `GeminiRespondingSpinner` → `RespondingSpinner`
+- Renamed component `GeminiSpinner` → `LLMSpinner`
+- Renamed file `GeminiRespondingSpinner.tsx` → `RespondingSpinner.tsx`
+- All import sites updated to the new names
+- **Deleted** dead duplicate files: `useGeminiStream.ts`, `useGeminiStream.test.tsx`, `GeminiRespondingSpinner.tsx`
+- Renamed Qwen-branded files: `useQwenAuth.ts` → `useClaudexAuth.ts`, `QwenOAuthProgress.tsx` → `ClaudexOAuthProgress.tsx` (+ tests); all import sites updated, old files deleted
+- Renamed Gemini-branded memory functions in `memory/const.ts`: `setGeminiMdFilename` → `setContextFilename`, `getCurrentGeminiMdFilename` → `getCurrentContextFilename`, `getAllGeminiMdFilenames` → `getAllContextFilenames`; deprecated aliases removed; all production callers and test mocks updated
+- Deleted orphaned `packages/core/src/tools/memory-config.ts` (not imported anywhere, duplicate of `memory/const.ts`)
+
+### Rename script (`rename_qwen_to_claudex.py`)
+- Run once to replace `QWEN`/`Qwen`/`qwen` → `CLAUDEX`/`Claudex`/`claudex` across all source files
+- URLs are preserved (the script skips any line containing `http/https`)
+- The script itself was mutated by its own run (strings inside the script were also renamed)
+
+---
+
+## What Still Needs Doing
+
+### 🔴 `CLAUDEX_OAUTH` — active but should be removed
+
+`AuthType.CLAUDEX_OAUTH` is still a live enum value used across 37 source files. The OAuth flow it backed has been deleted. This is dead runtime code that:
+- Appears as a valid `--auth-type` CLI option
+- Shows in the model picker UI as a selectable auth type
+- Has its own model list (`CLAUDEX_OAUTH_MODELS` in `constants.ts`, currently an empty array)
+- Has quota-error detection logic (`isClaudexQuotaExceededError` in `quotaErrorDetection.ts`) that checks for `code === 'insufficient_quota'`
+
+**Key files to touch:**
+- `packages/core/src/core/contentGenerator.ts` — `AuthType` enum definition, remove `CLAUDEX_OAUTH`
+- `packages/cli/src/config/config.ts` — remove from `--auth-type` choices
+- `packages/cli/src/ui/components/ModelDialog.tsx` — remove from `authTypeOrder`, UI branches
+- `packages/cli/src/ui/components/AppHeader.tsx` / `Header.tsx` — remove `CLAUDEX_OAUTH` display case
+- `packages/cli/src/ui/models/availableModels.ts` — remove `CLAUDEX_OAUTH` case
+- `packages/core/src/models/constants.ts` — remove `CLAUDEX_OAUTH_MODELS` / `CLAUDEX_OAUTH_ALLOWED_MODELS` stubs
+- `packages/core/src/utils/retry.ts` — remove `isClaudexQuotaExceededError` call in retry logic
+- `packages/cli/src/commands/auth/handler.ts` — remove OAuth branch
+- `packages/cli/src/claudex.tsx`, `acp-integration/authMethods.ts`, `acp-integration/acpAgent.ts`, `acp-integration/session/Session.ts`
+
+### 🟡 Remaining Gemini-branded names in production code
+
+These don't break anything but are inconsistent with the Claudex branding:
+
+| Symbol / File | Location | Suggested Rename |
+|---|---|---|
+| `GeminiClient` class (41 references) | `packages/core/src/core/client.ts:127` | `LLMClient` |
+| `GeminiChat` class | `packages/core/src/core/geminiChat.ts` | `LLMChat` / `ChatSession` |
+| `geminiChat.ts` file | `packages/core/src/core/` | `llmChat.ts` |
+| `GeminiEventType` enum | `packages/core/src/core/turn.ts:49` | `LLMEventType` |
+| `ServerGeminiStreamEvent` type and ~15 related event types | `packages/core/src/core/turn.ts` | `ServerLLMStreamEvent` |
+| `geminiRequest.ts` file | `packages/core/src/core/` | `llmRequest.ts` |
+| `StreamEventType` (imported from geminiChat.ts) | `packages/core/src/followup/speculation.ts` | — |
+| `processGeminiStreamEvents` callback (internal) | `useLLMStream.ts:1100` | `processLLMStreamEvents` |
+| `mockedUseGeminiStream` variable (test-only) | `AppContainer.test.tsx:140` | cosmetic |
+
+### 🟡 Files still importing `@google/genai` directly (comments/mocks only)
+
+These 14 occurrences are all comment strings or `vi.mock('@google/genai')` in test files — not runtime imports. They are harmless but worth a note:
+
+- `mcp-tool.ts` — 3 JSDoc comments mentioning `@google/genai`
+- `prompts.ts` — 1 JSDoc comment
+- `tools.ts` — 1 JSDoc comment
+- `mcp-tool.test.ts`, `mcp-client.test.ts`, `tool-registry.test.ts`, `turn.test.ts`, `contentGenerator.test.ts` — `vi.mock('@google/genai')` and `vi.importActual('@google/genai')` in test setup
+
+
+### 🟢 Test suite status
+
+The root `vitest.config.ts` has been cleaned up (removed deleted package references) and now lists only `packages/cli`, `packages/core`, `integration-tests`, `scripts`.
+
+Individual package test status:
+- `packages/core` — **not yet verified**
+- `packages/cli` — **not yet verified**
+
+Likely test failures to watch for:
+- Tests asserting on `AuthType.CLAUDEX_OAUTH` behaviour (functionality is dead)
+- Tests for `useQwenAuth` / `QwenOAuthProgress` (OAuth flow is gone)
+- Any snapshot or string-match tests that haven't been updated after the `qwen→claudex` rename
+
+### 🟢 Docs URL placeholder
+
+`docsCommand.ts` currently uses `https://claudex-cli.github.io/docs/${langPath}` — a placeholder. Update once the actual docs site is live.
+
+---
+
+## Architecture Notes / Areas for Deeper Review
+
+### 1. `@google/genai` is still a runtime dependency of `packages/core`
+
+The `llm-types.ts` shim does `export * from '@google/genai'` — meaning the package is still bundled and loaded at runtime. The long-term goal is to replace `GenerateContentResponse` (a class that's instantiated with `new`) with a local class, and `mcpToTool` / `CallableTool` with a local MCP adapter. This is a meaningful decoupling effort, not done yet.
+
+**Key blocker:** `converter.ts` in both `anthropicContentGenerator/` and `openaiContentGenerator/` calls `new GenerateContentResponse()` and accesses its methods/properties. This class would need to be re-implemented locally (or the converters rewritten to use a neutral response type).
+
+### 2. `CLAUDEX_OAUTH` quota-error detection may be wrong
+
+`isClaudexQuotaExceededError` checks for `code === 'insufficient_quota'` with HTTP 429. This was originally checking for a Qwen/DashScope-specific quota response. If this is now intended to detect OpenAI quota errors, the condition may be incorrect — OpenAI uses `status === 429` with `code: 'insufficient_quota'` but the shape differs from what the function checks. Worth testing with a real 429 from the target APIs.
+
+### 3. `CLAUDEX_OAUTH` auth flow is wired but dead
+
+The OAuth device-flow UI (`QwenOAuthProgress.tsx`, `useQwenAuth.ts`) is rendered by `DialogManager.tsx` when `uiState.showClaudexOAuthProgress` is true. The underlying `claudexOAuth2.ts` was deleted (Phase 3 from the original STATUS.md), so this flow will fail if triggered. The UI scaffolding is live dead code — it won't crash unless a user actually tries to authenticate with OAuth.
+
+### 4. `geminiChat.ts` / `GeminiChat` class naming
+
+`GeminiChat` is the core chat session class used by `GeminiClient` (also misnamed). Renaming these is safe but involves touching ~50 files. It's purely cosmetic — there's no functional issue.
+
+### 5. Dual-file problem: `useGeminiStream.ts` + `useLLMStream.ts`
+
+Both files exist with identical content (only the export name differs). AppContainer imports `useLLMStream`. The old file is dead but present — it will confuse editors and future contributors. Delete `useGeminiStream.ts` and `useGeminiStream.test.tsx`.
+
+### 6. Same dual-file problem: `GeminiRespondingSpinner.tsx` + `RespondingSpinner.tsx`
+
+Both files exist with identical content. All imports use `RespondingSpinner.tsx`. Delete `GeminiRespondingSpinner.tsx`.
+
 
 > Fork of `claudex-code`, stripped down to a multi-provider API-only CLI (OpenAI-compatible + Anthropic). No telemetry, no cloud login, no Gemini/Vertex.
 
@@ -148,16 +308,11 @@ This changes where global settings (`~/.claudex/settings.json`), session data, M
 ### Step 5 — Update docs URL + description (5 min)
 In `docsCommand.ts`, update to actual Claudex docs URL (TBD — placeholder `https://claudex-cli.github.io/docs` or wherever docs will live).
 
-### Step 6 — Rename Gemini-branded functions (10 min)
-In `packages/core/src/memory/const.ts`:
-- `setGeminiMdFilename` → `setContextFilename`
-- `getCurrentGeminiMdFilename` → `getCurrentContextFilename`
-- `getAllGeminiMdFilenames` → `getAllContextFilenames`
-
-Use `vscode_renameSymbol` or `sed` — these are called in several places across core.
+### ~~Step 6 — Rename Gemini-branded functions~~ ✅ Done
+`setGeminiMdFilename/getCurrentGeminiMdFilename/getAllGeminiMdFilenames` renamed to `setContextFilename/getCurrentContextFilename/getAllContextFilenames` in `memory/const.ts`. Deprecated aliases removed. All callers (production + test mocks) updated. Orphaned `tools/memory-config.ts` deleted.
 
 ### Step 7 — Run and fix unit tests (1–3 hrs)
-After steps 1–2, run full test suite from package dirs and fix failures:
+Run full test suite from package dirs and fix failures:
 
 ```bash
 cd packages/core && npx vitest run 2>&1 | grep "FAIL"
@@ -165,11 +320,8 @@ cd packages/cli  && npx vitest run 2>&1 | grep "FAIL"
 ```
 
 Likely failures:
-- Any test that asserts on `~/.claudex` path strings (after Step 3)
-- Any test asserting on auth type strings that reference removed types
 - Tests for `useClaudexAuth` / `ClaudexOAuthProgress` (functionality is gone — tests may need to be removed or converted to stubs)
+- Any tests asserting on removed `CLAUDEX_OAUTH` auth-type strings
 
-### Step 8 — Remove dead files (10 min)
-- `packages/cli/src/gemini.tsx` — superseded by `claudex.tsx`
-- `packages/cli/src/gemini.test.tsx` — superseded by `claudex.test.tsx`
+### Step 8 — Remove dead auth handler code (10 min)
 - `packages/cli/src/commands/auth/handler.ts` coding-plan dead code block (simplify to noop for unsupported auth types)

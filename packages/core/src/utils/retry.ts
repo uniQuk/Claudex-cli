@@ -5,8 +5,6 @@
  */
 
 import type { GenerateContentResponse } from '../types/llm-types.js';
-import { AuthType } from '../core/contentGenerator.js';
-import { isClaudexQuotaExceededError } from './quotaErrorDetection.js';
 import { createDebugLogger } from './debugLogger.js';
 import { getErrorStatus } from './errors.js';
 
@@ -77,7 +75,6 @@ export async function retryWithBackoff<T>(
     maxAttempts,
     initialDelayMs,
     maxDelayMs,
-    authType,
     shouldRetryOnError,
     shouldRetryOnContent,
   } = {
@@ -107,18 +104,6 @@ export async function retryWithBackoff<T>(
       return result;
     } catch (error) {
       const errorStatus = getErrorStatus(error);
-
-      // Check for Claudex OAuth quota exceeded error - throw immediately without retry
-      if (authType === AuthType.CLAUDEX_OAUTH && isClaudexQuotaExceededError(error)) {
-        throw new Error(
-          `Claudex OAuth free tier has been discontinued as of 2026-04-15.\n\n` +
-            `To continue using Claudex, try one of these alternatives:\n` +
-            `  - OpenRouter:    https://openrouter.ai/docs/quickstart\n` +
-            `  - Fireworks AI:  https://docs.fireworks.ai/api-reference/introduction\n` +
-            `  - ModelStudio:   https://help.aliyun.com/zh/model-studio/coding-plan\n\n` +
-            `After setting up your API key, run /auth to configure your provider.`,
-        );
-      }
 
       // Check if we've exhausted retries or shouldn't retry
       if (attempt >= maxAttempts || !shouldRetryOnError(error as Error)) {

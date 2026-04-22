@@ -11,7 +11,7 @@ import type {
   SlashCommand,
   SlashCommandActionReturn,
 } from './types.js';
-import { getCurrentGeminiMdFilename } from '@claudex/core';
+import { getCurrentContextFilename } from '@claudex/core';
 import { CommandKind } from './types.js';
 import { Text } from 'ink';
 import React from 'react';
@@ -37,7 +37,7 @@ export const initCommand: SlashCommand = {
       };
     }
     const targetDir = context.services.config.getTargetDir();
-    const contextFileName = getCurrentGeminiMdFilename();
+    const contextFileName = getCurrentContextFilename();
     const contextFilePath = path.join(targetDir, contextFileName);
 
     try {

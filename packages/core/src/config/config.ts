@@ -44,7 +44,7 @@ import { CronScheduler } from '../services/cronScheduler.js';
 
 // Tools — only lightweight imports; tool classes are lazy-loaded via dynamic import
 import type { SendSdkMcpMessage } from '../tools/mcp-client.js';
-import { setGeminiMdFilename } from '../memory/const.js';
+import { setContextFilename } from '../memory/const.js';
 import { canUseRipgrep } from '../utils/ripgrepUtils.js';
 import { ToolRegistry, type ToolFactory } from '../tools/tool-registry.js';
 import { ToolNames } from '../tools/tool-names.js';
@@ -814,7 +814,7 @@ export class Config {
     this.eventEmitter = params.eventEmitter;
     this.agentsSettings = params.agents ?? {};
     if (params.contextFileName) {
-      setGeminiMdFilename(params.contextFileName);
+      setContextFilename(params.contextFileName);
     }
 
     // Create ModelsConfig for centralized model management

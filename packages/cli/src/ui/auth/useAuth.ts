@@ -24,12 +24,12 @@ export interface OpenAICredentials {
   baseUrl?: string;
   model?: string;
 }
-import { useClaudexAuth } from '../hooks/useQwenAuth.js';
+import { useClaudexAuth } from '../hooks/useClaudexAuth.js';
 import { AuthState, MessageType } from '../types.js';
 import type { HistoryItem } from '../types.js';
 import { t } from '../../i18n/index.js';
 
-export type { ClaudexAuthState } from '../hooks/useQwenAuth.js';
+export type { ClaudexAuthState } from '../hooks/useClaudexAuth.js';
 
 export const useAuthCommand = (
   settings: LoadedSettings,

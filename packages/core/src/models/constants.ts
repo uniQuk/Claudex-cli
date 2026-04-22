@@ -75,7 +75,4 @@ export const DEFAULT_MODELS = {
   openai: MAINLINE_CODER_MODEL,
 } as Partial<Record<AuthType, string>>;
 
-// Kept for any downstream code that referenced CLAUDEX_OAUTH_MODELS.
-export const CLAUDEX_OAUTH_MODELS: ModelConfig[] = [];
-export const CLAUDEX_OAUTH_ALLOWED_MODELS: readonly string[] = [];
 

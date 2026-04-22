@@ -8,7 +8,7 @@ import * as fs from 'node:fs/promises';
 import * as fsSync from 'node:fs';
 import * as path from 'node:path';
 import { homedir } from 'node:os';
-import { getAllGeminiMdFilenames } from '../memory/const.js';
+import { getAllContextFilenames } from '../memory/const.js';
 import type { FileDiscoveryService } from '../services/fileDiscoveryService.js';
 import { processImports } from './memoryImportProcessor.js';
 import { CLAUDEX_DIR } from './paths.js';
@@ -126,9 +126,9 @@ async function getGeminiMdFilePathsInternalForEachDir(
   implicitDiscoveryEnabled: boolean = true,
 ): Promise<string[]> {
   const allPaths = new Set<string>();
-  const geminiMdFilenames = getAllGeminiMdFilenames();
+  const contextFilenames = getAllContextFilenames();
 
-  for (const geminiMdFilename of geminiMdFilenames) {
+  for (const geminiMdFilename of contextFilenames) {
     const resolvedHome = path.resolve(userHomePath);
     const globalMemoryPath = path.join(
       resolvedHome,
@@ -232,7 +232,7 @@ async function getGeminiMdFilePathsInternalForEachDir(
   const finalPaths = Array.from(allPaths);
 
   logger.debug(
-    `Final ordered ${getAllGeminiMdFilenames()} paths to read: ${JSON.stringify(
+    `Final ordered ${getAllContextFilenames()} paths to read: ${JSON.stringify(
       finalPaths,
     )}`,
   );
@@ -274,7 +274,7 @@ async function readGeminiMdFiles(
             const message =
               error instanceof Error ? error.message : String(error);
             logger.warn(
-              `Warning: Could not read ${getAllGeminiMdFilenames()} file at ${filePath}. Error: ${message}`,
+              `Warning: Could not read ${getAllContextFilenames()} file at ${filePath}. Error: ${message}`,
             );
           }
           logger.debug(`Failed to read: ${filePath}`);
@@ -385,7 +385,7 @@ export async function loadServerHierarchicalMemory(
 
     // Only count files that match configured memory filenames (e.g., CLAUDEX.md),
     // excluding system context files like output-language.md
-    const memoryFilenames = new Set(getAllGeminiMdFilenames());
+    const memoryFilenames = new Set(getAllContextFilenames());
     fileCount = contentsWithPaths.filter((item) =>
       memoryFilenames.has(path.basename(item.filePath)),
     ).length;

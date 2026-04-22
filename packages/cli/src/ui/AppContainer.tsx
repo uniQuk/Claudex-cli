@@ -36,7 +36,7 @@ import {
   ideContextStore,
   createDebugLogger,
   getErrorMessage,
-  getAllGeminiMdFilenames,
+  getAllContextFilenames,
   ShellExecutionService,
   SessionEndReason,
   SessionStartSource,
@@ -1255,7 +1255,7 @@ export const AppContainer = (props: AppContainerProps) => {
       ? Array.isArray(fromSettings)
         ? fromSettings
         : [fromSettings]
-      : getAllGeminiMdFilenames();
+      : getAllContextFilenames();
   }, [settings.merged.context?.fileName]);
   // Initial prompt handling
   const initialPrompt = useMemo(() => config.getQuestion(), [config]);

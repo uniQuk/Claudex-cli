@@ -6,9 +6,9 @@
 
 import { vi, describe, it, expect } from 'vitest';
 import {
-  setGeminiMdFilename,
-  getCurrentGeminiMdFilename,
-  getAllGeminiMdFilenames,
+  setContextFilename,
+  getCurrentContextFilename,
+  getAllContextFilenames,
 } from './const.js';
 
 // Mock dependencies
@@ -23,26 +23,26 @@ vi.mock(import('node:fs/promises'), async (importOriginal) => {
 
 vi.mock('os');
 
-describe('setGeminiMdFilename', () => {
+describe('setContextFilename', () => {
   it('should update currentGeminiMdFilename when a valid new name is provided', () => {
     const newName = 'CUSTOM_CONTEXT.md';
-    setGeminiMdFilename(newName);
-    expect(getCurrentGeminiMdFilename()).toBe(newName);
+    setContextFilename(newName);
+    expect(getCurrentContextFilename()).toBe(newName);
   });
 
   it('should not update currentGeminiMdFilename if the new name is empty or whitespace', () => {
-    const initialName = getCurrentGeminiMdFilename(); // Get current before trying to change
-    setGeminiMdFilename('  ');
-    expect(getCurrentGeminiMdFilename()).toBe(initialName);
+    const initialName = getCurrentContextFilename(); // Get current before trying to change
+    setContextFilename('  ');
+    expect(getCurrentContextFilename()).toBe(initialName);
 
-    setGeminiMdFilename('');
-    expect(getCurrentGeminiMdFilename()).toBe(initialName);
+    setContextFilename('');
+    expect(getCurrentContextFilename()).toBe(initialName);
   });
 
   it('should handle an array of filenames', () => {
     const newNames = ['CUSTOM_CONTEXT.md', 'ANOTHER_CONTEXT.md'];
-    setGeminiMdFilename(newNames);
-    expect(getCurrentGeminiMdFilename()).toBe('CUSTOM_CONTEXT.md');
-    expect(getAllGeminiMdFilenames()).toEqual(newNames);
+    setContextFilename(newNames);
+    expect(getCurrentContextFilename()).toBe('CUSTOM_CONTEXT.md');
+    expect(getAllContextFilenames()).toEqual(newNames);
   });
 });

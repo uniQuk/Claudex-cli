@@ -7,7 +7,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import type { DeviceAuthorizationData } from '@claudex/core';
-import { useClaudexAuth } from './useQwenAuth.js';
+import { useClaudexAuth } from './useClaudexAuth.js';
 import {
   AuthType,
   claudexOAuth2Events,

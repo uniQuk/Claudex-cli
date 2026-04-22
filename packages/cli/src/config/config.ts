@@ -10,10 +10,10 @@ import {
   Config,
   DEFAULT_CLAUDEX_EMBEDDING_MODEL,
   FileDiscoveryService,
-  getAllGeminiMdFilenames,
+  getAllContextFilenames,
   loadServerHierarchicalMemory,
   type LoadServerHierarchicalMemoryResponse,
-  setGeminiMdFilename as setServerGeminiMdFilename,
+  setContextFilename as setServerContextFilename,
   Storage,
   InputFormat,
   OutputFormat,
@@ -705,13 +705,13 @@ export async function loadCliConfig(
 
   // Set the context filename in the server's memoryTool module BEFORE loading memory
   // TODO(b/343434939): This is a bit of a hack. The contextFileName should ideally be passed
-  // directly to the Config constructor in core, and have core handle setGeminiMdFilename.
+  // directly to the Config constructor in core, and have core handle setContextFilename.
   // However, loadHierarchicalGeminiMemory is called *before* createServerConfig.
   if (settings.context?.fileName) {
-    setServerGeminiMdFilename(settings.context.fileName);
+    setServerContextFilename(settings.context.fileName);
   } else {
     // Reset to default context filenames if not provided in settings.
-    setServerGeminiMdFilename(getAllGeminiMdFilenames());
+    setServerContextFilename(getAllContextFilenames());
   }
 
   // Automatically load output-language.md if it exists

@@ -14,7 +14,7 @@ import type { Config } from '../config/config.js';
 
 // Mock the memoryTool module
 vi.mock('../memory/const.js', () => ({
-  getAllGeminiMdFilenames: vi.fn(() => ['GEMINI.md', 'AGENTS.md']),
+  getAllContextFilenames: vi.fn(() => ['CLAUDEX.md', 'AGENTS.md']),
 }));
 
 describe('FileExclusions', () => {

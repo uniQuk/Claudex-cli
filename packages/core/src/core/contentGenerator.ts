@@ -55,8 +55,6 @@ export interface ContentGenerator {
 export enum AuthType {
   USE_OPENAI = 'openai',
   USE_ANTHROPIC = 'anthropic',
-  /** @deprecated OAuth discontinued 2026-04-15. Remove in Phase 8. */
-  CLAUDEX_OAUTH = 'claudex-oauth',
 }
 
 /**

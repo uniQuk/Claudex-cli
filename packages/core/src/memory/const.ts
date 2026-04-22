@@ -41,10 +41,3 @@ export function getAllContextFilenames(): string[] {
   return [currentContextFilename];
 }
 
-// Backward-compat aliases
-/** @deprecated Use setContextFilename */
-export const setGeminiMdFilename = setContextFilename;
-/** @deprecated Use getCurrentContextFilename */
-export const getCurrentGeminiMdFilename = getCurrentContextFilename;
-/** @deprecated Use getAllContextFilenames */
-export const getAllGeminiMdFilenames = getAllContextFilenames;

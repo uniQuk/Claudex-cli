@@ -10,7 +10,7 @@ import type { ConfigParameters, SandboxConfig } from './config.js';
 import { Config, ApprovalMode } from './config.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { setGeminiMdFilename as mockSetGeminiMdFilename } from '../memory/const.js';
+import { setContextFilename as mockSetContextFilename } from '../memory/const.js';
 import {
   DEFAULT_TELEMETRY_TARGET,
   DEFAULT_OTLP_ENDPOINT,
@@ -146,20 +146,11 @@ vi.mock('../tools/read-many-files', () => ({
   ReadManyFilesTool: createToolMock('read_many_files'),
 }));
 vi.mock('../memory/const.js', () => ({
-  setGeminiMdFilename: vi.fn(),
-  getCurrentGeminiMdFilename: vi.fn(() => 'CLAUDEX.md'), // Mock the original filename
-  getAllGeminiMdFilenames: vi.fn(() => ['CLAUDEX.md', 'AGENTS.md']),
+  setContextFilename: vi.fn(),
+  getCurrentContextFilename: vi.fn(() => 'CLAUDEX.md'),
+  getAllContextFilenames: vi.fn(() => ['CLAUDEX.md', 'AGENTS.md']),
   DEFAULT_CONTEXT_FILENAME: 'CLAUDEX.md',
   CLAUDEX_CONFIG_DIR: '.claudex',
-}));
-vi.mock('../tools/memory-config', () => ({
-  setGeminiMdFilename: vi.fn(),
-  getCurrentGeminiMdFilename: vi.fn(() => 'CLAUDEX.md'),
-  getAllGeminiMdFilenames: vi.fn(() => ['CLAUDEX.md', 'AGENTS.md']),
-  DEFAULT_CONTEXT_FILENAME: 'CLAUDEX.md',
-  AGENT_CONTEXT_FILENAME: 'AGENTS.md',
-  CLAUDEX_CONFIG_DIR: '.claudex',
-  MEMORY_SECTION_HEADER: '## Claudex Added Memories',
 }));
 
 vi.mock('../core/contentGenerator.js');
@@ -750,19 +741,19 @@ describe('Server Config (config.ts)', () => {
     expect(lastCall?.at(-1)).toEqual({ explicitOnly: true });
   });
 
-  it('Config constructor should call setGeminiMdFilename with contextFileName if provided', () => {
+  it('Config constructor should call setContextFilename with contextFileName if provided', () => {
     const contextFileName = 'CUSTOM_AGENTS.md';
     const paramsWithContextFile: ConfigParameters = {
       ...baseParams,
       contextFileName,
     };
     new Config(paramsWithContextFile);
-    expect(mockSetGeminiMdFilename).toHaveBeenCalledWith(contextFileName);
+    expect(mockSetContextFilename).toHaveBeenCalledWith(contextFileName);
   });
 
-  it('Config constructor should not call setGeminiMdFilename if contextFileName is not provided', () => {
+  it('Config constructor should not call setContextFilename if contextFileName is not provided', () => {
     new Config(baseParams); // baseParams does not have contextFileName
-    expect(mockSetGeminiMdFilename).not.toHaveBeenCalled();
+    expect(mockSetContextFilename).not.toHaveBeenCalled();
   });
 
   it('should set default file filtering settings when not provided', () => {
