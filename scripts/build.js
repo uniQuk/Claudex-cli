@@ -25,17 +25,12 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
 
-// npm install if node_modules was removed (e.g. via npm run clean or scripts/clean.js)
+// Ensure deps exist
 if (!existsSync(join(root, 'node_modules'))) {
   execSync('npm install', { stdio: 'inherit', cwd: root });
 }
 
-// build all workspaces/packages in dependency order
-execSync('npm run generate', { stdio: 'inherit', cwd: root });
-
-// Build in dependency order:
-// 1. core (foundation package)
-// 2. cli (depends on core)
+// Build in dependency order
 const buildOrder = [
   'packages/core',
   'packages/cli',
@@ -46,16 +41,15 @@ for (const workspace of buildOrder) {
     stdio: 'inherit',
     cwd: root,
   });
-
 }
 
-// also build container image if sandboxing is enabled
-// skip (-s) npm install + build since we did that above
+// Optional sandbox build (safe to keep or remove)
 try {
   execSync('node scripts/sandbox_command.js -q', {
     stdio: 'inherit',
     cwd: root,
   });
+
   if (
     process.env.BUILD_SANDBOX === '1' ||
     process.env.BUILD_SANDBOX === 'true'
@@ -66,5 +60,5 @@ try {
     });
   }
 } catch {
-  // ignore
+  // intentionally ignored
 }
