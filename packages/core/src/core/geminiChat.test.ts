@@ -9,8 +9,8 @@ import type {
   Content,
   GenerateContentConfig,
   GenerateContentResponse,
-} from '@google/genai';
-import { ApiError } from '@google/genai';
+} from '../types/llm-types.js';
+import { ApiError } from '../types/llm-types.js';
 import type { ContentGenerator } from '../core/contentGenerator.js';
 import {
   GeminiChat,

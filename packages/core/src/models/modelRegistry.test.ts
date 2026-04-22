@@ -93,7 +93,7 @@ describe('ModelRegistry', () => {
     });
 
     it('should return empty array for non-existent authType', () => {
-      const models = registry.getModelsForAuthType(AuthType.USE_VERTEX_AI);
+      const models = registry.getModelsForAuthType(AuthType.USE_OPENAI);
       expect(models.length).toBe(0);
     });
 
@@ -157,7 +157,7 @@ describe('ModelRegistry', () => {
     });
 
     it('should return undefined for non-existent authType', () => {
-      const model = registry.getModel(AuthType.USE_VERTEX_AI, 'some-model');
+      const model = registry.getModel(AuthType.USE_OPENAI, 'some-model');
       expect(model).toBeUndefined();
     });
   });
@@ -182,7 +182,7 @@ describe('ModelRegistry', () => {
     });
 
     it('should return false for non-existent authType', () => {
-      expect(registry.hasModel(AuthType.USE_VERTEX_AI, 'gpt-4')).toBe(false);
+      expect(registry.hasModel(AuthType.USE_OPENAI, 'gpt-4')).toBe(false);
     });
   });
 
@@ -257,14 +257,14 @@ describe('ModelRegistry', () => {
     it('should accept valid authType keys', () => {
       const registry = new ModelRegistry({
         openai: [{ id: 'gpt-4', name: 'GPT-4' }],
-        gemini: [{ id: 'gemini-pro', name: 'Gemini Pro' }],
+        anthropic: [{ id: 'claude-3', name: 'Claude 3' }],
       });
 
       const openaiModels = registry.getModelsForAuthType(AuthType.USE_OPENAI);
       expect(openaiModels.length).toBe(1);
       expect(openaiModels[0].id).toBe('gpt-4');
 
-      const geminiModels = registry.getModelsForAuthType(AuthType.USE_GEMINI);
+      const geminiModels = registry.getModelsForAuthType(AuthType.USE_ANTHROPIC);
       expect(geminiModels.length).toBe(1);
       expect(geminiModels[0].id).toBe('gemini-pro');
     });
@@ -287,19 +287,19 @@ describe('ModelRegistry', () => {
       const registry = new ModelRegistry({
         openai: [{ id: 'gpt-4', name: 'GPT-4' }],
         'bad-key-1': [{ id: 'model-1', name: 'Model 1' }],
-        gemini: [{ id: 'gemini-pro', name: 'Gemini Pro' }],
+        anthropic: [{ id: 'claude-3', name: 'Claude 3' }],
         'bad-key-2': [{ id: 'model-2', name: 'Model 2' }],
       } as unknown as ModelProvidersConfig);
 
       // Valid keys should be registered
       expect(registry.getModelsForAuthType(AuthType.USE_OPENAI).length).toBe(1);
-      expect(registry.getModelsForAuthType(AuthType.USE_GEMINI).length).toBe(1);
+      expect(registry.getModelsForAuthType(AuthType.USE_ANTHROPIC).length).toBe(1);
 
       // Invalid keys should be skipped
       const openaiModels = registry.getModelsForAuthType(AuthType.USE_OPENAI);
       expect(openaiModels.length).toBe(1);
 
-      const geminiModels = registry.getModelsForAuthType(AuthType.USE_GEMINI);
+      const geminiModels = registry.getModelsForAuthType(AuthType.USE_ANTHROPIC);
       expect(geminiModels.length).toBe(1);
     });
 
@@ -375,7 +375,7 @@ describe('ModelRegistry', () => {
         'shared-model',
       );
       const geminiModel = registry.getModel(
-        AuthType.USE_GEMINI,
+        AuthType.USE_ANTHROPIC,
         'shared-model',
       );
 
@@ -429,17 +429,17 @@ describe('ModelRegistry', () => {
     it('should clear user-configured models when reload with empty config', () => {
       const registry = new ModelRegistry({
         openai: [{ id: 'gpt-4', name: 'GPT-4' }],
-        gemini: [{ id: 'gemini-pro', name: 'Gemini Pro' }],
+        anthropic: [{ id: 'claude-3', name: 'Claude 3' }],
       });
 
       expect(registry.getModelsForAuthType(AuthType.USE_OPENAI).length).toBe(1);
-      expect(registry.getModelsForAuthType(AuthType.USE_GEMINI).length).toBe(1);
+      expect(registry.getModelsForAuthType(AuthType.USE_ANTHROPIC).length).toBe(1);
 
       registry.reloadModels({});
 
       // All user-configured models should be cleared
       expect(registry.getModelsForAuthType(AuthType.USE_OPENAI).length).toBe(0);
-      expect(registry.getModelsForAuthType(AuthType.USE_GEMINI).length).toBe(0);
+      expect(registry.getModelsForAuthType(AuthType.USE_ANTHROPIC).length).toBe(0);
 
       // claudex-oauth models should still exist
       expect(registry.getModelsForAuthType(AuthType.CLAUDEX_OAUTH).length).toBe(
@@ -470,7 +470,7 @@ describe('ModelRegistry', () => {
           { id: 'gpt-4', name: 'GPT-4 Updated' },
           { id: 'gpt-3.5', name: 'GPT-3.5' },
         ],
-        gemini: [{ id: 'gemini-pro', name: 'Gemini Pro' }],
+        anthropic: [{ id: 'claude-3', name: 'Claude 3' }],
       });
 
       const openaiModels = registry.getModelsForAuthType(AuthType.USE_OPENAI);
@@ -479,7 +479,7 @@ describe('ModelRegistry', () => {
         'GPT-4 Updated',
       );
 
-      const geminiModels = registry.getModelsForAuthType(AuthType.USE_GEMINI);
+      const geminiModels = registry.getModelsForAuthType(AuthType.USE_ANTHROPIC);
       expect(geminiModels.length).toBe(1);
     });
 

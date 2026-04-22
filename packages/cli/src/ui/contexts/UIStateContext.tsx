@@ -17,7 +17,7 @@ import type {
   SettingInputRequest,
   PluginChoiceRequest,
 } from '../types.js';
-import type { ClaudexAuthState } from '../hooks/useClaudexAuth.js';
+import type { ClaudexAuthState } from '../hooks/useQwenAuth.js';
 import type { CommandContext, SlashCommand } from '../commands/types.js';
 import type { TextBuffer } from '../components/shared/text-buffer.js';
 import type {
@@ -34,7 +34,6 @@ import type { UpdateObject } from '../utils/updateCheck.js';
 import { type UseHistoryManagerReturn } from '../hooks/useHistoryManager.js';
 import { type RestartReason } from '../hooks/useIdeTrustListener.js';
 import { type CodingPlanUpdateRequest } from '../hooks/useCodingPlanUpdates.js';
-import { type ArenaDialogType } from '../hooks/useArenaCommand.js';
 
 export interface UIState {
   history: HistoryItem[];
@@ -57,7 +56,6 @@ export interface UIState {
   isModelDialogOpen: boolean;
   isFastModelMode: boolean;
   isTrustDialogOpen: boolean;
-  activeArenaDialog: ArenaDialogType;
   isPermissionsDialogOpen: boolean;
   isApprovalModeDialogOpen: boolean;
   isResumeDialogOpen: boolean;
@@ -83,8 +81,6 @@ export interface UIState {
   suggestionsWidth: number;
   isInputActive: boolean;
   shouldShowIdePrompt: boolean;
-  shouldShowCommandMigrationNudge: boolean;
-  commandMigrationTomlFiles: string[];
   isFolderTrustDialogOpen: boolean;
   isTrustedFolder: boolean | undefined;
   constrainHeight: boolean;

@@ -7,7 +7,6 @@
 import { createContext, useContext } from 'react';
 import { type Key } from '../hooks/useKeypress.js';
 import { type IdeIntegrationNudgeResult } from '../IdeIntegrationNudge.js';
-import { type CommandMigrationNudgeResult } from '../CommandFormatMigrationNudge.js';
 import { type FolderTrustChoice } from '../components/FolderTrustDialog.js';
 import {
   type AuthType,
@@ -16,7 +15,6 @@ import {
 } from '@claudex/core';
 import { type SettingScope } from '../../config/settings.js';
 import type { AuthState } from '../types.js';
-import { type ArenaDialogType } from '../hooks/useArenaCommand.js';
 // OpenAICredentials type (previously imported from OpenAIKeyPrompt)
 export interface OpenAICredentials {
   apiKey: string;
@@ -53,16 +51,12 @@ export interface UIActions {
   closeMemoryDialog: () => void;
   closeModelDialog: () => void;
   openModelDialog: (options?: { fastModelMode?: boolean }) => void;
-  openArenaDialog: (type: Exclude<ArenaDialogType, null>) => void;
-  closeArenaDialog: () => void;
-  handleArenaModelsSelected?: (models: string[]) => void;
   dismissCodingPlanUpdate: () => void;
   closeTrustDialog: () => void;
   closePermissionsDialog: () => void;
   setShellModeActive: (value: boolean) => void;
   vimHandleInput: (key: Key) => boolean;
   handleIdePromptComplete: (result: IdeIntegrationNudgeResult) => void;
-  handleCommandMigrationComplete: (result: CommandMigrationNudgeResult) => void;
   handleFolderTrustSelect: (choice: FolderTrustChoice) => void;
   setConstrainHeight: (value: boolean) => void;
   onEscapePromptChange: (show: boolean) => void;

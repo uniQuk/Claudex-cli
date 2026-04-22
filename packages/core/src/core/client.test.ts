@@ -14,7 +14,7 @@ import {
   type Mock,
 } from 'vitest';
 
-import type { Content, GenerateContentResponse, Part } from '@google/genai';
+import type { Content, GenerateContentResponse, Part } from '../types/llm-types.js';
 import { GeminiClient, SendMessageType } from './client.js';
 import { findCompressSplitPoint } from '../services/chatCompressionService.js';
 import {
@@ -320,8 +320,8 @@ describe('Gemini Client (client.ts)', () => {
     const contentGeneratorConfig: ContentGeneratorConfig = {
       model: 'test-model',
       apiKey: 'test-key',
-      vertexai: false,
-      authType: AuthType.USE_GEMINI,
+      
+      authType: AuthType.USE_OPENAI,
     };
     const mockSubagentManager = {
       listSubagents: vi.fn().mockResolvedValue([]),
@@ -731,8 +731,8 @@ describe('Gemini Client (client.ts)', () => {
           {
             model: 'test-model',
             apiKey: 'test-key',
-            vertexai: false,
-            authType: AuthType.USE_GEMINI,
+            
+            authType: AuthType.USE_OPENAI,
             contextWindowSize: 100, // Set to same as originalTokenCount to ensure threshold is exceeded
           },
         );
@@ -784,8 +784,8 @@ describe('Gemini Client (client.ts)', () => {
           {
             model: 'test-model',
             apiKey: 'test-key',
-            vertexai: false,
-            authType: AuthType.USE_GEMINI,
+            
+            authType: AuthType.USE_OPENAI,
             contextWindowSize: 100, // Set to same as originalTokenCount to ensure threshold is exceeded
           },
         );
@@ -810,8 +810,8 @@ describe('Gemini Client (client.ts)', () => {
       vi.spyOn(client['config'], 'getContentGeneratorConfig').mockReturnValue({
         model: 'test-model',
         apiKey: 'test-key',
-        vertexai: false,
-        authType: AuthType.USE_GEMINI,
+        
+        authType: AuthType.USE_OPENAI,
         contextWindowSize: MOCKED_TOKEN_LIMIT,
       });
       mockGetHistory.mockReturnValue([
@@ -843,8 +843,8 @@ describe('Gemini Client (client.ts)', () => {
       vi.spyOn(client['config'], 'getContentGeneratorConfig').mockReturnValue({
         model: 'test-model',
         apiKey: 'test-key',
-        vertexai: false,
-        authType: AuthType.USE_GEMINI,
+        
+        authType: AuthType.USE_OPENAI,
         contextWindowSize: MOCKED_TOKEN_LIMIT,
       });
       vi.spyOn(client['config'], 'getChatCompression').mockReturnValue({
@@ -923,8 +923,8 @@ describe('Gemini Client (client.ts)', () => {
       vi.spyOn(client['config'], 'getContentGeneratorConfig').mockReturnValue({
         model: 'test-model',
         apiKey: 'test-key',
-        vertexai: false,
-        authType: AuthType.USE_GEMINI,
+        
+        authType: AuthType.USE_OPENAI,
         contextWindowSize: MOCKED_TOKEN_LIMIT,
       });
       vi.spyOn(client['config'], 'getChatCompression').mockReturnValue({
@@ -1008,8 +1008,8 @@ describe('Gemini Client (client.ts)', () => {
       vi.spyOn(client['config'], 'getContentGeneratorConfig').mockReturnValue({
         model: 'test-model',
         apiKey: 'test-key',
-        vertexai: false,
-        authType: AuthType.USE_GEMINI,
+        
+        authType: AuthType.USE_OPENAI,
         contextWindowSize: MOCKED_TOKEN_LIMIT,
       });
       const history: Content[] = [

@@ -16,7 +16,7 @@ import {
   type AtCommandRecordPayload,
 } from './chatRecordingService.js';
 import * as jsonl from '../utils/jsonl-utils.js';
-import type { Part } from '@google/genai';
+import type { Part } from '../types/llm-types.js';
 
 vi.mock('node:path');
 vi.mock('node:child_process');

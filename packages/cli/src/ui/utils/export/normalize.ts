@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type { Part } from '@google/genai';
+import type { Part } from '@claudex/core';
 import { ToolNames } from '@claudex/core';
 import type { ChatRecord, Config, Kind } from '@claudex/core';
 import type { ExportMessage, ExportSessionData } from './types.js';

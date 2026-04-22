@@ -8,8 +8,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type {
   GenerateContentParameters,
   GenerateContentResponseUsageMetadata,
-} from '@google/genai';
-import { GenerateContentResponse } from '@google/genai';
+} from '../../types/llm-types.js';
+import { GenerateContentResponse } from '../../types/llm-types.js';
 import type { Config } from '../../config/config.js';
 import type { ContentGenerator } from '../contentGenerator.js';
 import { AuthType } from '../contentGenerator.js';

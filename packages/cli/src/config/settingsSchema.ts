@@ -1569,7 +1569,7 @@ const SETTINGS_SCHEMA = {
     default: undefined as
       | {
           provider: Array<{
-            type: 'tavily' | 'google' | 'dashscope';
+            type: 'tavily' | 'google';
             apiKey?: string;
             searchEngineId?: string;
           }>;
@@ -1610,50 +1610,9 @@ const SETTINGS_SCHEMA = {
         category: 'Advanced',
         requiresRestart: false,
         default: {},
-        description: 'Settings for Arena (multi-model competitive execution).',
+        description: 'Reserved for future use.',
         showInDialog: false,
-        properties: {
-          worktreeBaseDir: {
-            type: 'string',
-            label: 'Worktree Base Directory',
-            category: 'Advanced',
-            requiresRestart: true,
-            default: undefined as string | undefined,
-            description:
-              'Custom base directory for Arena worktrees. Defaults to ~/.claudex/arena.',
-            showInDialog: false,
-          },
-          preserveArtifacts: {
-            type: 'boolean',
-            label: 'Preserve Arena Artifacts',
-            category: 'Advanced',
-            requiresRestart: false,
-            default: false,
-            description:
-              'When enabled, Arena worktrees and session state files are preserved after the session ends or the main agent exits.',
-            showInDialog: true,
-          },
-          maxRoundsPerAgent: {
-            type: 'number',
-            label: 'Max Rounds Per Agent',
-            category: 'Advanced',
-            requiresRestart: false,
-            default: undefined as number | undefined,
-            description:
-              'Maximum number of rounds (turns) each agent can execute. No limit if unset.',
-            showInDialog: false,
-          },
-          timeoutSeconds: {
-            type: 'number',
-            label: 'Timeout (seconds)',
-            category: 'Advanced',
-            requiresRestart: false,
-            default: undefined as number | undefined,
-            description:
-              'Total timeout in seconds for the Arena session. No limit if unset.',
-            showInDialog: false,
-          },
-        },
+        properties: {},
       },
       team: {
         type: 'object',

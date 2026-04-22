@@ -1,5 +1,5 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
-import type { Content } from '@google/genai';
+import type { Content } from '../../types/llm-types.js';
 
 export const FORK_SUBAGENT_TYPE = 'fork';
 

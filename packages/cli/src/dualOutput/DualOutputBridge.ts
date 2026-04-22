@@ -18,7 +18,7 @@ import type {
   ToolCallResponseInfo,
 } from '@claudex/core';
 import { createDebugLogger } from '@claudex/core';
-import type { Part } from '@google/genai';
+import type { Part } from '@claudex/core';
 import { StreamJsonOutputAdapter } from '../nonInteractive/io/index.js';
 
 const debugLogger = createDebugLogger('DUAL_OUTPUT');

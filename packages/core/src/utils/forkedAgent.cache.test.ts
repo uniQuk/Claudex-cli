@@ -11,7 +11,7 @@ import {
   clearCacheSafeParams,
   runForkedAgent,
 } from './forkedAgent.js';
-import type { GenerateContentConfig } from '@google/genai';
+import type { GenerateContentConfig } from '../types/llm-types.js';
 import type { Config } from '../config/config.js';
 import { GeminiChat, StreamEventType } from '../core/geminiChat.js';
 

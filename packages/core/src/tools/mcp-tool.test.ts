@@ -15,7 +15,7 @@ import {
 } from './mcp-tool.js';
 import type { ToolResult } from './tools.js';
 import { ToolConfirmationOutcome } from './tools.js';
-import type { CallableTool, Part } from '@google/genai';
+import type { CallableTool, Part } from '../types/llm-types.js';
 import { ToolErrorType } from './tool-error.js';
 import { updateMCPServerStatus, MCPServerStatus } from './mcp-client.js';
 

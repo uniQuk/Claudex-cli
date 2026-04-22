@@ -8,7 +8,7 @@ import type {
   EmbedContentResponse,
   GenerateContentParameters,
   GenerateContentResponse,
-} from '@google/genai';
+} from '../../types/llm-types.js';
 import type { PipelineConfig } from './pipeline.js';
 import { ContentGenerationPipeline } from './pipeline.js';
 import { EnhancedErrorHandler } from './errorHandler.js';

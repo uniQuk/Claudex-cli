@@ -12,7 +12,7 @@ import {
   type FunctionCall,
   type FunctionDeclaration,
   type GenerateContentResponseUsageMetadata,
-} from '@google/genai';
+} from '../types/llm-types.js';
 import type {
   ToolCallConfirmationDetails,
   ToolResult,

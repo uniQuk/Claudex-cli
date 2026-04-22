@@ -5,7 +5,7 @@
  */
 
 import * as path from 'node:path';
-import type { Part, FunctionCall } from '@google/genai';
+import type { Part, FunctionCall } from '@claudex/core';
 import type {
   ResumedSessionData,
   ConversationRecord,

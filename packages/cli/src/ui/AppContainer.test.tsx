@@ -65,7 +65,7 @@ vi.mock('./hooks/slashCommandProcessor.js');
 vi.mock('./hooks/useTerminalSize.js', () => ({
   useTerminalSize: vi.fn(() => ({ columns: 80, rows: 24 })),
 }));
-vi.mock('./hooks/useGeminiStream.js');
+vi.mock('./hooks/useLLMStream.js');
 vi.mock('./hooks/vim.js');
 vi.mock('./hooks/useFocus.js');
 vi.mock('./hooks/useBracketedPaste.js');
@@ -108,7 +108,7 @@ import { useEditorSettings } from './hooks/useEditorSettings.js';
 import { useSettingsCommand } from './hooks/useSettingsCommand.js';
 import { useModelCommand } from './hooks/useModelCommand.js';
 import { useSlashCommandProcessor } from './hooks/slashCommandProcessor.js';
-import { useGeminiStream } from './hooks/useGeminiStream.js';
+import { useLLMStream } from './hooks/useLLMStream.js';
 import { useVim } from './hooks/vim.js';
 import { useFolderTrust } from './hooks/useFolderTrust.js';
 import { useIdeTrustListener } from './hooks/useIdeTrustListener.js';
@@ -137,7 +137,7 @@ describe('AppContainer State Management', () => {
   const mockedUseSettingsCommand = useSettingsCommand as Mock;
   const mockedUseModelCommand = useModelCommand as Mock;
   const mockedUseSlashCommandProcessor = useSlashCommandProcessor as Mock;
-  const mockedUseGeminiStream = useGeminiStream as Mock;
+  const mockedUseGeminiStream = useLLMStream as Mock;
   const mockedUseVim = useVim as Mock;
   const mockedUseFolderTrust = useFolderTrust as Mock;
   const mockedUseIdeTrustListener = useIdeTrustListener as Mock;
@@ -517,8 +517,8 @@ describe('AppContainer State Management', () => {
   });
 
   describe('Cancel Handler (issue #3204)', () => {
-    // The cancel handler is wired through useGeminiStream's onCancelSubmit
-    // arg (positional index 14 — see the useGeminiStream call site in
+    // The cancel handler is wired through useLLMStream's onCancelSubmit
+    // arg (positional index 14 — see the useLLMStream call site in
     // AppContainer.tsx). We capture it via mockImplementation so a future
     // signature change surfaces as a clear test failure rather than silently
     // grabbing the wrong callback.
@@ -541,7 +541,7 @@ describe('AppContainer State Management', () => {
     const triggerCancel = () => {
       if (!capturedOnCancelSubmit) {
         throw new Error(
-          `onCancelSubmit was not captured at arg index ${ON_CANCEL_SUBMIT_ARG_INDEX} — useGeminiStream signature may have changed`,
+          `onCancelSubmit was not captured at arg index ${ON_CANCEL_SUBMIT_ARG_INDEX} — useLLMStream signature may have changed`,
         );
       }
       capturedOnCancelSubmit();

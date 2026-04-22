@@ -10,7 +10,7 @@ import type {
   ServerGeminiErrorEvent,
 } from './turn.js';
 import { Turn, GeminiEventType } from './turn.js';
-import type { GenerateContentResponse, Part, Content } from '@google/genai';
+import type { GenerateContentResponse, Part, Content } from '../types/llm-types.js';
 import { reportError } from '../utils/errorReporting.js';
 import type { GeminiChat } from './geminiChat.js';
 import { StreamEventType } from './geminiChat.js';

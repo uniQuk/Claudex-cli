@@ -794,7 +794,7 @@ describe('ModelsConfig', () => {
 
       // Should include gemini models
       const geminiModels = allModels.filter(
-        (m) => m.authType === AuthType.USE_GEMINI,
+        (m) => m.authType === AuthType.USE_OPENAI,
       );
       expect(geminiModels.length).toBe(1);
       expect(geminiModels[0].id).toBe('gemini-model-1');
@@ -1622,11 +1622,11 @@ describe('ModelsConfig', () => {
 
       // Test Gemini model without provider max_tokens
       const geminiConfig = new ModelsConfig({
-        initialAuthType: AuthType.USE_GEMINI,
+        initialAuthType: AuthType.USE_OPENAI,
         modelProvidersConfig,
       });
 
-      await geminiConfig.switchModel(AuthType.USE_GEMINI, 'gemini-pro');
+      await geminiConfig.switchModel(AuthType.USE_OPENAI, 'gemini-pro');
 
       gc = currentGenerationConfig(geminiConfig);
       expect(gc.samplingParams).toBeUndefined();

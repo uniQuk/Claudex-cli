@@ -9,7 +9,7 @@ import type {
   FunctionCall,
   GenerateContentResponseUsageMetadata,
   Part,
-} from '@google/genai';
+} from '@claudex/core';
 import type {
   Config,
   GeminiChat,
@@ -79,7 +79,7 @@ import {
 } from '../../nonInteractiveCliCommands.js';
 import { isSlashCommand } from '../../ui/utils/commandUtils.js';
 import { parseAcpModelOption } from '../../utils/acpModelUtils.js';
-import { classifyApiError } from '../../ui/hooks/useGeminiStream.js';
+import { classifyApiError } from '../../ui/hooks/useLLMStream.js';
 
 // Import modular session components
 import type {
@@ -458,7 +458,7 @@ export class Session implements SessionContext {
             }
           } catch (error) {
             // Fire StopFailure hook (fire-and-forget, replaces Stop event for API errors)
-            // Aligned with useGeminiStream.ts handleFinishedWithErrorEvent
+            // Aligned with useLLMStream.ts handleFinishedWithErrorEvent
             const errorStatus = getErrorStatus(error);
             const errorMessage =
               error instanceof Error ? error.message : String(error);

@@ -13,8 +13,8 @@ import type {
   GenerateContentParameters,
   GenerateContentResponseUsageMetadata,
   Part,
-} from '@google/genai';
-import { GenerateContentResponse } from '@google/genai';
+} from '../../types/llm-types.js';
+import { GenerateContentResponse } from '../../types/llm-types.js';
 import type { Config } from '../../config/config.js';
 import type {
   ContentGenerator,

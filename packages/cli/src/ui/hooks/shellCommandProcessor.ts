@@ -21,7 +21,7 @@ import {
   isBinary,
   ShellExecutionService,
 } from '@claudex/core';
-import { type PartListUnion } from '@google/genai';
+import { type PartListUnion } from '@claudex/core';
 import type { UseHistoryManagerReturn } from './useHistoryManager.js';
 import { SHELL_COMMAND_NAME } from '../constants.js';
 import { formatMemoryUsage } from '../utils/formatters.js';

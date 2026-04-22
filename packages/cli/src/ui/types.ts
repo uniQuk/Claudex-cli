@@ -11,9 +11,8 @@ import type {
   ToolCallConfirmationDetails,
   ToolConfirmationOutcome,
   ToolResultDisplay,
-  AgentStatus,
 } from '@claudex/core';
-import type { PartListUnion } from '@google/genai';
+import type { PartListUnion } from '@claudex/core';
 import { type ReactNode } from 'react';
 
 export type { ThoughtSummary };
@@ -339,37 +338,6 @@ export type HistoryItemContextUsage = HistoryItemBase & {
 };
 
 /**
- * Arena agent completion card data.
- */
-export interface ArenaAgentCardData {
-  label: string;
-  status: AgentStatus;
-  durationMs: number;
-  totalTokens: number;
-  inputTokens: number;
-  outputTokens: number;
-  toolCalls: number;
-  successfulToolCalls: number;
-  failedToolCalls: number;
-  rounds: number;
-  error?: string;
-  diff?: string;
-}
-
-export type HistoryItemArenaAgentComplete = HistoryItemBase & {
-  type: 'arena_agent_complete';
-  agent: ArenaAgentCardData;
-};
-
-export type HistoryItemArenaSessionComplete = HistoryItemBase & {
-  type: 'arena_session_complete';
-  sessionStatus: string;
-  task: string;
-  totalDurationMs: number;
-  agents: ArenaAgentCardData[];
-};
-
-/**
  * Insight progress message.
  */
 export type HistoryItemInsightProgress = HistoryItemBase & {
@@ -479,8 +447,6 @@ export type HistoryItemWithoutId =
   | HistoryItemSkillsList
   | HistoryItemMcpStatus
   | HistoryItemContextUsage
-  | HistoryItemArenaAgentComplete
-  | HistoryItemArenaSessionComplete
   | HistoryItemInsightProgress
   | HistoryItemBtw
   | HistoryItemMemorySaved
@@ -513,8 +479,6 @@ export enum MessageType {
   SKILLS_LIST = 'skills_list',
   MCP_STATUS = 'mcp_status',
   CONTEXT_USAGE = 'context_usage',
-  ARENA_AGENT_COMPLETE = 'arena_agent_complete',
-  ARENA_SESSION_COMPLETE = 'arena_session_complete',
   INSIGHT_PROGRESS = 'insight_progress',
   BTW = 'btw',
 }
@@ -616,7 +580,7 @@ export interface SubmitPromptResult {
 }
 
 /**
- * Defines the result of the slash command processor for its consumer (useGeminiStream).
+ * Defines the result of the slash command processor for its consumer (useLLMStream).
  */
 export type SlashCommandProcessorResult =
   | {

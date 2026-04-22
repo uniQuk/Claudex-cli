@@ -6,7 +6,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { ensureToolResultPairing } from './speculation.js';
-import type { Content } from '@google/genai';
+import type { Content } from '../types/llm-types.js';
 
 describe('ensureToolResultPairing', () => {
   it('returns empty array unchanged', () => {

@@ -6,7 +6,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { partListUnionToString } from './geminiRequest.js';
-import { type Part } from '@google/genai';
+import { type Part } from '../types/llm-types.js';
 
 describe('partListUnionToString', () => {
   it('should return the string value if the input is a string', () => {

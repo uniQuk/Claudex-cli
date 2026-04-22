@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type { Content, GenerateContentConfig, Part } from '@google/genai';
+import type { Content, GenerateContentConfig, Part } from '../types/llm-types.js';
 import type { Config } from '../config/config.js';
 import { DEFAULT_CLAUDEX_MODEL } from '../config/models.js';
 import { SchemaValidator } from './schemaValidator.js';

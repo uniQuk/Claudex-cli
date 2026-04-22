@@ -11,7 +11,7 @@ import { ToolNames } from '../tools/tool-names.js';
 import process from 'node:process';
 import { isGitRepository } from '../utils/gitUtils.js';
 import { CLAUDEX_CONFIG_DIR } from '../memory/const.js';
-import type { GenerateContentConfig } from '@google/genai';
+import type { GenerateContentConfig } from '../types/llm-types.js';
 import { createDebugLogger } from '../utils/debugLogger.js';
 
 const debugLogger = createDebugLogger('PROMPTS');
@@ -885,16 +885,6 @@ Plan mode is active. The user indicated that they do not want you to execute yet
 1. Answer the user's query comprehensively
 2. When you're done researching, present your plan ${planOnly ? 'directly' : `by calling the ${ToolNames.EXIT_PLAN_MODE} tool, which will prompt the user to confirm the plan`}. Do NOT make any file changes or run any tools that modify the system state in any way until the user has confirmed the plan. Use ${ToolNames.ASK_USER_QUESTION} if you need to clarify approaches.
 </system-reminder>`;
-}
-
-/**
- * Generates a system reminder about an active Arena session.
- *
- * @param configFilePath - Absolute path to the arena session's `config.json`
- * @returns A formatted system reminder string wrapped in XML tags
- */
-export function getArenaSystemReminder(configFilePath: string): string {
-  return `<system-reminder>An Arena session is active. For details, read: ${configFilePath}. This message is for internal use only. Do not mention this to user in your response.</system-reminder>`;
 }
 
 // ============================================================================

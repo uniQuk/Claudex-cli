@@ -5,7 +5,7 @@
  */
 
 import * as fs from 'node:fs/promises';
-import type { Content } from '@google/genai';
+import type { Content } from '../types/llm-types.js';
 import type { Config } from '../config/config.js';
 import { createDebugLogger } from '../utils/debugLogger.js';
 import { partToString } from '../utils/partUtils.js';

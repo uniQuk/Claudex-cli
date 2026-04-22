@@ -7,9 +7,7 @@
 import { promises as fs } from 'node:fs';
 import * as fsSync from 'node:fs';
 import path from 'node:path';
-import toml from '@iarna/toml';
 import { glob } from 'glob';
-import { z } from 'zod';
 import type { Config } from '@claudex/core';
 import {
   createDebugLogger,
@@ -35,24 +33,12 @@ interface CommandDirectory {
 const debugLogger = createDebugLogger('FILE_COMMAND_LOADER');
 
 /**
- * Defines the Zod schema for a command definition file. This serves as the
- * single source of truth for both validation and type inference.
- */
-const TomlCommandDefSchema = z.object({
-  prompt: z.string({
-    required_error: "The 'prompt' field is required.",
-    invalid_type_error: "The 'prompt' field must be a string.",
-  }),
-  description: z.string().optional(),
-});
-
-/**
- * Discovers and loads custom slash commands from .toml files in both the
+ * Discovers and loads custom slash commands from .md files in both the
  * user's global config directory and the current project's directory.
  *
  * This loader is responsible for:
  * - Recursively scanning command directories.
- * - Parsing and validating TOML files.
+ * - Parsing and validating Markdown files.
  * - Adapting valid definitions into executable SlashCommand objects.
  * - Handling file system errors and malformed files gracefully.
  */
@@ -96,11 +82,7 @@ export class FileCommandLoader implements ICommandLoader {
     const commandDirs = this.getCommandDirectories();
     for (const dirInfo of commandDirs) {
       try {
-        // Scan both .toml and .md files
-        const tomlFiles = await glob('**/*.toml', {
-          ...globOptions,
-          cwd: dirInfo.path,
-        });
+        // Scan .md files only
         const mdFiles = await glob('**/*.md', {
           ...globOptions,
           cwd: dirInfo.path,
@@ -109,15 +91,6 @@ export class FileCommandLoader implements ICommandLoader {
         if (this.folderTrustEnabled && !this.folderTrust) {
           return [];
         }
-
-        // Process TOML files
-        const tomlCommandPromises = tomlFiles.map((file) =>
-          this.parseAndAdaptTomlFile(
-            path.join(dirInfo.path, file),
-            dirInfo.path,
-            dirInfo.extensionName,
-          ),
-        );
 
         // Process Markdown files
         const mdCommandPromises = mdFiles.map((file) =>
@@ -129,7 +102,7 @@ export class FileCommandLoader implements ICommandLoader {
         );
 
         const commands = (
-          await Promise.all([...tomlCommandPromises, ...mdCommandPromises])
+          await Promise.all([...mdCommandPromises])
         ).filter((cmd): cmd is SlashCommand => cmd !== null);
 
         // Add all commands without deduplication
@@ -242,62 +215,6 @@ export class FileCommandLoader implements ICommandLoader {
     }
 
     return [];
-  }
-
-  /**
-   * Parses a single .toml file and transforms it into a SlashCommand object.
-   * @param filePath The absolute path to the .toml file.
-   * @param baseDir The root command directory for name calculation.
-   * @param extensionName Optional extension name to prefix commands with.
-   * @returns A promise resolving to a SlashCommand, or null if the file is invalid.
-   */
-  private async parseAndAdaptTomlFile(
-    filePath: string,
-    baseDir: string,
-    extensionName?: string,
-  ): Promise<SlashCommand | null> {
-    let fileContent: string;
-    try {
-      fileContent = await fs.readFile(filePath, 'utf-8');
-    } catch (error: unknown) {
-      debugLogger.error(
-        `[FileCommandLoader] Failed to read file ${filePath}:`,
-        error instanceof Error ? error.message : String(error),
-      );
-      return null;
-    }
-
-    let parsed: unknown;
-    try {
-      parsed = toml.parse(fileContent);
-    } catch (error: unknown) {
-      debugLogger.error(
-        `[FileCommandLoader] Failed to parse TOML file ${filePath}:`,
-        error instanceof Error ? error.message : String(error),
-      );
-      return null;
-    }
-
-    const validationResult = TomlCommandDefSchema.safeParse(parsed);
-
-    if (!validationResult.success) {
-      debugLogger.error(
-        `[FileCommandLoader] Skipping invalid command file: ${filePath}. Validation errors:`,
-        validationResult.error.flatten(),
-      );
-      return null;
-    }
-
-    const validDef = validationResult.data;
-
-    // Use factory to create command
-    return createSlashCommandFromDefinition(
-      filePath,
-      baseDir,
-      validDef,
-      extensionName,
-      '.toml',
-    );
   }
 
   /**

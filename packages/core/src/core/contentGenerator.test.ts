@@ -10,7 +10,7 @@ import {
   createContentGeneratorConfig,
   AuthType,
 } from './contentGenerator.js';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from '../types/llm-types.js';
 import type { Config } from '../config/config.js';
 import { LoggingContentGenerator } from './loggingContentGenerator/index.js';
 
@@ -32,7 +32,7 @@ describe('createContentGenerator', () => {
       {
         model: 'test-model',
         apiKey: 'test-api-key',
-        authType: AuthType.USE_GEMINI,
+        authType: AuthType.USE_OPENAI,
       },
       mockConfig,
     );
@@ -66,7 +66,7 @@ describe('createContentGenerator', () => {
       {
         model: 'test-model',
         apiKey: 'test-api-key',
-        authType: AuthType.USE_GEMINI,
+        authType: AuthType.USE_OPENAI,
       },
       mockConfig,
     );

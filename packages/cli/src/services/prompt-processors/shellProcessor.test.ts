@@ -12,7 +12,7 @@ import type { Config } from '@claudex/core';
 import { ApprovalMode } from '@claudex/core';
 import os from 'node:os';
 import { quote } from 'shell-quote';
-import { createPartFromText } from '@google/genai';
+import { createPartFromText } from '@claudex/core';
 import type { PromptPipelineContent } from './types.js';
 
 // Helper function to determine the expected escaped string based on the current OS,

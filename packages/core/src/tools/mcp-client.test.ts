@@ -4,14 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as GenAiLib from '@google/genai';
+import * as GenAiLib from '../types/llm-types.js';
 import * as ClientLib from '@modelcontextprotocol/sdk/client/index.js';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import * as SdkClientStdioLib from '@modelcontextprotocol/sdk/client/stdio.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { AuthProviderType, type Config } from '../config/config.js';
-import { GoogleCredentialProvider } from '../mcp/google-auth-provider.js';
+import { type Config } from '../config/config.js';
 import type { PromptRegistry } from '../prompts/prompt-registry.js';
 import type { WorkspaceContext } from '../utils/workspaceContext.js';
 import {
@@ -396,63 +395,6 @@ describe('mcp-client', () => {
       ).rejects.toThrow(
         "MCP server 'test-server': configured cwd does not exist: /nonexistent/path",
       );
-    });
-
-    describe('useGoogleCredentialProvider', () => {
-      it('should use GoogleCredentialProvider when specified', async () => {
-        const transport = await createTransport(
-          'test-server',
-          {
-            httpUrl: 'http://test.googleapis.com',
-            authProviderType: AuthProviderType.GOOGLE_CREDENTIALS,
-            oauth: {
-              scopes: ['scope1'],
-            },
-          },
-          false,
-        );
-
-        expect(transport).toBeInstanceOf(StreamableHTTPClientTransport);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const authProvider = (transport as any)._authProvider;
-        expect(authProvider).toBeInstanceOf(GoogleCredentialProvider);
-      });
-
-      it('should use GoogleCredentialProvider with SSE transport', async () => {
-        const transport = await createTransport(
-          'test-server',
-          {
-            url: 'http://test.googleapis.com',
-            authProviderType: AuthProviderType.GOOGLE_CREDENTIALS,
-            oauth: {
-              scopes: ['scope1'],
-            },
-          },
-          false,
-        );
-
-        expect(transport).toBeInstanceOf(SSEClientTransport);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const authProvider = (transport as any)._authProvider;
-        expect(authProvider).toBeInstanceOf(GoogleCredentialProvider);
-      });
-
-      it('should throw an error if no URL is provided with GoogleCredentialProvider', async () => {
-        await expect(
-          createTransport(
-            'test-server',
-            {
-              authProviderType: AuthProviderType.GOOGLE_CREDENTIALS,
-              oauth: {
-                scopes: ['scope1'],
-              },
-            },
-            false,
-          ),
-        ).rejects.toThrow(
-          'URL must be provided in the config for Google Credentials provider',
-        );
-      });
     });
   });
   describe('isEnabled', () => {

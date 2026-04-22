@@ -9,7 +9,7 @@ import * as fs from 'node:fs/promises';
 import { exportCommand } from './exportCommand.js';
 import { createMockCommandContext } from '../../test-utils/mockCommandContext.js';
 import type { ChatRecord } from '@claudex/core';
-import type { Part, Content } from '@google/genai';
+import type { Part, Content } from '@claudex/core';
 import {
   collectSessionData,
   normalizeSessionData,

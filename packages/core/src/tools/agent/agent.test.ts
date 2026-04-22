@@ -10,7 +10,7 @@ import {
   type AgentParams,
   resolveSubagentApprovalMode,
 } from './agent.js';
-import type { PartListUnion } from '@google/genai';
+import type { PartListUnion } from '../../types/llm-types.js';
 import type { ToolResultDisplay, AgentResultDisplay } from '../tools.js';
 import { ToolConfirmationOutcome } from '../tools.js';
 import { type Config, ApprovalMode } from '../../config/config.js';

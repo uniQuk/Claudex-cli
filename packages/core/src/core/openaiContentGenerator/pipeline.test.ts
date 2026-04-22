@@ -7,8 +7,8 @@
 import type { Mock } from 'vitest';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import type OpenAI from 'openai';
-import type { GenerateContentParameters } from '@google/genai';
-import { GenerateContentResponse, Type, FinishReason } from '@google/genai';
+import type { GenerateContentParameters } from '../../types/llm-types.js';
+import { GenerateContentResponse, Type, FinishReason } from '../../types/llm-types.js';
 import type { PipelineConfig } from './pipeline.js';
 import { ContentGenerationPipeline, StreamContentError } from './pipeline.js';
 import { OpenAIContentConverter } from './converter.js';

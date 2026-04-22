@@ -7,7 +7,6 @@
 import { useCallback } from 'react';
 import { SettingScope } from '../../config/settings.js';
 import type { AuthType, ApprovalMode } from '@claudex/core';
-import type { ArenaDialogType } from './useArenaCommand.js';
 // OpenAICredentials type (previously imported from OpenAIKeyPrompt)
 interface OpenAICredentials {
   apiKey: string;
@@ -46,10 +45,6 @@ export interface DialogCloseOptions {
   // Memory dialog
   isMemoryDialogOpen: boolean;
   closeMemoryDialog: () => void;
-
-  // Arena dialogs
-  activeArenaDialog: ArenaDialogType;
-  closeArenaDialog: () => void;
 
   // Folder trust dialog
   isFolderTrustDialogOpen: boolean;
@@ -94,11 +89,6 @@ export function useDialogClose(options: DialogCloseOptions) {
 
     if (options.isMemoryDialogOpen) {
       options.closeMemoryDialog();
-      return true;
-    }
-
-    if (options.activeArenaDialog !== null) {
-      options.closeArenaDialog();
       return true;
     }
 

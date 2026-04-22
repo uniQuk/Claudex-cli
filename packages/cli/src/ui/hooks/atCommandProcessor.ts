@@ -6,7 +6,7 @@
 
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import type { PartListUnion } from '@google/genai';
+import type { PartListUnion } from '@claudex/core';
 import type { Config } from '@claudex/core';
 import {
   getErrorMessage,

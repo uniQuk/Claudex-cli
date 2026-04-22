@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type { GenerateContentResponseUsageMetadata } from '@google/genai';
+import type { GenerateContentResponseUsageMetadata } from '@claudex/core';
 import type { SubagentMeta } from '../types.js';
 import type { Usage } from '@agentclientprotocol/sdk';
 import { BaseEmitter } from './BaseEmitter.js';

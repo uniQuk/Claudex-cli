@@ -31,7 +31,7 @@ import {
   CoreToolScheduler,
   convertToFunctionResponse,
 } from './coreToolScheduler.js';
-import type { Part, PartListUnion } from '@google/genai';
+import type { Part, PartListUnion } from '../types/llm-types.js';
 import {
   MockModifiableTool,
   MockTool,

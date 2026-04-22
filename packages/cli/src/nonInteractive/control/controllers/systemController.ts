@@ -163,8 +163,6 @@ export class SystemController extends BaseController {
           undefined, // extensionName
           undefined, // oauth
           undefined, // authProviderType
-          undefined, // targetAudience
-          undefined, // targetServiceAccount
           'sdk', // type
         );
       }
@@ -301,8 +299,6 @@ export class SystemController extends BaseController {
       config.extensionName,
       oauthConfig,
       authProvider,
-      config.targetAudience,
-      config.targetServiceAccount,
     );
   }
 
@@ -315,8 +311,6 @@ export class SystemController extends BaseController {
 
     switch (value) {
       case AuthProviderType.DYNAMIC_DISCOVERY:
-      case AuthProviderType.GOOGLE_CREDENTIALS:
-      case AuthProviderType.SERVICE_ACCOUNT_IMPERSONATION:
         return value;
       default:
         debugLogger.warn(

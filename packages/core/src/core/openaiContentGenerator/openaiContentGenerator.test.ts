@@ -32,7 +32,7 @@ import { AuthType } from '../contentGenerator.js';
 import type {
   GenerateContentParameters,
   CountTokensParameters,
-} from '@google/genai';
+} from '../../types/llm-types.js';
 import type { OpenAICompatibleProvider } from './provider/index.js';
 import type OpenAI from 'openai';
 

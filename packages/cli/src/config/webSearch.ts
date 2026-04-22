@@ -84,11 +84,10 @@ export function buildWebSearchConfig(
   }
 
   // Step 4: Determine default provider
-  // Priority: user explicit config > CLI arg > first available provider (tavily > google > dashscope)
-  const providerPriority: Array<'tavily' | 'google' | 'dashscope'> = [
+  // Priority: user explicit config > CLI arg > first available provider (tavily > google)
+  const providerPriority: Array<'tavily' | 'google'> = [
     'tavily',
     'google',
-    'dashscope',
   ];
 
   // Determine default provider based on availability
@@ -103,7 +102,7 @@ export function buildWebSearchConfig(
     }
     // Fallback to first available provider if none found in priority list
     if (!defaultProvider) {
-      defaultProvider = providers[0]?.type || 'dashscope';
+      defaultProvider = providers[0]?.type || 'tavily';
     }
   }
 

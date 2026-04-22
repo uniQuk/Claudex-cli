@@ -30,7 +30,7 @@ import {
   AgentHeadless,
   ContextState,
 } from '../../agents/runtime/agent-headless.js';
-import type { Content, FunctionDeclaration } from '@google/genai';
+import type { Content, FunctionDeclaration } from '../../types/llm-types.js';
 import {
   FORK_AGENT,
   FORK_PLACEHOLDER_RESULT,

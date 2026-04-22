@@ -22,7 +22,7 @@ import {
   ApprovalMode,
   SendMessageType,
 } from '@claudex/core';
-import type { Part } from '@google/genai';
+import type { Part } from '@claudex/core';
 import { runNonInteractive } from './nonInteractiveCli.js';
 import { vi, type Mock, type MockInstance } from 'vitest';
 import type { LoadedSettings } from './config/settings.js';

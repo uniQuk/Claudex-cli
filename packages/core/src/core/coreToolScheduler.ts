@@ -46,7 +46,7 @@ import type {
   FunctionResponsePart,
   Part,
   PartListUnion,
-} from '@google/genai';
+} from '../types/llm-types.js';
 import { ToolNames } from '../tools/tool-names.js';
 import { CONCURRENCY_SAFE_KINDS } from '../tools/tools.js';
 import { isShellCommandReadOnly } from '../utils/shellReadOnlyChecker.js';

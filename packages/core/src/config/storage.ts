@@ -11,8 +11,6 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { getProjectHash, sanitizeCwd } from '../utils/paths.js';
 
 export const CLAUDEX_DIR = '.claudex';
-/** @deprecated Use CLAUDEX_DIR */
-export const CLAUDEX_DIR = CLAUDEX_DIR;
 export const GOOGLE_ACCOUNTS_FILENAME = 'google_accounts.json';
 export const OAUTH_FILE = 'oauth_creds.json';
 export const SKILL_PROVIDER_CONFIG_DIRS = ['.claudex', '.agents'];
@@ -22,7 +20,6 @@ const PROJECT_DIR_NAME = 'projects';
 const IDE_DIR_NAME = 'ide';
 const PLANS_DIR_NAME = 'plans';
 const DEBUG_DIR_NAME = 'debug';
-const ARENA_DIR_NAME = 'arena';
 
 export class Storage {
   private readonly targetDir: string;
@@ -129,11 +126,6 @@ export class Storage {
     return path.join(homeDir, CLAUDEX_DIR);
   }
 
-  /** @deprecated Use getGlobalClaudexDir() */
-  static getGlobalClaudexDir(): string {
-    return Storage.getGlobalClaudexDir();
-  }
-
   static getMcpOAuthTokensPath(): string {
     return path.join(Storage.getGlobalClaudexDir(), 'mcp-oauth-tokens.json');
   }
@@ -186,17 +178,8 @@ export class Storage {
     return path.join(Storage.getGlobalClaudexDir(), BIN_DIR_NAME);
   }
 
-  static getGlobalArenaDir(): string {
-    return path.join(Storage.getGlobalClaudexDir(), ARENA_DIR_NAME);
-  }
-
   getClaudexDir(): string {
     return path.join(this.targetDir, CLAUDEX_DIR);
-  }
-
-  /** @deprecated Use getClaudexDir() */
-  getClaudexDir(): string {
-    return this.getClaudexDir();
   }
 
   getProjectDir(): string {

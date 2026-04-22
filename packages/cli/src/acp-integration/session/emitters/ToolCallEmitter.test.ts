@@ -14,7 +14,7 @@ import type {
   AnyToolInvocation,
 } from '@claudex/core';
 import { Kind, ToolNames } from '@claudex/core';
-import type { Part } from '@google/genai';
+import type { Part } from '@claudex/core';
 
 // Helper to create mock message parts for tests
 const createMockMessage = (text?: string): Part[] =>

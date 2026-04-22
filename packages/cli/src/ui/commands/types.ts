@@ -5,7 +5,7 @@
  */
 
 import type { MutableRefObject, ReactNode } from 'react';
-import type { Content, PartListUnion } from '@google/genai';
+import type { Content, PartListUnion } from '@claudex/core';
 import type { Config, GitService, Logger } from '@claudex/core';
 import type {
   HistoryItemWithoutId,
@@ -150,10 +150,6 @@ export interface OpenDialogActionReturn {
 
   dialog:
     | 'help'
-    | 'arena_start'
-    | 'arena_select'
-    | 'arena_stop'
-    | 'arena_status'
     | 'auth'
     | 'theme'
     | 'editor'

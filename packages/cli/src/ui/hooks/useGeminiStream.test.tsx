@@ -32,7 +32,7 @@ import {
   ToolErrorType,
   ToolConfirmationOutcome,
 } from '@claudex/core';
-import type { Part, PartListUnion } from '@google/genai';
+import type { Part, PartListUnion } from '@claudex/core';
 import type { UseHistoryManagerReturn } from './useHistoryManager.js';
 import type { HistoryItem, SlashCommandProcessorResult } from '../types.js';
 import { MessageType, StreamingState } from '../types.js';
@@ -204,7 +204,6 @@ describe('useGeminiStream', () => {
         .fn()
         .mockReturnValue(contentGeneratorConfig),
       getMaxSessionTurns: vi.fn(() => 50),
-      getArenaAgentClient: vi.fn(() => null),
       isCronEnabled: vi.fn(() => false),
       getCronScheduler: vi.fn(() => null),
       getBackgroundTaskRegistry: vi.fn(() => ({

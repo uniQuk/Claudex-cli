@@ -25,14 +25,14 @@ interface GeminiRespondingSpinnerProps {
   spinnerType?: SpinnerName;
 }
 
-export const GeminiRespondingSpinner: React.FC<
+export const RespondingSpinner: React.FC<
   GeminiRespondingSpinnerProps
 > = ({ nonRespondingDisplay, spinnerType = 'dots' }) => {
   const streamingState = useStreamingContext();
   const isScreenReaderEnabled = useIsScreenReaderEnabled();
   if (streamingState === StreamingState.Responding) {
     return (
-      <GeminiSpinner
+      <LLMSpinner
         spinnerType={spinnerType}
         altText={SCREEN_READER_RESPONDING}
       />
@@ -52,7 +52,7 @@ interface GeminiSpinnerProps {
   altText?: string;
 }
 
-export const GeminiSpinner: React.FC<GeminiSpinnerProps> = ({
+export const LLMSpinner: React.FC<GeminiSpinnerProps> = ({
   spinnerType = 'dots',
   altText,
 }) => {

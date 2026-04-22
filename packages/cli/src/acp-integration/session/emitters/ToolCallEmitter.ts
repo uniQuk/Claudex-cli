@@ -18,7 +18,7 @@ import type {
   ToolCallLocation,
   ToolKind,
 } from '@agentclientprotocol/sdk';
-import type { Part } from '@google/genai';
+import type { Part } from '@claudex/core';
 import { ToolNames, Kind } from '@claudex/core';
 
 /**

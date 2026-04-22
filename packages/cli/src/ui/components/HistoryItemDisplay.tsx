@@ -47,7 +47,6 @@ import { ToolsList } from './views/ToolsList.js';
 import { McpStatus } from './views/McpStatus.js';
 import { ContextUsage } from './views/ContextUsage.js';
 import { DoctorReport } from './views/DoctorReport.js';
-import { ArenaAgentCard, ArenaSessionCard } from './arena/ArenaCards.js';
 import { InsightProgressMessage } from './messages/InsightProgressMessage.js';
 import { BtwMessage } from './messages/BtwMessage.js';
 import { MemorySavedMessage } from './messages/MemorySavedMessage.js';
@@ -238,18 +237,6 @@ const HistoryItemDisplayComponent: React.FC<HistoryItemDisplayProps> = ({
         <DoctorReport
           checks={itemForDisplay.checks}
           summary={itemForDisplay.summary}
-          width={boxWidth}
-        />
-      )}
-      {itemForDisplay.type === 'arena_agent_complete' && (
-        <ArenaAgentCard agent={itemForDisplay.agent} width={boxWidth} />
-      )}
-      {itemForDisplay.type === 'arena_session_complete' && (
-        <ArenaSessionCard
-          sessionStatus={itemForDisplay.sessionStatus}
-          task={itemForDisplay.task}
-          totalDurationMs={itemForDisplay.totalDurationMs}
-          agents={itemForDisplay.agents}
           width={boxWidth}
         />
       )}

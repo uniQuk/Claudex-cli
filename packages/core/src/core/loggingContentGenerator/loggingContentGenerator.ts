@@ -18,7 +18,7 @@ import {
   type Part,
   type PartUnion,
   type FinishReason,
-} from '@google/genai';
+} from '../../types/llm-types.js';
 import type OpenAI from 'openai';
 import {
   ApiRequestEvent,

@@ -43,7 +43,7 @@ import {
   isSupportedImageMimeType,
   getUnsupportedImageFormatWarning,
 } from '@claudex/core';
-import { type Part, type PartListUnion, FinishReason } from '@google/genai';
+import { type Part, type PartListUnion, FinishReason } from '@claudex/core';
 import type {
   HistoryItem,
   HistoryItemWithoutId,
@@ -480,12 +480,6 @@ export const useGeminiStream = (
     turnCancelledRef.current = true;
     isSubmittingQueryRef.current = false;
     abortControllerRef.current?.abort();
-
-    // Report cancellation to arena status reporter (if in arena mode).
-    // This is needed because cancellation during tool execution won't
-    // flow through sendMessageStream where the inline reportCancelled()
-    // lives — tools get cancelled and handleCompletedTools returns early.
-    config.getArenaAgentClient()?.reportCancelled();
 
     // Log API cancellation
     const prompt_id = config.getSessionId() + '########' + getPromptCount();
@@ -1687,7 +1681,6 @@ export const useGeminiStream = (
           });
 
           // Report cancellation to arena (safety net — cancelOngoingRequest
-          config.getArenaAgentClient()?.reportCancelled();
         }
 
         const callIdsToMarkAsSubmitted = geminiTools.map(

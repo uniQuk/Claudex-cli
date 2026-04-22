@@ -19,7 +19,7 @@ import {
   ToolErrorType,
   parseAndFormatApiError,
 } from '@claudex/core';
-import type { Part, GenerateContentResponseUsageMetadata } from '@google/genai';
+import type { Part, GenerateContentResponseUsageMetadata } from '@claudex/core';
 import type {
   CLIAssistantMessage,
   CLIMessage,

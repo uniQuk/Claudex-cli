@@ -5,7 +5,7 @@
  */
 
 import type { Config } from '@claudex/core';
-import type { Part } from '@google/genai';
+import type { Part } from '@claudex/core';
 import type {
   SessionUpdate,
   ToolCallLocation,

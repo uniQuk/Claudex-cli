@@ -20,7 +20,7 @@ import {
   createDebugLogger,
   getMCPServerStatus,
 } from '@claudex/core';
-import type { Part, PartListUnion } from '@google/genai';
+import type { Part, PartListUnion } from '@claudex/core';
 import type {
   CLIUserMessage,
   Usage,

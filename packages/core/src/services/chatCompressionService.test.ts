@@ -9,7 +9,7 @@ import {
   ChatCompressionService,
   findCompressSplitPoint,
 } from './chatCompressionService.js';
-import type { Content, GenerateContentResponse } from '@google/genai';
+import type { Content, GenerateContentResponse } from '../types/llm-types.js';
 import { CompressionStatus } from '../core/turn.js';
 import { uiTelemetryService } from '../telemetry/uiTelemetry.js';
 import { tokenLimit } from '../core/tokenLimits.js';

@@ -7,7 +7,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import type { DeviceAuthorizationData } from '@claudex/core';
-import { useClaudexAuth } from './useClaudexAuth.js';
+import { useClaudexAuth } from './useQwenAuth.js';
 import {
   AuthType,
   claudexOAuth2Events,
@@ -53,7 +53,7 @@ describe('useClaudexAuth', () => {
 
   it('should initialize with default state when not Claudex auth', () => {
     const { result } = renderHook(() =>
-      useClaudexAuth(AuthType.USE_GEMINI, false),
+      useClaudexAuth(AuthType.USE_OPENAI, false),
     );
 
     expect(result.current.claudexAuthState).toEqual({
@@ -249,7 +249,7 @@ describe('useClaudexAuth', () => {
     );
 
     // Change to non-Claudex auth
-    rerender({ pendingAuthType: AuthType.USE_GEMINI, isAuthenticating: true });
+    rerender({ pendingAuthType: AuthType.USE_OPENAI, isAuthenticating: true });
 
     expect(mockClaudexOAuth2Events.off).toHaveBeenCalledWith(
       ClaudexOAuth2Event.AuthUri,
@@ -328,7 +328,7 @@ describe('useClaudexAuth', () => {
     expect(result.current.claudexAuthState.authStatus).toBe('polling');
 
     // Switch to different auth type
-    rerender({ pendingAuthType: AuthType.USE_GEMINI, isAuthenticating: true });
+    rerender({ pendingAuthType: AuthType.USE_OPENAI, isAuthenticating: true });
 
     expect(result.current.claudexAuthState.deviceAuth).toBe(null);
     expect(result.current.claudexAuthState.authStatus).toBe('idle');
@@ -406,7 +406,7 @@ describe('useClaudexAuth', () => {
 
     // Test with other auth types - should not set up event listeners
     const { result: geminiResult } = renderHook(() =>
-      useClaudexAuth(AuthType.USE_GEMINI, true),
+      useClaudexAuth(AuthType.USE_OPENAI, true),
     );
     expect(geminiResult.current.claudexAuthState.authStatus).toBe('idle');
 

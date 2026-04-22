@@ -26,7 +26,7 @@ import {
   createDebugLogger,
   SendMessageType,
 } from '@claudex/core';
-import type { Content, Part, PartListUnion } from '@google/genai';
+import type { Content, Part, PartListUnion } from '@claudex/core';
 import type { CLIUserMessage, PermissionMode } from './nonInteractive/types.js';
 import type { JsonOutputAdapterInterface } from './nonInteractive/io/BaseJsonOutputAdapter.js';
 import { JsonOutputAdapter } from './nonInteractive/io/JsonOutputAdapter.js';

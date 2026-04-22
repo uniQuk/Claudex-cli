@@ -353,9 +353,8 @@ export const InputPrompt: React.FC<InputPromptProps> = ({
     onChange: customSetTextAndResetCompletionSignal,
   });
 
-  // When an arena session starts (agents appear), reset history position so
-  // that pressing down-arrow immediately focuses the agent tab bar instead
-  // of cycling through input history.
+  // When agents appear, reset history position so that pressing down-arrow
+  // immediately focuses the agent tab bar instead of cycling through input history.
   const prevHasAgentsRef = useRef(hasAgents);
   useEffect(() => {
     if (hasAgents && !prevHasAgentsRef.current) {

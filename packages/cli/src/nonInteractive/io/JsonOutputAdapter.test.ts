@@ -10,7 +10,7 @@ import type {
   ServerGeminiStreamEvent,
 } from '@claudex/core';
 import { GeminiEventType, OutputFormat } from '@claudex/core';
-import type { Part } from '@google/genai';
+import type { Part } from '@claudex/core';
 import { JsonOutputAdapter } from './JsonOutputAdapter.js';
 
 function createMockConfig(): Config {

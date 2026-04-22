@@ -485,8 +485,6 @@ export async function parseArguments(): Promise<CliArgs> {
             AuthType.USE_OPENAI,
             AuthType.USE_ANTHROPIC,
             AuthType.CLAUDEX_OAUTH,
-            AuthType.USE_GEMINI,
-            AuthType.USE_VERTEX_AI,
           ],
           description: 'Authentication type',
         })
@@ -1179,13 +1177,6 @@ export async function loadCliConfig(
     agents: settings.agents
       ? {
           displayMode: settings.agents.displayMode,
-          arena: settings.agents.arena
-            ? {
-                worktreeBaseDir: settings.agents.arena.worktreeBaseDir,
-                preserveArtifacts:
-                  settings.agents.arena.preserveArtifacts ?? false,
-              }
-            : undefined,
         }
       : undefined,
   });

@@ -14,7 +14,7 @@ import {
   type Mocked,
 } from 'vitest';
 
-import type { GenerateContentResponse } from '@google/genai';
+import type { GenerateContentResponse } from '../types/llm-types.js';
 import { BaseLlmClient, type GenerateJsonOptions } from './baseLlmClient.js';
 import type { ContentGenerator } from './contentGenerator.js';
 import type { Config } from '../config/config.js';
@@ -53,7 +53,7 @@ const mockConfig = {
   getSessionId: vi.fn().mockReturnValue('test-session-id'),
   getContentGeneratorConfig: vi
     .fn()
-    .mockReturnValue({ authType: AuthType.USE_GEMINI }),
+    .mockReturnValue({ authType: AuthType.USE_OPENAI }),
   getEmbeddingModel: vi.fn().mockReturnValue('test-embedding-model'),
 } as unknown as Mocked<Config>;
 

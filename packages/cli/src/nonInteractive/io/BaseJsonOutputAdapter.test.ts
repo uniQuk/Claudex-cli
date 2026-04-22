@@ -12,7 +12,7 @@ import {
   type ToolCallRequestInfo,
   type AgentResultDisplay,
 } from '@claudex/core';
-import type { Part, GenerateContentResponseUsageMetadata } from '@google/genai';
+import type { Part, GenerateContentResponseUsageMetadata } from '@claudex/core';
 import type {
   CLIMessage,
   CLIAssistantMessage,

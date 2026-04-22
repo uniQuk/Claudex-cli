@@ -1,20 +1,5 @@
-import type { GenerateContentConfig } from '@google/genai';
+import type { GenerateContentConfig } from '../../../types/llm-types.js';
 import type OpenAI from 'openai';
-
-// Extended types to support cache_control for DashScope
-export interface ChatCompletionContentPartTextWithCache
-  extends OpenAI.Chat.ChatCompletionContentPartText {
-  cache_control?: { type: 'ephemeral' };
-}
-
-export type ChatCompletionContentPartWithCache =
-  | ChatCompletionContentPartTextWithCache
-  | OpenAI.Chat.ChatCompletionContentPartImage
-  | OpenAI.Chat.ChatCompletionContentPartRefusal;
-
-export type ChatCompletionToolWithCache = OpenAI.Chat.ChatCompletionTool & {
-  cache_control?: { type: 'ephemeral' };
-};
 
 export interface OpenAICompatibleProvider {
   buildHeaders(): Record<string, string | undefined>;
@@ -25,11 +10,3 @@ export interface OpenAICompatibleProvider {
   ): OpenAI.Chat.ChatCompletionCreateParams;
   getDefaultGenerationConfig(): GenerateContentConfig;
 }
-
-export type DashScopeRequestMetadata = {
-  metadata: {
-    sessionId?: string;
-    promptId: string;
-    channel?: string;
-  };
-};

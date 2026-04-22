@@ -8,8 +8,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type {
   CountTokensParameters,
   GenerateContentParameters,
-} from '@google/genai';
-import { FinishReason, GenerateContentResponse } from '@google/genai';
+} from '../../types/llm-types.js';
+import { FinishReason, GenerateContentResponse } from '../../types/llm-types.js';
 import type { ContentGeneratorConfig } from '../contentGenerator.js';
 
 // Mock the request tokenizer module BEFORE importing the class that uses it.

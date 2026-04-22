@@ -5,8 +5,8 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { CallableTool, Content, Tool } from '@google/genai';
-import { FinishReason } from '@google/genai';
+import type { CallableTool, Content, Tool } from '../../types/llm-types.js';
+import { FinishReason } from '../../types/llm-types.js';
 import type Anthropic from '@anthropic-ai/sdk';
 
 // Mock schema conversion so we can force edge-cases (e.g. missing `type`).

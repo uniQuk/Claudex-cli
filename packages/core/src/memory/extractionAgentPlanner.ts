@@ -7,7 +7,7 @@
 import type { Config } from '../config/config.js';
 import { runForkedAgent, getCacheSafeParams } from '../utils/forkedAgent.js';
 import { buildFunctionResponseParts } from '../tools/agent/fork-subagent.js';
-import type { Content } from '@google/genai';
+import type { Content } from '../types/llm-types.js';
 import type { PermissionManager } from '../permissions/permission-manager.js';
 import type {
   PermissionCheckContext,

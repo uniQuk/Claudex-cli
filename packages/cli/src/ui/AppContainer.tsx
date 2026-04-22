@@ -38,7 +38,6 @@ import {
   getErrorMessage,
   getAllGeminiMdFilenames,
   ShellExecutionService,
-  Storage,
   SessionEndReason,
   SessionStartSource,
   generatePromptSuggestion,
@@ -69,7 +68,6 @@ import { useAuthCommand } from './auth/useAuth.js';
 import { useEditorSettings } from './hooks/useEditorSettings.js';
 import { useSettingsCommand } from './hooks/useSettingsCommand.js';
 import { useModelCommand } from './hooks/useModelCommand.js';
-import { useArenaCommand } from './hooks/useArenaCommand.js';
 import { useApprovalModeCommand } from './hooks/useApprovalModeCommand.js';
 import { useResumeCommand } from './hooks/useResumeCommand.js';
 import { useSlashCommandProcessor } from './hooks/slashCommandProcessor.js';
@@ -85,7 +83,7 @@ import { computeWindowTitle } from '../utils/windowTitle.js';
 import { clearScreen } from '../utils/stdioHelpers.js';
 import { useTextBuffer } from './components/shared/text-buffer.js';
 import { useLogger } from './hooks/useLogger.js';
-import { useGeminiStream } from './hooks/useGeminiStream.js';
+import { useLLMStream } from './hooks/useLLMStream.js';
 import { useVim } from './hooks/vim.js';
 import { isBtwCommand } from './utils/commandUtils.js';
 import { type LoadedSettings, SettingScope } from '../config/settings.js';
@@ -100,9 +98,6 @@ import { useTerminalProgress } from './hooks/useTerminalProgress.js';
 import { useFolderTrust } from './hooks/useFolderTrust.js';
 import { useIdeTrustListener } from './hooks/useIdeTrustListener.js';
 import { type IdeIntegrationNudgeResult } from './IdeIntegrationNudge.js';
-import { type CommandMigrationNudgeResult } from './CommandFormatMigrationNudge.js';
-import { useCommandMigration } from './hooks/useCommandMigration.js';
-import { migrateTomlCommands } from '../services/command-migration-tool.js';
 import { type UpdateObject } from './utils/updateCheck.js';
 import { setUpdateHandler } from '../utils/handleAutoUpdate.js';
 import { registerCleanup, runExitCleanup } from '../utils/cleanup.js';
@@ -371,7 +366,7 @@ export const AppContainer = (props: AppContainerProps) => {
   // Track idle state via ref so the update handler can defer notifications
   // while the model is streaming, without triggering re-renders.
   // Note: isIdleRef.current is assigned after streamingState becomes available
-  // (see the assignment below useGeminiStream).
+  // (see the assignment below useLLMStream).
   const isIdleRef = useRef(true);
   const updateHandlerRef = useRef<{
     cleanup: () => void;
@@ -561,9 +556,6 @@ export const AppContainer = (props: AppContainerProps) => {
     openModelDialog,
     closeModelDialog,
   } = useModelCommand();
-  const { activeArenaDialog, openArenaDialog, closeArenaDialog } =
-    useArenaCommand();
-
   const {
     isResumeDialogOpen,
     openResumeDialog,
@@ -606,7 +598,6 @@ export const AppContainer = (props: AppContainerProps) => {
       openSettingsDialog,
       openModelDialog,
       openTrustDialog,
-      openArenaDialog,
       openPermissionsDialog,
       openApprovalModeDialog,
       quit: (messages: HistoryItem[]) => {
@@ -633,7 +624,6 @@ export const AppContainer = (props: AppContainerProps) => {
       openMemoryDialog,
       openSettingsDialog,
       openModelDialog,
-      openArenaDialog,
       setDebugMessage,
       dispatchExtensionStateUpdate,
       openTrustDialog,
@@ -759,7 +749,7 @@ export const AppContainer = (props: AppContainerProps) => {
     activePtyId,
     loopDetectionConfirmationRequest,
     pendingToolCalls,
-  } = useGeminiStream(
+  } = useLLMStream(
     config.getGeminiClient(),
     historyManager.history,
     historyManager.addItem,
@@ -1139,15 +1129,6 @@ export const AppContainer = (props: AppContainerProps) => {
     ],
   );
 
-  const handleArenaModelsSelected = useCallback(
-    (models: string[]) => {
-      const value = models.join(',');
-      buffer.setText(`/arena start --models ${value} `);
-      closeArenaDialog();
-    },
-    [buffer, closeArenaDialog],
-  );
-
   // Welcome back functionality (must be after handleFinalSubmit)
   const {
     welcomeBackInfo,
@@ -1464,13 +1445,6 @@ export const AppContainer = (props: AppContainerProps) => {
       !idePromptAnswered,
   );
 
-  // Command migration nudge
-  const {
-    showMigrationNudge: shouldShowCommandMigrationNudge,
-    tomlFiles: commandMigrationTomlFiles,
-    setShowMigrationNudge: setShowCommandMigrationNudge,
-  } = useCommandMigration(settings, config.storage);
-
   const [showToolDescriptions, setShowToolDescriptions] =
     useState<boolean>(false);
 
@@ -1549,92 +1523,6 @@ export const AppContainer = (props: AppContainerProps) => {
     [handleSlashCommand, settings],
   );
 
-  const handleCommandMigrationComplete = useCallback(
-    async (result: CommandMigrationNudgeResult) => {
-      setShowCommandMigrationNudge(false);
-
-      if (result.userSelection === 'yes') {
-        // Perform migration for both workspace and user levels
-        try {
-          const results = [];
-
-          // Migrate workspace commands
-          const workspaceCommandsDir = config.storage.getProjectCommandsDir();
-          const workspaceResult = await migrateTomlCommands({
-            commandDir: workspaceCommandsDir,
-            createBackup: true,
-            deleteOriginal: false,
-          });
-          if (
-            workspaceResult.convertedFiles.length > 0 ||
-            workspaceResult.failedFiles.length > 0
-          ) {
-            results.push({ level: 'workspace', result: workspaceResult });
-          }
-
-          // Migrate user commands
-          const userCommandsDir = Storage.getUserCommandsDir();
-          const userResult = await migrateTomlCommands({
-            commandDir: userCommandsDir,
-            createBackup: true,
-            deleteOriginal: false,
-          });
-          if (
-            userResult.convertedFiles.length > 0 ||
-            userResult.failedFiles.length > 0
-          ) {
-            results.push({ level: 'user', result: userResult });
-          }
-
-          // Report results
-          for (const { level, result: migrationResult } of results) {
-            if (
-              migrationResult.success &&
-              migrationResult.convertedFiles.length > 0
-            ) {
-              historyManager.addItem(
-                {
-                  type: MessageType.INFO,
-                  text: `[${level}] Successfully migrated ${migrationResult.convertedFiles.length} command file${migrationResult.convertedFiles.length > 1 ? 's' : ''} to Markdown format. Original files backed up as .toml.backup`,
-                },
-                Date.now(),
-              );
-            }
-
-            if (migrationResult.failedFiles.length > 0) {
-              historyManager.addItem(
-                {
-                  type: MessageType.ERROR,
-                  text: `[${level}] Failed to migrate ${migrationResult.failedFiles.length} file${migrationResult.failedFiles.length > 1 ? 's' : ''}:\n${migrationResult.failedFiles.map((f) => `  • ${f.file}: ${f.error}`).join('\n')}`,
-                },
-                Date.now(),
-              );
-            }
-          }
-
-          if (results.length === 0) {
-            historyManager.addItem(
-              {
-                type: MessageType.INFO,
-                text: 'No TOML files found to migrate.',
-              },
-              Date.now(),
-            );
-          }
-        } catch (error) {
-          historyManager.addItem(
-            {
-              type: MessageType.ERROR,
-              text: `❌ Migration failed: ${getErrorMessage(error)}`,
-            },
-            Date.now(),
-          );
-        }
-      }
-    },
-    [historyManager, setShowCommandMigrationNudge, config.storage],
-  );
-
   const currentCandidatesTokens = Object.values(
     sessionStats.metrics?.models ?? {},
   ).reduce((acc, model) => acc + (model.tokens?.candidates ?? 0), 0);
@@ -1669,8 +1557,6 @@ export const AppContainer = (props: AppContainerProps) => {
     closeSettingsDialog,
     isMemoryDialogOpen,
     closeMemoryDialog,
-    activeArenaDialog,
-    closeArenaDialog,
     isFolderTrustDialogOpen,
     showWelcomeBackDialog,
     handleWelcomeBackClose,
@@ -1966,7 +1852,6 @@ export const AppContainer = (props: AppContainerProps) => {
   const dialogsVisible =
     showWelcomeBackDialog ||
     shouldShowIdePrompt ||
-    shouldShowCommandMigrationNudge ||
     isFolderTrustDialogOpen ||
     !!shellConfirmationRequest ||
     !!confirmationRequest ||
@@ -1980,7 +1865,6 @@ export const AppContainer = (props: AppContainerProps) => {
     isMemoryDialogOpen ||
     isModelDialogOpen ||
     isTrustDialogOpen ||
-    activeArenaDialog !== null ||
     isPermissionsDialogOpen ||
     isAuthDialogOpen ||
     isAuthenticating ||
@@ -2031,7 +1915,6 @@ export const AppContainer = (props: AppContainerProps) => {
       isModelDialogOpen,
       isFastModelMode,
       isTrustDialogOpen,
-      activeArenaDialog,
       isPermissionsDialogOpen,
       isApprovalModeDialogOpen,
       isResumeDialogOpen,
@@ -2057,8 +1940,6 @@ export const AppContainer = (props: AppContainerProps) => {
       suggestionsWidth,
       isInputActive,
       shouldShowIdePrompt,
-      shouldShowCommandMigrationNudge,
-      commandMigrationTomlFiles,
       isFolderTrustDialogOpen: isFolderTrustDialogOpen ?? false,
       isTrustedFolder,
       constrainHeight,
@@ -2138,7 +2019,6 @@ export const AppContainer = (props: AppContainerProps) => {
       isModelDialogOpen,
       isFastModelMode,
       isTrustDialogOpen,
-      activeArenaDialog,
       isPermissionsDialogOpen,
       isApprovalModeDialogOpen,
       isResumeDialogOpen,
@@ -2164,8 +2044,6 @@ export const AppContainer = (props: AppContainerProps) => {
       suggestionsWidth,
       isInputActive,
       shouldShowIdePrompt,
-      shouldShowCommandMigrationNudge,
-      commandMigrationTomlFiles,
       isFolderTrustDialogOpen,
       isTrustedFolder,
       constrainHeight,
@@ -2247,16 +2125,12 @@ export const AppContainer = (props: AppContainerProps) => {
       closeMemoryDialog,
       closeModelDialog,
       openModelDialog,
-      openArenaDialog,
-      closeArenaDialog,
-      handleArenaModelsSelected,
       dismissCodingPlanUpdate,
       closeTrustDialog,
       closePermissionsDialog,
       setShellModeActive,
       vimHandleInput,
       handleIdePromptComplete,
-      handleCommandMigrationComplete,
       handleFolderTrustSelect,
       setConstrainHeight,
       onEscapePromptChange: handleEscapePromptChange,
@@ -2307,16 +2181,12 @@ export const AppContainer = (props: AppContainerProps) => {
       closeMemoryDialog,
       closeModelDialog,
       openModelDialog,
-      openArenaDialog,
-      closeArenaDialog,
-      handleArenaModelsSelected,
       dismissCodingPlanUpdate,
       closeTrustDialog,
       closePermissionsDialog,
       setShellModeActive,
       vimHandleInput,
       handleIdePromptComplete,
-      handleCommandMigrationComplete,
       handleFolderTrustSelect,
       setConstrainHeight,
       handleEscapePromptChange,

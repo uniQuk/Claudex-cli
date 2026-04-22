@@ -28,7 +28,7 @@ import type {
   Content,
   GenerateContentConfig,
   GenerateContentResponseUsageMetadata,
-} from '@google/genai';
+} from '../types/llm-types.js';
 import { ApprovalMode, type Config } from '../config/config.js';
 import { GeminiChat, StreamEventType } from '../core/geminiChat.js';
 import {

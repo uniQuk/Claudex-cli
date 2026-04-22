@@ -15,8 +15,8 @@ import type {
   Part,
   Tool,
   GenerateContentResponseUsageMetadata,
-} from '@google/genai';
-import { createUserContent, FinishReason } from '@google/genai';
+} from '../types/llm-types.js';
+import { createUserContent, FinishReason } from '../types/llm-types.js';
 import { retryWithBackoff } from '../utils/retry.js';
 import { getErrorStatus } from '../utils/errors.js';
 import { createDebugLogger } from '../utils/debugLogger.js';

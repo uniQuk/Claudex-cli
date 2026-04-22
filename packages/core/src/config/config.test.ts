@@ -380,7 +380,7 @@ describe('Server Config (config.ts)', () => {
   describe('refreshAuth', () => {
     it('should refresh auth and update config', async () => {
       const config = new Config(baseParams);
-      const authType = AuthType.USE_GEMINI;
+      const authType = AuthType.USE_OPENAI;
       const mockContentConfig = {
         apiKey: 'test-key',
         model: 'claudex3-coder-plus',
@@ -417,7 +417,7 @@ describe('Server Config (config.ts)', () => {
       // Set messageBus using the setter
       config.setMessageBus(mockMessageBus as unknown as MessageBus);
 
-      const authType = AuthType.USE_GEMINI;
+      const authType = AuthType.USE_OPENAI;
       const mockContentConfig = {
         apiKey: 'test-key',
         model: 'claudex3-coder-plus',
@@ -445,7 +445,7 @@ describe('Server Config (config.ts)', () => {
         ...baseParams,
         disableAllHooks: true,
       });
-      const authType = AuthType.USE_GEMINI;
+      const authType = AuthType.USE_OPENAI;
       const mockContentConfig = {
         apiKey: 'test-key',
         model: 'claudex3-coder-plus',
@@ -474,9 +474,9 @@ describe('Server Config (config.ts)', () => {
           ({ authType }) as unknown as ContentGeneratorConfig,
       );
 
-      await config.refreshAuth(AuthType.USE_VERTEX_AI);
+      await config.refreshAuth(AuthType.USE_OPENAI);
 
-      await config.refreshAuth(AuthType.USE_GEMINI);
+      await config.refreshAuth(AuthType.USE_OPENAI);
 
       expect(
         config.getGeminiClient().stripThoughtsFromHistory,
@@ -1667,7 +1667,7 @@ describe('BaseLlmClient Lifecycle', () => {
 
   it('should successfully initialize BaseLlmClient after refreshAuth is called', async () => {
     const config = new Config(baseParams);
-    const authType = AuthType.USE_GEMINI;
+    const authType = AuthType.USE_OPENAI;
     const mockContentConfig = { model: 'gemini-flash', apiKey: 'test-key' };
 
     vi.mocked(resolveContentGeneratorConfigWithSources).mockReturnValue({
@@ -1797,7 +1797,7 @@ describe('Model Switching and Config Updates', () => {
     // Switch to different auth type (should trigger full refresh)
     const newConfig: ContentGeneratorConfig = {
       ['model']: 'gemini-flash',
-      ['authType']: AuthType.USE_GEMINI,
+      ['authType']: AuthType.USE_OPENAI,
       ['apiKey']: 'gemini-key',
       ['contextWindowSize']: 32_000,
     };
@@ -1822,10 +1822,10 @@ describe('Model Switching and Config Updates', () => {
           requiresRefresh: boolean,
         ) => Promise<void>;
       }
-    ).handleModelChange(AuthType.USE_GEMINI, true);
+    ).handleModelChange(AuthType.USE_OPENAI, true);
 
     // Verify refreshAuth was called (full refresh path)
-    expect(refreshAuthSpy).toHaveBeenCalledWith(AuthType.USE_GEMINI);
+    expect(refreshAuthSpy).toHaveBeenCalledWith(AuthType.USE_OPENAI);
   });
 
   it('should handle model switch when contextWindowSize is undefined', async () => {

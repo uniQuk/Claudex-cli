@@ -10,8 +10,8 @@ import type {
   FunctionDeclaration,
   GenerateContentConfig,
   Part,
-} from '@google/genai';
-import { Type } from '@google/genai';
+} from '../../types/llm-types.js';
+import { Type } from '../../types/llm-types.js';
 import {
   afterEach,
   beforeEach,
@@ -65,12 +65,12 @@ vi.mock('../../core/contentGenerator.js', async (importOriginal) => {
     }),
     createContentGeneratorConfig: vi.fn().mockReturnValue({
       model: DEFAULT_CLAUDEX_MODEL,
-      authType: actual.AuthType.USE_GEMINI,
+      authType: actual.AuthType.USE_OPENAI,
     }),
     resolveContentGeneratorConfigWithSources: vi.fn().mockReturnValue({
       config: {
         model: DEFAULT_CLAUDEX_MODEL,
-        authType: actual.AuthType.USE_GEMINI,
+        authType: actual.AuthType.USE_OPENAI,
         apiKey: 'test-api-key',
       },
       sources: {},
@@ -130,7 +130,7 @@ async function createMockConfig(
   };
   const config = new Config(configParams);
   await config.initialize();
-  await config.refreshAuth(AuthType.USE_GEMINI);
+  await config.refreshAuth(AuthType.USE_OPENAI);
 
   // Mock ToolRegistry
   const mockToolRegistryBase = {
@@ -151,7 +151,7 @@ async function createMockConfig(
   // Mock getContentGeneratorConfig to return a valid config
   vi.spyOn(config, 'getContentGeneratorConfig').mockReturnValue({
     model: DEFAULT_CLAUDEX_MODEL,
-    authType: AuthType.USE_GEMINI,
+    authType: AuthType.USE_OPENAI,
   });
 
   // Mock setModel method
@@ -257,7 +257,7 @@ describe('subagent.ts', () => {
       vi.mocked(resolveContentGeneratorConfigWithSources).mockReturnValue({
         config: {
           model: DEFAULT_CLAUDEX_MODEL,
-          authType: AuthType.USE_GEMINI,
+          authType: AuthType.USE_OPENAI,
           apiKey: 'test-api-key',
         },
         sources: {},

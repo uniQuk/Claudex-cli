@@ -10,7 +10,7 @@ import { type CommandContext } from '../../ui/commands/types.js';
 import { AtFileProcessor } from './atFileProcessor.js';
 import { MessageType } from '../../ui/types.js';
 import type { Config } from '@claudex/core';
-import type { PartUnion } from '@google/genai';
+import type { PartUnion } from '@claudex/core';
 
 // Mock the core dependency
 const mockReadPathFromWorkspace = vi.hoisted(() => vi.fn());

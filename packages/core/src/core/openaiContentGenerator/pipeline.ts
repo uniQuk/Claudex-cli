@@ -9,7 +9,7 @@ import type OpenAI from 'openai';
 import {
   type GenerateContentParameters,
   GenerateContentResponse,
-} from '@google/genai';
+} from '../../types/llm-types.js';
 import type { Config } from '../../config/config.js';
 import type { ContentGeneratorConfig } from '../contentGenerator.js';
 import type { OpenAICompatibleProvider } from './provider/index.js';

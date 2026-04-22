@@ -36,7 +36,7 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import type { Content, Part } from '@google/genai';
+import type { Content, Part } from '../types/llm-types.js';
 import type { Config } from '../config/config.js';
 import { Storage } from '../config/storage.js';
 import { logMemoryExtract, MemoryExtractEvent } from '../telemetry/index.js';

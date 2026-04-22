@@ -6,7 +6,7 @@
 
 import { randomUUID } from 'node:crypto';
 import type { Config, ChatRecord } from '@claudex/core';
-import type { GenerateContentResponseUsageMetadata } from '@google/genai';
+import type { GenerateContentResponseUsageMetadata } from '@claudex/core';
 import type { SessionContext } from '../../../acp-integration/session/types.js';
 import type { SessionUpdate, ToolCall } from '@agentclientprotocol/sdk';
 import { HistoryReplayer } from '../../../acp-integration/session/HistoryReplayer.js';

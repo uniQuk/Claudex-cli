@@ -12,7 +12,7 @@ import type {
 import type {
   Content,
   GenerateContentResponseUsageMetadata,
-} from '@google/genai';
+} from '@claudex/core';
 import type { SessionContext } from './types.js';
 import { MessageEmitter } from './emitters/MessageEmitter.js';
 import { ToolCallEmitter } from './emitters/ToolCallEmitter.js';

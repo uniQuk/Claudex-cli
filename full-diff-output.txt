@@ -1,0 +1,4323 @@
+diff --git i/packages/cli/package.json w/packages/cli/package.json
+index 438b4292a..1694d9262 100644
+--- i/packages/cli/package.json
++++ w/packages/cli/package.json
+@@ -37,7 +37,6 @@
+   },
+   "dependencies": {
+     "@agentclientprotocol/sdk": "^0.14.1",
+-    "@google/genai": "1.30.0",
+     "@iarna/toml": "^2.2.5",
+     "@modelcontextprotocol/sdk": "^1.29.0",
+     "@claudex/core": "file:../core",
+diff --git i/packages/cli/src/acp-integration/session/HistoryReplayer.ts w/packages/cli/src/acp-integration/session/HistoryReplayer.ts
+index 97c56e7e0..2037ea30b 100644
+--- i/packages/cli/src/acp-integration/session/HistoryReplayer.ts
++++ w/packages/cli/src/acp-integration/session/HistoryReplayer.ts
+@@ -12,7 +12,7 @@ import type {
+ import type {
+   Content,
+   GenerateContentResponseUsageMetadata,
+-} from '@google/genai';
++} from '@claudex/core';
+ import type { SessionContext } from './types.js';
+ import { MessageEmitter } from './emitters/MessageEmitter.js';
+ import { ToolCallEmitter } from './emitters/ToolCallEmitter.js';
+diff --git i/packages/cli/src/acp-integration/session/Session.ts w/packages/cli/src/acp-integration/session/Session.ts
+index ab15d6e66..7fee09085 100644
+--- i/packages/cli/src/acp-integration/session/Session.ts
++++ w/packages/cli/src/acp-integration/session/Session.ts
+@@ -9,7 +9,7 @@ import type {
+   FunctionCall,
+   GenerateContentResponseUsageMetadata,
+   Part,
+-} from '@google/genai';
++} from '@claudex/core';
+ import type {
+   Config,
+   GeminiChat,
+@@ -79,7 +79,7 @@ import {
+ } from '../../nonInteractiveCliCommands.js';
+ import { isSlashCommand } from '../../ui/utils/commandUtils.js';
+ import { parseAcpModelOption } from '../../utils/acpModelUtils.js';
+-import { classifyApiError } from '../../ui/hooks/useGeminiStream.js';
++import { classifyApiError } from '../../ui/hooks/useLLMStream.js';
+ 
+ // Import modular session components
+ import type {
+@@ -458,7 +458,7 @@ export class Session implements SessionContext {
+             }
+           } catch (error) {
+             // Fire StopFailure hook (fire-and-forget, replaces Stop event for API errors)
+-            // Aligned with useGeminiStream.ts handleFinishedWithErrorEvent
++            // Aligned with useLLMStream.ts handleFinishedWithErrorEvent
+             const errorStatus = getErrorStatus(error);
+             const errorMessage =
+               error instanceof Error ? error.message : String(error);
+diff --git i/packages/cli/src/acp-integration/session/emitters/MessageEmitter.ts w/packages/cli/src/acp-integration/session/emitters/MessageEmitter.ts
+index 9c1cdbb78..c3b07b81f 100644
+--- i/packages/cli/src/acp-integration/session/emitters/MessageEmitter.ts
++++ w/packages/cli/src/acp-integration/session/emitters/MessageEmitter.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { GenerateContentResponseUsageMetadata } from '@google/genai';
++import type { GenerateContentResponseUsageMetadata } from '@claudex/core';
+ import type { SubagentMeta } from '../types.js';
+ import type { Usage } from '@agentclientprotocol/sdk';
+ import { BaseEmitter } from './BaseEmitter.js';
+diff --git i/packages/cli/src/acp-integration/session/emitters/ToolCallEmitter.test.ts w/packages/cli/src/acp-integration/session/emitters/ToolCallEmitter.test.ts
+index 6e899a040..4b7e253f3 100644
+--- i/packages/cli/src/acp-integration/session/emitters/ToolCallEmitter.test.ts
++++ w/packages/cli/src/acp-integration/session/emitters/ToolCallEmitter.test.ts
+@@ -14,7 +14,7 @@ import type {
+   AnyToolInvocation,
+ } from '@claudex/core';
+ import { Kind, ToolNames } from '@claudex/core';
+-import type { Part } from '@google/genai';
++import type { Part } from '@claudex/core';
+ 
+ // Helper to create mock message parts for tests
+ const createMockMessage = (text?: string): Part[] =>
+diff --git i/packages/cli/src/acp-integration/session/emitters/ToolCallEmitter.ts w/packages/cli/src/acp-integration/session/emitters/ToolCallEmitter.ts
+index 843372add..9ba85966e 100644
+--- i/packages/cli/src/acp-integration/session/emitters/ToolCallEmitter.ts
++++ w/packages/cli/src/acp-integration/session/emitters/ToolCallEmitter.ts
+@@ -18,7 +18,7 @@ import type {
+   ToolCallLocation,
+   ToolKind,
+ } from '@agentclientprotocol/sdk';
+-import type { Part } from '@google/genai';
++import type { Part } from '@claudex/core';
+ import { ToolNames, Kind } from '@claudex/core';
+ 
+ /**
+diff --git i/packages/cli/src/acp-integration/session/types.ts w/packages/cli/src/acp-integration/session/types.ts
+index 5765bdb98..6ca4f9dbe 100644
+--- i/packages/cli/src/acp-integration/session/types.ts
++++ w/packages/cli/src/acp-integration/session/types.ts
+@@ -5,7 +5,7 @@
+  */
+ 
+ import type { Config } from '@claudex/core';
+-import type { Part } from '@google/genai';
++import type { Part } from '@claudex/core';
+ import type {
+   SessionUpdate,
+   ToolCallLocation,
+diff --git i/packages/cli/src/config/auth.test.ts w/packages/cli/src/config/auth.test.ts
+index ef3b21a24..f0cd7fa1a 100644
+--- i/packages/cli/src/config/auth.test.ts
++++ w/packages/cli/src/config/auth.test.ts
+@@ -88,7 +88,7 @@ describe('validateAuthMethod', () => {
+     } as unknown as ReturnType<typeof settings.loadSettings>);
+     process.env['GEMINI_API_KEY_ALTERED'] = 'altered-key';
+ 
+-    expect(validateAuthMethod(AuthType.USE_GEMINI)).toBeNull();
++    expect(validateAuthMethod(AuthType.USE_OPENAI)).toBeNull();
+   });
+ 
+   it('should return error with custom envKey for USE_GEMINI when env var is missing', () => {
+@@ -103,7 +103,7 @@ describe('validateAuthMethod', () => {
+       },
+     } as unknown as ReturnType<typeof settings.loadSettings>);
+ 
+-    const result = validateAuthMethod(AuthType.USE_GEMINI);
++    const result = validateAuthMethod(AuthType.USE_OPENAI);
+     expect(result).toContain('GEMINI_API_KEY_ALTERED');
+   });
+ 
+@@ -166,7 +166,7 @@ describe('validateAuthMethod', () => {
+     } as unknown as ReturnType<typeof settings.loadSettings>);
+     process.env['GOOGLE_API_KEY_VERTEX'] = 'vertex-key';
+ 
+-    expect(validateAuthMethod(AuthType.USE_VERTEX_AI)).toBeNull();
++    expect(validateAuthMethod(AuthType.USE_OPENAI)).toBeNull();
+   });
+ 
+   it('should use config.getModelsConfig().getModel() when Config is provided', () => {
+diff --git i/packages/cli/src/config/config.ts w/packages/cli/src/config/config.ts
+index 2ed070cb9..c782138ee 100755
+--- i/packages/cli/src/config/config.ts
++++ w/packages/cli/src/config/config.ts
+@@ -485,8 +485,6 @@ export async function parseArguments(): Promise<CliArgs> {
+             AuthType.USE_OPENAI,
+             AuthType.USE_ANTHROPIC,
+             AuthType.CLAUDEX_OAUTH,
+-            AuthType.USE_GEMINI,
+-            AuthType.USE_VERTEX_AI,
+           ],
+           description: 'Authentication type',
+         })
+@@ -1179,13 +1177,6 @@ export async function loadCliConfig(
+     agents: settings.agents
+       ? {
+           displayMode: settings.agents.displayMode,
+-          arena: settings.agents.arena
+-            ? {
+-                worktreeBaseDir: settings.agents.arena.worktreeBaseDir,
+-                preserveArtifacts:
+-                  settings.agents.arena.preserveArtifacts ?? false,
+-              }
+-            : undefined,
+         }
+       : undefined,
+   });
+diff --git i/packages/cli/src/config/settingsSchema.ts w/packages/cli/src/config/settingsSchema.ts
+index 12f40e033..8de1de308 100644
+--- i/packages/cli/src/config/settingsSchema.ts
++++ w/packages/cli/src/config/settingsSchema.ts
+@@ -1569,7 +1569,7 @@ const SETTINGS_SCHEMA = {
+     default: undefined as
+       | {
+           provider: Array<{
+-            type: 'tavily' | 'google' | 'dashscope';
++            type: 'tavily' | 'google';
+             apiKey?: string;
+             searchEngineId?: string;
+           }>;
+@@ -1610,50 +1610,9 @@ const SETTINGS_SCHEMA = {
+         category: 'Advanced',
+         requiresRestart: false,
+         default: {},
+-        description: 'Settings for Arena (multi-model competitive execution).',
++        description: 'Reserved for future use.',
+         showInDialog: false,
+-        properties: {
+-          worktreeBaseDir: {
+-            type: 'string',
+-            label: 'Worktree Base Directory',
+-            category: 'Advanced',
+-            requiresRestart: true,
+-            default: undefined as string | undefined,
+-            description:
+-              'Custom base directory for Arena worktrees. Defaults to ~/.claudex/arena.',
+-            showInDialog: false,
+-          },
+-          preserveArtifacts: {
+-            type: 'boolean',
+-            label: 'Preserve Arena Artifacts',
+-            category: 'Advanced',
+-            requiresRestart: false,
+-            default: false,
+-            description:
+-              'When enabled, Arena worktrees and session state files are preserved after the session ends or the main agent exits.',
+-            showInDialog: true,
+-          },
+-          maxRoundsPerAgent: {
+-            type: 'number',
+-            label: 'Max Rounds Per Agent',
+-            category: 'Advanced',
+-            requiresRestart: false,
+-            default: undefined as number | undefined,
+-            description:
+-              'Maximum number of rounds (turns) each agent can execute. No limit if unset.',
+-            showInDialog: false,
+-          },
+-          timeoutSeconds: {
+-            type: 'number',
+-            label: 'Timeout (seconds)',
+-            category: 'Advanced',
+-            requiresRestart: false,
+-            default: undefined as number | undefined,
+-            description:
+-              'Total timeout in seconds for the Arena session. No limit if unset.',
+-            showInDialog: false,
+-          },
+-        },
++        properties: {},
+       },
+       team: {
+         type: 'object',
+diff --git i/packages/cli/src/config/webSearch.ts w/packages/cli/src/config/webSearch.ts
+index 928818365..ab7e5e106 100644
+--- i/packages/cli/src/config/webSearch.ts
++++ w/packages/cli/src/config/webSearch.ts
+@@ -84,11 +84,10 @@ export function buildWebSearchConfig(
+   }
+ 
+   // Step 4: Determine default provider
+-  // Priority: user explicit config > CLI arg > first available provider (tavily > google > dashscope)
+-  const providerPriority: Array<'tavily' | 'google' | 'dashscope'> = [
++  // Priority: user explicit config > CLI arg > first available provider (tavily > google)
++  const providerPriority: Array<'tavily' | 'google'> = [
+     'tavily',
+     'google',
+-    'dashscope',
+   ];
+ 
+   // Determine default provider based on availability
+@@ -103,7 +102,7 @@ export function buildWebSearchConfig(
+     }
+     // Fallback to first available provider if none found in priority list
+     if (!defaultProvider) {
+-      defaultProvider = providers[0]?.type || 'dashscope';
++      defaultProvider = providers[0]?.type || 'tavily';
+     }
+   }
+ 
+diff --git i/packages/cli/src/dualOutput/DualOutputBridge.ts w/packages/cli/src/dualOutput/DualOutputBridge.ts
+index 65d19d7f5..fa4cadd6e 100644
+--- i/packages/cli/src/dualOutput/DualOutputBridge.ts
++++ w/packages/cli/src/dualOutput/DualOutputBridge.ts
+@@ -18,7 +18,7 @@ import type {
+   ToolCallResponseInfo,
+ } from '@claudex/core';
+ import { createDebugLogger } from '@claudex/core';
+-import type { Part } from '@google/genai';
++import type { Part } from '@claudex/core';
+ import { StreamJsonOutputAdapter } from '../nonInteractive/io/index.js';
+ 
+ const debugLogger = createDebugLogger('DUAL_OUTPUT');
+diff --git i/packages/cli/src/nonInteractive/control/controllers/systemController.ts w/packages/cli/src/nonInteractive/control/controllers/systemController.ts
+index 0a7cde03b..8f0f27732 100644
+--- i/packages/cli/src/nonInteractive/control/controllers/systemController.ts
++++ w/packages/cli/src/nonInteractive/control/controllers/systemController.ts
+@@ -163,8 +163,6 @@ export class SystemController extends BaseController {
+           undefined, // extensionName
+           undefined, // oauth
+           undefined, // authProviderType
+-          undefined, // targetAudience
+-          undefined, // targetServiceAccount
+           'sdk', // type
+         );
+       }
+@@ -301,8 +299,6 @@ export class SystemController extends BaseController {
+       config.extensionName,
+       oauthConfig,
+       authProvider,
+-      config.targetAudience,
+-      config.targetServiceAccount,
+     );
+   }
+ 
+@@ -315,8 +311,6 @@ export class SystemController extends BaseController {
+ 
+     switch (value) {
+       case AuthProviderType.DYNAMIC_DISCOVERY:
+-      case AuthProviderType.GOOGLE_CREDENTIALS:
+-      case AuthProviderType.SERVICE_ACCOUNT_IMPERSONATION:
+         return value;
+       default:
+         debugLogger.warn(
+diff --git i/packages/cli/src/nonInteractive/io/BaseJsonOutputAdapter.test.ts w/packages/cli/src/nonInteractive/io/BaseJsonOutputAdapter.test.ts
+index 02d6a2d4d..99ea47539 100644
+--- i/packages/cli/src/nonInteractive/io/BaseJsonOutputAdapter.test.ts
++++ w/packages/cli/src/nonInteractive/io/BaseJsonOutputAdapter.test.ts
+@@ -12,7 +12,7 @@ import {
+   type ToolCallRequestInfo,
+   type AgentResultDisplay,
+ } from '@claudex/core';
+-import type { Part, GenerateContentResponseUsageMetadata } from '@google/genai';
++import type { Part, GenerateContentResponseUsageMetadata } from '@claudex/core';
+ import type {
+   CLIMessage,
+   CLIAssistantMessage,
+diff --git i/packages/cli/src/nonInteractive/io/BaseJsonOutputAdapter.ts w/packages/cli/src/nonInteractive/io/BaseJsonOutputAdapter.ts
+index 7b75ba9d0..37a67ed0c 100644
+--- i/packages/cli/src/nonInteractive/io/BaseJsonOutputAdapter.ts
++++ w/packages/cli/src/nonInteractive/io/BaseJsonOutputAdapter.ts
+@@ -19,7 +19,7 @@ import {
+   ToolErrorType,
+   parseAndFormatApiError,
+ } from '@claudex/core';
+-import type { Part, GenerateContentResponseUsageMetadata } from '@google/genai';
++import type { Part, GenerateContentResponseUsageMetadata } from '@claudex/core';
+ import type {
+   CLIAssistantMessage,
+   CLIMessage,
+diff --git i/packages/cli/src/nonInteractive/io/JsonOutputAdapter.test.ts w/packages/cli/src/nonInteractive/io/JsonOutputAdapter.test.ts
+index 424de3365..a3dca045e 100644
+--- i/packages/cli/src/nonInteractive/io/JsonOutputAdapter.test.ts
++++ w/packages/cli/src/nonInteractive/io/JsonOutputAdapter.test.ts
+@@ -10,7 +10,7 @@ import type {
+   ServerGeminiStreamEvent,
+ } from '@claudex/core';
+ import { GeminiEventType, OutputFormat } from '@claudex/core';
+-import type { Part } from '@google/genai';
++import type { Part } from '@claudex/core';
+ import { JsonOutputAdapter } from './JsonOutputAdapter.js';
+ 
+ function createMockConfig(): Config {
+diff --git i/packages/cli/src/nonInteractive/io/StreamJsonOutputAdapter.test.ts w/packages/cli/src/nonInteractive/io/StreamJsonOutputAdapter.test.ts
+index 775bfa3d4..cb66ab969 100644
+--- i/packages/cli/src/nonInteractive/io/StreamJsonOutputAdapter.test.ts
++++ w/packages/cli/src/nonInteractive/io/StreamJsonOutputAdapter.test.ts
+@@ -10,7 +10,7 @@ import type {
+   ServerGeminiStreamEvent,
+ } from '@claudex/core';
+ import { GeminiEventType } from '@claudex/core';
+-import type { Part } from '@google/genai';
++import type { Part } from '@claudex/core';
+ import { StreamJsonOutputAdapter } from './StreamJsonOutputAdapter.js';
+ 
+ function createMockConfig(): Config {
+diff --git i/packages/cli/src/nonInteractiveCli.test.ts w/packages/cli/src/nonInteractiveCli.test.ts
+index 46ad7c8c7..b361cc40e 100644
+--- i/packages/cli/src/nonInteractiveCli.test.ts
++++ w/packages/cli/src/nonInteractiveCli.test.ts
+@@ -22,7 +22,7 @@ import {
+   ApprovalMode,
+   SendMessageType,
+ } from '@claudex/core';
+-import type { Part } from '@google/genai';
++import type { Part } from '@claudex/core';
+ import { runNonInteractive } from './nonInteractiveCli.js';
+ import { vi, type Mock, type MockInstance } from 'vitest';
+ import type { LoadedSettings } from './config/settings.js';
+diff --git i/packages/cli/src/nonInteractiveCli.ts w/packages/cli/src/nonInteractiveCli.ts
+index 996a7d703..49dece5fa 100644
+--- i/packages/cli/src/nonInteractiveCli.ts
++++ w/packages/cli/src/nonInteractiveCli.ts
+@@ -26,7 +26,7 @@ import {
+   createDebugLogger,
+   SendMessageType,
+ } from '@claudex/core';
+-import type { Content, Part, PartListUnion } from '@google/genai';
++import type { Content, Part, PartListUnion } from '@claudex/core';
+ import type { CLIUserMessage, PermissionMode } from './nonInteractive/types.js';
+ import type { JsonOutputAdapterInterface } from './nonInteractive/io/BaseJsonOutputAdapter.js';
+ import { JsonOutputAdapter } from './nonInteractive/io/JsonOutputAdapter.js';
+diff --git i/packages/cli/src/nonInteractiveCliCommands.ts w/packages/cli/src/nonInteractiveCliCommands.ts
+index eea070f47..a6f995dcb 100644
+--- i/packages/cli/src/nonInteractiveCliCommands.ts
++++ w/packages/cli/src/nonInteractiveCliCommands.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { PartListUnion } from '@google/genai';
++import type { PartListUnion } from '@claudex/core';
+ import { parseSlashCommand } from './utils/commands.js';
+ import {
+   Logger,
+diff --git i/packages/cli/src/remoteInput/RemoteInputWatcher.ts w/packages/cli/src/remoteInput/RemoteInputWatcher.ts
+index 3d9f57c50..a4d07d53e 100644
+--- i/packages/cli/src/remoteInput/RemoteInputWatcher.ts
++++ w/packages/cli/src/remoteInput/RemoteInputWatcher.ts
+@@ -64,7 +64,7 @@ export class RemoteInputWatcher {
+ 
+   /**
+    * Register the TUI's submit function. Called from AppContainer
+-   * once useGeminiStream's submitQuery is available.
++   * once useLLMStream's submitQuery is available.
+    */
+   setSubmitFn(fn: SubmitFn): void {
+     this.submitFn = fn;
+diff --git i/packages/cli/src/services/BuiltinCommandLoader.ts w/packages/cli/src/services/BuiltinCommandLoader.ts
+index 2189fe169..740574f89 100644
+--- i/packages/cli/src/services/BuiltinCommandLoader.ts
++++ w/packages/cli/src/services/BuiltinCommandLoader.ts
+@@ -9,7 +9,6 @@ import type { SlashCommand } from '../ui/commands/types.js';
+ import type { Config } from '@claudex/core';
+ import { aboutCommand } from '../ui/commands/aboutCommand.js';
+ import { agentsCommand } from '../ui/commands/agentsCommand.js';
+-import { arenaCommand } from '../ui/commands/arenaCommand.js';
+ import { approvalModeCommand } from '../ui/commands/approvalModeCommand.js';
+ import { authCommand } from '../ui/commands/authCommand.js';
+ import { btwCommand } from '../ui/commands/btwCommand.js';
+@@ -88,7 +87,6 @@ export class BuiltinCommandLoader implements ICommandLoader {
+     const allDefinitions: Array<SlashCommand | null> = [
+       aboutCommand,
+       agentsCommand,
+-      arenaCommand,
+       approvalModeCommand,
+       authCommand,
+       btwCommand,
+diff --git i/packages/cli/src/services/FileCommandLoader.ts w/packages/cli/src/services/FileCommandLoader.ts
+index e46fa6a51..d48268acd 100644
+--- i/packages/cli/src/services/FileCommandLoader.ts
++++ w/packages/cli/src/services/FileCommandLoader.ts
+@@ -7,9 +7,7 @@
+ import { promises as fs } from 'node:fs';
+ import * as fsSync from 'node:fs';
+ import path from 'node:path';
+-import toml from '@iarna/toml';
+ import { glob } from 'glob';
+-import { z } from 'zod';
+ import type { Config } from '@claudex/core';
+ import {
+   createDebugLogger,
+@@ -35,24 +33,12 @@ interface CommandDirectory {
+ const debugLogger = createDebugLogger('FILE_COMMAND_LOADER');
+ 
+ /**
+- * Defines the Zod schema for a command definition file. This serves as the
+- * single source of truth for both validation and type inference.
+- */
+-const TomlCommandDefSchema = z.object({
+-  prompt: z.string({
+-    required_error: "The 'prompt' field is required.",
+-    invalid_type_error: "The 'prompt' field must be a string.",
+-  }),
+-  description: z.string().optional(),
+-});
+-
+-/**
+- * Discovers and loads custom slash commands from .toml files in both the
++ * Discovers and loads custom slash commands from .md files in both the
+  * user's global config directory and the current project's directory.
+  *
+  * This loader is responsible for:
+  * - Recursively scanning command directories.
+- * - Parsing and validating TOML files.
++ * - Parsing and validating Markdown files.
+  * - Adapting valid definitions into executable SlashCommand objects.
+  * - Handling file system errors and malformed files gracefully.
+  */
+@@ -96,11 +82,7 @@ export class FileCommandLoader implements ICommandLoader {
+     const commandDirs = this.getCommandDirectories();
+     for (const dirInfo of commandDirs) {
+       try {
+-        // Scan both .toml and .md files
+-        const tomlFiles = await glob('**/*.toml', {
+-          ...globOptions,
+-          cwd: dirInfo.path,
+-        });
++        // Scan .md files only
+         const mdFiles = await glob('**/*.md', {
+           ...globOptions,
+           cwd: dirInfo.path,
+@@ -110,15 +92,6 @@ export class FileCommandLoader implements ICommandLoader {
+           return [];
+         }
+ 
+-        // Process TOML files
+-        const tomlCommandPromises = tomlFiles.map((file) =>
+-          this.parseAndAdaptTomlFile(
+-            path.join(dirInfo.path, file),
+-            dirInfo.path,
+-            dirInfo.extensionName,
+-          ),
+-        );
+-
+         // Process Markdown files
+         const mdCommandPromises = mdFiles.map((file) =>
+           this.parseAndAdaptMarkdownFile(
+@@ -129,7 +102,7 @@ export class FileCommandLoader implements ICommandLoader {
+         );
+ 
+         const commands = (
+-          await Promise.all([...tomlCommandPromises, ...mdCommandPromises])
++          await Promise.all([...mdCommandPromises])
+         ).filter((cmd): cmd is SlashCommand => cmd !== null);
+ 
+         // Add all commands without deduplication
+@@ -244,62 +217,6 @@ export class FileCommandLoader implements ICommandLoader {
+     return [];
+   }
+ 
+-  /**
+-   * Parses a single .toml file and transforms it into a SlashCommand object.
+-   * @param filePath The absolute path to the .toml file.
+-   * @param baseDir The root command directory for name calculation.
+-   * @param extensionName Optional extension name to prefix commands with.
+-   * @returns A promise resolving to a SlashCommand, or null if the file is invalid.
+-   */
+-  private async parseAndAdaptTomlFile(
+-    filePath: string,
+-    baseDir: string,
+-    extensionName?: string,
+-  ): Promise<SlashCommand | null> {
+-    let fileContent: string;
+-    try {
+-      fileContent = await fs.readFile(filePath, 'utf-8');
+-    } catch (error: unknown) {
+-      debugLogger.error(
+-        `[FileCommandLoader] Failed to read file ${filePath}:`,
+-        error instanceof Error ? error.message : String(error),
+-      );
+-      return null;
+-    }
+-
+-    let parsed: unknown;
+-    try {
+-      parsed = toml.parse(fileContent);
+-    } catch (error: unknown) {
+-      debugLogger.error(
+-        `[FileCommandLoader] Failed to parse TOML file ${filePath}:`,
+-        error instanceof Error ? error.message : String(error),
+-      );
+-      return null;
+-    }
+-
+-    const validationResult = TomlCommandDefSchema.safeParse(parsed);
+-
+-    if (!validationResult.success) {
+-      debugLogger.error(
+-        `[FileCommandLoader] Skipping invalid command file: ${filePath}. Validation errors:`,
+-        validationResult.error.flatten(),
+-      );
+-      return null;
+-    }
+-
+-    const validDef = validationResult.data;
+-
+-    // Use factory to create command
+-    return createSlashCommandFromDefinition(
+-      filePath,
+-      baseDir,
+-      validDef,
+-      extensionName,
+-      '.toml',
+-    );
+-  }
+-
+   /**
+    * Parses a single .md file and transforms it into a SlashCommand object.
+    * @param filePath The absolute path to the .md file.
+diff --git i/packages/cli/src/services/prompt-processors/atFileProcessor.test.ts w/packages/cli/src/services/prompt-processors/atFileProcessor.test.ts
+index 8a46689c8..189a475eb 100644
+--- i/packages/cli/src/services/prompt-processors/atFileProcessor.test.ts
++++ w/packages/cli/src/services/prompt-processors/atFileProcessor.test.ts
+@@ -10,7 +10,7 @@ import { type CommandContext } from '../../ui/commands/types.js';
+ import { AtFileProcessor } from './atFileProcessor.js';
+ import { MessageType } from '../../ui/types.js';
+ import type { Config } from '@claudex/core';
+-import type { PartUnion } from '@google/genai';
++import type { PartUnion } from '@claudex/core';
+ 
+ // Mock the core dependency
+ const mockReadPathFromWorkspace = vi.hoisted(() => vi.fn());
+diff --git i/packages/cli/src/services/prompt-processors/shellProcessor.test.ts w/packages/cli/src/services/prompt-processors/shellProcessor.test.ts
+index 20a149be8..79b80e622 100644
+--- i/packages/cli/src/services/prompt-processors/shellProcessor.test.ts
++++ w/packages/cli/src/services/prompt-processors/shellProcessor.test.ts
+@@ -12,7 +12,7 @@ import type { Config } from '@claudex/core';
+ import { ApprovalMode } from '@claudex/core';
+ import os from 'node:os';
+ import { quote } from 'shell-quote';
+-import { createPartFromText } from '@google/genai';
++import { createPartFromText } from '@claudex/core';
+ import type { PromptPipelineContent } from './types.js';
+ 
+ // Helper function to determine the expected escaped string based on the current OS,
+diff --git i/packages/cli/src/services/prompt-processors/types.ts w/packages/cli/src/services/prompt-processors/types.ts
+index c68765744..685057224 100644
+--- i/packages/cli/src/services/prompt-processors/types.ts
++++ w/packages/cli/src/services/prompt-processors/types.ts
+@@ -5,7 +5,7 @@
+  */
+ 
+ import type { CommandContext } from '../../ui/commands/types.js';
+-import type { PartUnion } from '@google/genai';
++import type { PartUnion } from '@claudex/core';
+ 
+ /**
+  * Defines the input/output type for prompt processors.
+diff --git i/packages/cli/src/ui/AppContainer.test.tsx w/packages/cli/src/ui/AppContainer.test.tsx
+index 9dbd6acd2..5275a2def 100644
+--- i/packages/cli/src/ui/AppContainer.test.tsx
++++ w/packages/cli/src/ui/AppContainer.test.tsx
+@@ -65,7 +65,7 @@ vi.mock('./hooks/slashCommandProcessor.js');
+ vi.mock('./hooks/useTerminalSize.js', () => ({
+   useTerminalSize: vi.fn(() => ({ columns: 80, rows: 24 })),
+ }));
+-vi.mock('./hooks/useGeminiStream.js');
++vi.mock('./hooks/useLLMStream.js');
+ vi.mock('./hooks/vim.js');
+ vi.mock('./hooks/useFocus.js');
+ vi.mock('./hooks/useBracketedPaste.js');
+@@ -108,7 +108,7 @@ import { useEditorSettings } from './hooks/useEditorSettings.js';
+ import { useSettingsCommand } from './hooks/useSettingsCommand.js';
+ import { useModelCommand } from './hooks/useModelCommand.js';
+ import { useSlashCommandProcessor } from './hooks/slashCommandProcessor.js';
+-import { useGeminiStream } from './hooks/useGeminiStream.js';
++import { useLLMStream } from './hooks/useLLMStream.js';
+ import { useVim } from './hooks/vim.js';
+ import { useFolderTrust } from './hooks/useFolderTrust.js';
+ import { useIdeTrustListener } from './hooks/useIdeTrustListener.js';
+@@ -137,7 +137,7 @@ describe('AppContainer State Management', () => {
+   const mockedUseSettingsCommand = useSettingsCommand as Mock;
+   const mockedUseModelCommand = useModelCommand as Mock;
+   const mockedUseSlashCommandProcessor = useSlashCommandProcessor as Mock;
+-  const mockedUseGeminiStream = useGeminiStream as Mock;
++  const mockedUseGeminiStream = useLLMStream as Mock;
+   const mockedUseVim = useVim as Mock;
+   const mockedUseFolderTrust = useFolderTrust as Mock;
+   const mockedUseIdeTrustListener = useIdeTrustListener as Mock;
+@@ -517,8 +517,8 @@ describe('AppContainer State Management', () => {
+   });
+ 
+   describe('Cancel Handler (issue #3204)', () => {
+-    // The cancel handler is wired through useGeminiStream's onCancelSubmit
+-    // arg (positional index 14 — see the useGeminiStream call site in
++    // The cancel handler is wired through useLLMStream's onCancelSubmit
++    // arg (positional index 14 — see the useLLMStream call site in
+     // AppContainer.tsx). We capture it via mockImplementation so a future
+     // signature change surfaces as a clear test failure rather than silently
+     // grabbing the wrong callback.
+@@ -541,7 +541,7 @@ describe('AppContainer State Management', () => {
+     const triggerCancel = () => {
+       if (!capturedOnCancelSubmit) {
+         throw new Error(
+-          `onCancelSubmit was not captured at arg index ${ON_CANCEL_SUBMIT_ARG_INDEX} — useGeminiStream signature may have changed`,
++          `onCancelSubmit was not captured at arg index ${ON_CANCEL_SUBMIT_ARG_INDEX} — useLLMStream signature may have changed`,
+         );
+       }
+       capturedOnCancelSubmit();
+diff --git i/packages/cli/src/ui/AppContainer.tsx w/packages/cli/src/ui/AppContainer.tsx
+index 8f2865a13..da114c993 100644
+--- i/packages/cli/src/ui/AppContainer.tsx
++++ w/packages/cli/src/ui/AppContainer.tsx
+@@ -38,7 +38,6 @@ import {
+   getErrorMessage,
+   getAllGeminiMdFilenames,
+   ShellExecutionService,
+-  Storage,
+   SessionEndReason,
+   SessionStartSource,
+   generatePromptSuggestion,
+@@ -69,7 +68,6 @@ import { useAuthCommand } from './auth/useAuth.js';
+ import { useEditorSettings } from './hooks/useEditorSettings.js';
+ import { useSettingsCommand } from './hooks/useSettingsCommand.js';
+ import { useModelCommand } from './hooks/useModelCommand.js';
+-import { useArenaCommand } from './hooks/useArenaCommand.js';
+ import { useApprovalModeCommand } from './hooks/useApprovalModeCommand.js';
+ import { useResumeCommand } from './hooks/useResumeCommand.js';
+ import { useSlashCommandProcessor } from './hooks/slashCommandProcessor.js';
+@@ -85,7 +83,7 @@ import { computeWindowTitle } from '../utils/windowTitle.js';
+ import { clearScreen } from '../utils/stdioHelpers.js';
+ import { useTextBuffer } from './components/shared/text-buffer.js';
+ import { useLogger } from './hooks/useLogger.js';
+-import { useGeminiStream } from './hooks/useGeminiStream.js';
++import { useLLMStream } from './hooks/useLLMStream.js';
+ import { useVim } from './hooks/vim.js';
+ import { isBtwCommand } from './utils/commandUtils.js';
+ import { type LoadedSettings, SettingScope } from '../config/settings.js';
+@@ -100,9 +98,6 @@ import { useTerminalProgress } from './hooks/useTerminalProgress.js';
+ import { useFolderTrust } from './hooks/useFolderTrust.js';
+ import { useIdeTrustListener } from './hooks/useIdeTrustListener.js';
+ import { type IdeIntegrationNudgeResult } from './IdeIntegrationNudge.js';
+-import { type CommandMigrationNudgeResult } from './CommandFormatMigrationNudge.js';
+-import { useCommandMigration } from './hooks/useCommandMigration.js';
+-import { migrateTomlCommands } from '../services/command-migration-tool.js';
+ import { type UpdateObject } from './utils/updateCheck.js';
+ import { setUpdateHandler } from '../utils/handleAutoUpdate.js';
+ import { registerCleanup, runExitCleanup } from '../utils/cleanup.js';
+@@ -371,7 +366,7 @@ export const AppContainer = (props: AppContainerProps) => {
+   // Track idle state via ref so the update handler can defer notifications
+   // while the model is streaming, without triggering re-renders.
+   // Note: isIdleRef.current is assigned after streamingState becomes available
+-  // (see the assignment below useGeminiStream).
++  // (see the assignment below useLLMStream).
+   const isIdleRef = useRef(true);
+   const updateHandlerRef = useRef<{
+     cleanup: () => void;
+@@ -561,9 +556,6 @@ export const AppContainer = (props: AppContainerProps) => {
+     openModelDialog,
+     closeModelDialog,
+   } = useModelCommand();
+-  const { activeArenaDialog, openArenaDialog, closeArenaDialog } =
+-    useArenaCommand();
+-
+   const {
+     isResumeDialogOpen,
+     openResumeDialog,
+@@ -606,7 +598,6 @@ export const AppContainer = (props: AppContainerProps) => {
+       openSettingsDialog,
+       openModelDialog,
+       openTrustDialog,
+-      openArenaDialog,
+       openPermissionsDialog,
+       openApprovalModeDialog,
+       quit: (messages: HistoryItem[]) => {
+@@ -633,7 +624,6 @@ export const AppContainer = (props: AppContainerProps) => {
+       openMemoryDialog,
+       openSettingsDialog,
+       openModelDialog,
+-      openArenaDialog,
+       setDebugMessage,
+       dispatchExtensionStateUpdate,
+       openTrustDialog,
+@@ -759,7 +749,7 @@ export const AppContainer = (props: AppContainerProps) => {
+     activePtyId,
+     loopDetectionConfirmationRequest,
+     pendingToolCalls,
+-  } = useGeminiStream(
++  } = useLLMStream(
+     config.getGeminiClient(),
+     historyManager.history,
+     historyManager.addItem,
+@@ -1139,15 +1129,6 @@ export const AppContainer = (props: AppContainerProps) => {
+     ],
+   );
+ 
+-  const handleArenaModelsSelected = useCallback(
+-    (models: string[]) => {
+-      const value = models.join(',');
+-      buffer.setText(`/arena start --models ${value} `);
+-      closeArenaDialog();
+-    },
+-    [buffer, closeArenaDialog],
+-  );
+-
+   // Welcome back functionality (must be after handleFinalSubmit)
+   const {
+     welcomeBackInfo,
+@@ -1464,13 +1445,6 @@ export const AppContainer = (props: AppContainerProps) => {
+       !idePromptAnswered,
+   );
+ 
+-  // Command migration nudge
+-  const {
+-    showMigrationNudge: shouldShowCommandMigrationNudge,
+-    tomlFiles: commandMigrationTomlFiles,
+-    setShowMigrationNudge: setShowCommandMigrationNudge,
+-  } = useCommandMigration(settings, config.storage);
+-
+   const [showToolDescriptions, setShowToolDescriptions] =
+     useState<boolean>(false);
+ 
+@@ -1549,92 +1523,6 @@ export const AppContainer = (props: AppContainerProps) => {
+     [handleSlashCommand, settings],
+   );
+ 
+-  const handleCommandMigrationComplete = useCallback(
+-    async (result: CommandMigrationNudgeResult) => {
+-      setShowCommandMigrationNudge(false);
+-
+-      if (result.userSelection === 'yes') {
+-        // Perform migration for both workspace and user levels
+-        try {
+-          const results = [];
+-
+-          // Migrate workspace commands
+-          const workspaceCommandsDir = config.storage.getProjectCommandsDir();
+-          const workspaceResult = await migrateTomlCommands({
+-            commandDir: workspaceCommandsDir,
+-            createBackup: true,
+-            deleteOriginal: false,
+-          });
+-          if (
+-            workspaceResult.convertedFiles.length > 0 ||
+-            workspaceResult.failedFiles.length > 0
+-          ) {
+-            results.push({ level: 'workspace', result: workspaceResult });
+-          }
+-
+-          // Migrate user commands
+-          const userCommandsDir = Storage.getUserCommandsDir();
+-          const userResult = await migrateTomlCommands({
+-            commandDir: userCommandsDir,
+-            createBackup: true,
+-            deleteOriginal: false,
+-          });
+-          if (
+-            userResult.convertedFiles.length > 0 ||
+-            userResult.failedFiles.length > 0
+-          ) {
+-            results.push({ level: 'user', result: userResult });
+-          }
+-
+-          // Report results
+-          for (const { level, result: migrationResult } of results) {
+-            if (
+-              migrationResult.success &&
+-              migrationResult.convertedFiles.length > 0
+-            ) {
+-              historyManager.addItem(
+-                {
+-                  type: MessageType.INFO,
+-                  text: `[${level}] Successfully migrated ${migrationResult.convertedFiles.length} command file${migrationResult.convertedFiles.length > 1 ? 's' : ''} to Markdown format. Original files backed up as .toml.backup`,
+-                },
+-                Date.now(),
+-              );
+-            }
+-
+-            if (migrationResult.failedFiles.length > 0) {
+-              historyManager.addItem(
+-                {
+-                  type: MessageType.ERROR,
+-                  text: `[${level}] Failed to migrate ${migrationResult.failedFiles.length} file${migrationResult.failedFiles.length > 1 ? 's' : ''}:\n${migrationResult.failedFiles.map((f) => `  • ${f.file}: ${f.error}`).join('\n')}`,
+-                },
+-                Date.now(),
+-              );
+-            }
+-          }
+-
+-          if (results.length === 0) {
+-            historyManager.addItem(
+-              {
+-                type: MessageType.INFO,
+-                text: 'No TOML files found to migrate.',
+-              },
+-              Date.now(),
+-            );
+-          }
+-        } catch (error) {
+-          historyManager.addItem(
+-            {
+-              type: MessageType.ERROR,
+-              text: `❌ Migration failed: ${getErrorMessage(error)}`,
+-            },
+-            Date.now(),
+-          );
+-        }
+-      }
+-    },
+-    [historyManager, setShowCommandMigrationNudge, config.storage],
+-  );
+-
+   const currentCandidatesTokens = Object.values(
+     sessionStats.metrics?.models ?? {},
+   ).reduce((acc, model) => acc + (model.tokens?.candidates ?? 0), 0);
+@@ -1669,8 +1557,6 @@ export const AppContainer = (props: AppContainerProps) => {
+     closeSettingsDialog,
+     isMemoryDialogOpen,
+     closeMemoryDialog,
+-    activeArenaDialog,
+-    closeArenaDialog,
+     isFolderTrustDialogOpen,
+     showWelcomeBackDialog,
+     handleWelcomeBackClose,
+@@ -1966,7 +1852,6 @@ export const AppContainer = (props: AppContainerProps) => {
+   const dialogsVisible =
+     showWelcomeBackDialog ||
+     shouldShowIdePrompt ||
+-    shouldShowCommandMigrationNudge ||
+     isFolderTrustDialogOpen ||
+     !!shellConfirmationRequest ||
+     !!confirmationRequest ||
+@@ -1980,7 +1865,6 @@ export const AppContainer = (props: AppContainerProps) => {
+     isMemoryDialogOpen ||
+     isModelDialogOpen ||
+     isTrustDialogOpen ||
+-    activeArenaDialog !== null ||
+     isPermissionsDialogOpen ||
+     isAuthDialogOpen ||
+     isAuthenticating ||
+@@ -2031,7 +1915,6 @@ export const AppContainer = (props: AppContainerProps) => {
+       isModelDialogOpen,
+       isFastModelMode,
+       isTrustDialogOpen,
+-      activeArenaDialog,
+       isPermissionsDialogOpen,
+       isApprovalModeDialogOpen,
+       isResumeDialogOpen,
+@@ -2057,8 +1940,6 @@ export const AppContainer = (props: AppContainerProps) => {
+       suggestionsWidth,
+       isInputActive,
+       shouldShowIdePrompt,
+-      shouldShowCommandMigrationNudge,
+-      commandMigrationTomlFiles,
+       isFolderTrustDialogOpen: isFolderTrustDialogOpen ?? false,
+       isTrustedFolder,
+       constrainHeight,
+@@ -2138,7 +2019,6 @@ export const AppContainer = (props: AppContainerProps) => {
+       isModelDialogOpen,
+       isFastModelMode,
+       isTrustDialogOpen,
+-      activeArenaDialog,
+       isPermissionsDialogOpen,
+       isApprovalModeDialogOpen,
+       isResumeDialogOpen,
+@@ -2164,8 +2044,6 @@ export const AppContainer = (props: AppContainerProps) => {
+       suggestionsWidth,
+       isInputActive,
+       shouldShowIdePrompt,
+-      shouldShowCommandMigrationNudge,
+-      commandMigrationTomlFiles,
+       isFolderTrustDialogOpen,
+       isTrustedFolder,
+       constrainHeight,
+@@ -2247,16 +2125,12 @@ export const AppContainer = (props: AppContainerProps) => {
+       closeMemoryDialog,
+       closeModelDialog,
+       openModelDialog,
+-      openArenaDialog,
+-      closeArenaDialog,
+-      handleArenaModelsSelected,
+       dismissCodingPlanUpdate,
+       closeTrustDialog,
+       closePermissionsDialog,
+       setShellModeActive,
+       vimHandleInput,
+       handleIdePromptComplete,
+-      handleCommandMigrationComplete,
+       handleFolderTrustSelect,
+       setConstrainHeight,
+       onEscapePromptChange: handleEscapePromptChange,
+@@ -2307,16 +2181,12 @@ export const AppContainer = (props: AppContainerProps) => {
+       closeMemoryDialog,
+       closeModelDialog,
+       openModelDialog,
+-      openArenaDialog,
+-      closeArenaDialog,
+-      handleArenaModelsSelected,
+       dismissCodingPlanUpdate,
+       closeTrustDialog,
+       closePermissionsDialog,
+       setShellModeActive,
+       vimHandleInput,
+       handleIdePromptComplete,
+-      handleCommandMigrationComplete,
+       handleFolderTrustSelect,
+       setConstrainHeight,
+       handleEscapePromptChange,
+diff --git i/packages/cli/src/ui/auth/AuthDialog.test.tsx w/packages/cli/src/ui/auth/AuthDialog.test.tsx
+index 347fcca16..d606d3929 100644
+--- i/packages/cli/src/ui/auth/AuthDialog.test.tsx
++++ w/packages/cli/src/ui/auth/AuthDialog.test.tsx
+@@ -103,14 +103,14 @@ describe('AuthDialog', () => {
+         settings: {
+           security: {
+             auth: {
+-              selectedType: AuthType.USE_GEMINI,
++              selectedType: AuthType.USE_OPENAI,
+             },
+           },
+         },
+         originalSettings: {
+           security: {
+             auth: {
+-              selectedType: AuthType.USE_GEMINI,
++              selectedType: AuthType.USE_OPENAI,
+             },
+           },
+         },
+diff --git i/packages/cli/src/ui/auth/useAuth.ts w/packages/cli/src/ui/auth/useAuth.ts
+index f36cca1cd..7af2eb90e 100644
+--- i/packages/cli/src/ui/auth/useAuth.ts
++++ w/packages/cli/src/ui/auth/useAuth.ts
+@@ -24,12 +24,12 @@ export interface OpenAICredentials {
+   baseUrl?: string;
+   model?: string;
+ }
+-import { useClaudexAuth } from '../hooks/useClaudexAuth.js';
++import { useClaudexAuth } from '../hooks/useQwenAuth.js';
+ import { AuthState, MessageType } from '../types.js';
+ import type { HistoryItem } from '../types.js';
+ import { t } from '../../i18n/index.js';
+ 
+-export type { ClaudexAuthState } from '../hooks/useClaudexAuth.js';
++export type { ClaudexAuthState } from '../hooks/useQwenAuth.js';
+ 
+ export const useAuthCommand = (
+   settings: LoadedSettings,
+diff --git i/packages/cli/src/ui/commands/exportCommand.test.ts w/packages/cli/src/ui/commands/exportCommand.test.ts
+index 20baa666a..5a76f7901 100644
+--- i/packages/cli/src/ui/commands/exportCommand.test.ts
++++ w/packages/cli/src/ui/commands/exportCommand.test.ts
+@@ -9,7 +9,7 @@ import * as fs from 'node:fs/promises';
+ import { exportCommand } from './exportCommand.js';
+ import { createMockCommandContext } from '../../test-utils/mockCommandContext.js';
+ import type { ChatRecord } from '@claudex/core';
+-import type { Part, Content } from '@google/genai';
++import type { Part, Content } from '@claudex/core';
+ import {
+   collectSessionData,
+   normalizeSessionData,
+diff --git i/packages/cli/src/ui/commands/types.ts w/packages/cli/src/ui/commands/types.ts
+index 95772eae7..447a26f61 100644
+--- i/packages/cli/src/ui/commands/types.ts
++++ w/packages/cli/src/ui/commands/types.ts
+@@ -5,7 +5,7 @@
+  */
+ 
+ import type { MutableRefObject, ReactNode } from 'react';
+-import type { Content, PartListUnion } from '@google/genai';
++import type { Content, PartListUnion } from '@claudex/core';
+ import type { Config, GitService, Logger } from '@claudex/core';
+ import type {
+   HistoryItemWithoutId,
+@@ -150,10 +150,6 @@ export interface OpenDialogActionReturn {
+ 
+   dialog:
+     | 'help'
+-    | 'arena_start'
+-    | 'arena_select'
+-    | 'arena_stop'
+-    | 'arena_status'
+     | 'auth'
+     | 'theme'
+     | 'editor'
+diff --git i/packages/cli/src/ui/components/ConfigInitDisplay.tsx w/packages/cli/src/ui/components/ConfigInitDisplay.tsx
+index f2164d5f2..874f5e828 100644
+--- i/packages/cli/src/ui/components/ConfigInitDisplay.tsx
++++ w/packages/cli/src/ui/components/ConfigInitDisplay.tsx
+@@ -9,7 +9,7 @@ import { appEvents } from './../../utils/events.js';
+ import { Box, Text } from 'ink';
+ import { useConfig } from '../contexts/ConfigContext.js';
+ import { type McpClient, MCPServerStatus } from '@claudex/core';
+-import { GeminiSpinner } from './GeminiRespondingSpinner.js';
++import { LLMSpinner } from './RespondingSpinner.js';
+ import { theme } from '../semantic-colors.js';
+ import { t } from '../../i18n/index.js';
+ 
+@@ -46,7 +46,7 @@ export const ConfigInitDisplay = () => {
+   return (
+     <Box marginTop={1}>
+       <Text>
+-        <GeminiSpinner /> <Text color={theme.text.primary}>{message}</Text>
++        <LLMSpinner /> <Text color={theme.text.primary}>{message}</Text>
+       </Text>
+     </Box>
+   );
+diff --git i/packages/cli/src/ui/components/DialogManager.tsx w/packages/cli/src/ui/components/DialogManager.tsx
+index dc5920159..f20c1c9fb 100644
+--- i/packages/cli/src/ui/components/DialogManager.tsx
++++ w/packages/cli/src/ui/components/DialogManager.tsx
+@@ -6,7 +6,6 @@
+ 
+ import { Box, Text } from 'ink';
+ import { IdeIntegrationNudge } from '../IdeIntegrationNudge.js';
+-import { CommandFormatMigrationNudge } from '../CommandFormatMigrationNudge.js';
+ import { LoopDetectionConfirmation } from './LoopDetectionConfirmation.js';
+ import { FolderTrustDialog } from './FolderTrustDialog.js';
+ import { ShellConfirmationDialog } from './ShellConfirmationDialog.js';
+@@ -15,16 +14,12 @@ import { SettingInputPrompt } from './SettingInputPrompt.js';
+ import { PluginChoicePrompt } from './PluginChoicePrompt.js';
+ import { ThemeDialog } from './ThemeDialog.js';
+ import { SettingsDialog } from './SettingsDialog.js';
+-import { ClaudexOAuthProgress } from './ClaudexOAuthProgress.js';
++import { ClaudexOAuthProgress } from './QwenOAuthProgress.js';
+ import { AuthDialog } from '../auth/AuthDialog.js';
+ import { EditorSettingsDialog } from './EditorSettingsDialog.js';
+ import { TrustDialog } from './TrustDialog.js';
+ import { PermissionsDialog } from './PermissionsDialog.js';
+ import { ModelDialog } from './ModelDialog.js';
+-import { ArenaStartDialog } from './arena/ArenaStartDialog.js';
+-import { ArenaSelectDialog } from './arena/ArenaSelectDialog.js';
+-import { ArenaStopDialog } from './arena/ArenaStopDialog.js';
+-import { ArenaStatusDialog } from './arena/ArenaStatusDialog.js';
+ import { ApprovalModeDialog } from './ApprovalModeDialog.js';
+ import { theme } from '../semantic-colors.js';
+ import { useUIState } from '../contexts/UIStateContext.js';
+@@ -83,14 +78,6 @@ export const DialogManager = ({
+       />
+     );
+   }
+-  if (uiState.shouldShowCommandMigrationNudge) {
+-    return (
+-      <CommandFormatMigrationNudge
+-        tomlFiles={uiState.commandMigrationTomlFiles}
+-        onComplete={uiActions.handleCommandMigrationComplete}
+-      />
+-    );
+-  }
+   if (uiState.isFolderTrustDialogOpen) {
+     return (
+       <FolderTrustDialog
+@@ -256,49 +243,6 @@ export const DialogManager = ({
+       </Box>
+     );
+   }
+-  if (uiState.activeArenaDialog === 'start') {
+-    return (
+-      <ArenaStartDialog
+-        onClose={() => uiActions.closeArenaDialog()}
+-        onConfirm={(models) => uiActions.handleArenaModelsSelected?.(models)}
+-      />
+-    );
+-  }
+-  if (uiState.activeArenaDialog === 'status') {
+-    const arenaManager = config.getArenaManager();
+-    if (arenaManager) {
+-      return (
+-        <ArenaStatusDialog
+-          manager={arenaManager}
+-          closeArenaDialog={uiActions.closeArenaDialog}
+-          width={mainAreaWidth}
+-        />
+-      );
+-    }
+-  }
+-  if (uiState.activeArenaDialog === 'stop') {
+-    return (
+-      <ArenaStopDialog
+-        config={config}
+-        addItem={addItem}
+-        closeArenaDialog={uiActions.closeArenaDialog}
+-      />
+-    );
+-  }
+-  if (uiState.activeArenaDialog === 'select') {
+-    const arenaManager = config.getArenaManager();
+-    if (arenaManager) {
+-      return (
+-        <ArenaSelectDialog
+-          manager={arenaManager}
+-          config={config}
+-          addItem={addItem}
+-          closeArenaDialog={uiActions.closeArenaDialog}
+-        />
+-      );
+-    }
+-  }
+-
+   if (uiState.isAuthDialogOpen || uiState.authError) {
+     return (
+       <Box flexDirection="column">
+diff --git i/packages/cli/src/ui/components/HistoryItemDisplay.tsx w/packages/cli/src/ui/components/HistoryItemDisplay.tsx
+index ba4662f0f..4861ce814 100644
+--- i/packages/cli/src/ui/components/HistoryItemDisplay.tsx
++++ w/packages/cli/src/ui/components/HistoryItemDisplay.tsx
+@@ -47,7 +47,6 @@ import { ToolsList } from './views/ToolsList.js';
+ import { McpStatus } from './views/McpStatus.js';
+ import { ContextUsage } from './views/ContextUsage.js';
+ import { DoctorReport } from './views/DoctorReport.js';
+-import { ArenaAgentCard, ArenaSessionCard } from './arena/ArenaCards.js';
+ import { InsightProgressMessage } from './messages/InsightProgressMessage.js';
+ import { BtwMessage } from './messages/BtwMessage.js';
+ import { MemorySavedMessage } from './messages/MemorySavedMessage.js';
+@@ -241,18 +240,6 @@ const HistoryItemDisplayComponent: React.FC<HistoryItemDisplayProps> = ({
+           width={boxWidth}
+         />
+       )}
+-      {itemForDisplay.type === 'arena_agent_complete' && (
+-        <ArenaAgentCard agent={itemForDisplay.agent} width={boxWidth} />
+-      )}
+-      {itemForDisplay.type === 'arena_session_complete' && (
+-        <ArenaSessionCard
+-          sessionStatus={itemForDisplay.sessionStatus}
+-          task={itemForDisplay.task}
+-          totalDurationMs={itemForDisplay.totalDurationMs}
+-          agents={itemForDisplay.agents}
+-          width={boxWidth}
+-        />
+-      )}
+       {itemForDisplay.type === 'insight_progress' && (
+         <InsightProgressMessage progress={itemForDisplay.progress} />
+       )}
+diff --git i/packages/cli/src/ui/components/InputPrompt.tsx w/packages/cli/src/ui/components/InputPrompt.tsx
+index 418db0266..9602617e9 100644
+--- i/packages/cli/src/ui/components/InputPrompt.tsx
++++ w/packages/cli/src/ui/components/InputPrompt.tsx
+@@ -353,9 +353,8 @@ export const InputPrompt: React.FC<InputPromptProps> = ({
+     onChange: customSetTextAndResetCompletionSignal,
+   });
+ 
+-  // When an arena session starts (agents appear), reset history position so
+-  // that pressing down-arrow immediately focuses the agent tab bar instead
+-  // of cycling through input history.
++  // When agents appear, reset history position so that pressing down-arrow
++  // immediately focuses the agent tab bar instead of cycling through input history.
+   const prevHasAgentsRef = useRef(hasAgents);
+   useEffect(() => {
+     if (hasAgents && !prevHasAgentsRef.current) {
+diff --git i/packages/cli/src/ui/components/LoadingIndicator.test.tsx w/packages/cli/src/ui/components/LoadingIndicator.test.tsx
+index c608f4a4e..6349d7014 100644
+--- i/packages/cli/src/ui/components/LoadingIndicator.test.tsx
++++ w/packages/cli/src/ui/components/LoadingIndicator.test.tsx
+@@ -13,9 +13,9 @@ import { StreamingState } from '../types.js';
+ import { vi } from 'vitest';
+ import * as useTerminalSize from '../hooks/useTerminalSize.js';
+ 
+-// Mock GeminiRespondingSpinner
+-vi.mock('./GeminiRespondingSpinner.js', () => ({
+-  GeminiRespondingSpinner: ({
++// Mock RespondingSpinner
++vi.mock('./RespondingSpinner.js', () => ({
++  RespondingSpinner: ({
+     nonRespondingDisplay,
+   }: {
+     nonRespondingDisplay?: string;
+diff --git i/packages/cli/src/ui/components/LoadingIndicator.tsx w/packages/cli/src/ui/components/LoadingIndicator.tsx
+index 476e3d8f9..02144c50b 100644
+--- i/packages/cli/src/ui/components/LoadingIndicator.tsx
++++ w/packages/cli/src/ui/components/LoadingIndicator.tsx
+@@ -10,7 +10,7 @@ import { Box, Text } from 'ink';
+ import { theme } from '../semantic-colors.js';
+ import { useStreamingContext } from '../contexts/StreamingContext.js';
+ import { StreamingState } from '../types.js';
+-import { GeminiRespondingSpinner } from './GeminiRespondingSpinner.js';
++import { RespondingSpinner } from './RespondingSpinner.js';
+ import { formatDuration, formatTokenCount } from '../utils/formatters.js';
+ import { useTerminalSize } from '../hooks/useTerminalSize.js';
+ import { isNarrowWidth } from '../utils/isNarrowWidth.js';
+@@ -69,7 +69,7 @@ export const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({
+       >
+         <Box>
+           <Box marginRight={1}>
+-            <GeminiRespondingSpinner
++            <RespondingSpinner
+               nonRespondingDisplay={
+                 streamingState === StreamingState.WaitingForConfirmation
+                   ? '⠏'
+diff --git i/packages/cli/src/ui/components/ModelDialog.tsx w/packages/cli/src/ui/components/ModelDialog.tsx
+index 0c2ad709a..3ab47af86 100644
+--- i/packages/cli/src/ui/components/ModelDialog.tsx
++++ w/packages/cli/src/ui/components/ModelDialog.tsx
+@@ -167,8 +167,6 @@ export function ModelDialog({
+       AuthType.CLAUDEX_OAUTH,
+       AuthType.USE_OPENAI,
+       AuthType.USE_ANTHROPIC,
+-      AuthType.USE_GEMINI,
+-      AuthType.USE_VERTEX_AI,
+     ];
+ 
+     // Filter to only include authTypes that have registry models and maintain order
+diff --git i/packages/cli/src/ui/components/QwenOAuthProgress.test.tsx w/packages/cli/src/ui/components/QwenOAuthProgress.test.tsx
+index 1e0b4d011..b6083c83c 100644
+--- i/packages/cli/src/ui/components/QwenOAuthProgress.test.tsx
++++ w/packages/cli/src/ui/components/QwenOAuthProgress.test.tsx
+@@ -7,7 +7,7 @@
+ // React import not needed for test files
+ import { render } from 'ink-testing-library';
+ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+-import { ClaudexOAuthProgress } from './ClaudexOAuthProgress.js';
++import { ClaudexOAuthProgress } from './QwenOAuthProgress.js';
+ import type { DeviceAuthorizationData } from '@claudex/core';
+ import { useKeypress } from '../hooks/useKeypress.js';
+ import type { Key } from '../contexts/KeypressContext.js';
+diff --git i/packages/cli/src/ui/components/agent-view/AgentChatView.tsx w/packages/cli/src/ui/components/agent-view/AgentChatView.tsx
+index 43f7f497c..d6b8e9327 100644
+--- i/packages/cli/src/ui/components/agent-view/AgentChatView.tsx
++++ w/packages/cli/src/ui/components/agent-view/AgentChatView.tsx
+@@ -38,7 +38,7 @@ import { useTerminalSize } from '../../hooks/useTerminalSize.js';
+ import { HistoryItemDisplay } from '../HistoryItemDisplay.js';
+ import { ToolCallStatus } from '../../types.js';
+ import { theme } from '../../semantic-colors.js';
+-import { GeminiRespondingSpinner } from '../GeminiRespondingSpinner.js';
++import { RespondingSpinner } from '../RespondingSpinner.js';
+ import { useKeypress } from '../../hooks/useKeypress.js';
+ import { agentMessagesToHistoryItems } from './agentHistoryAdapter.js';
+ import { AgentHeader } from './AgentHeader.js';
+@@ -267,7 +267,7 @@ export const AgentChatView = ({ agentId }: AgentChatViewProps) => {
+       {/* Spinner */}
+       {isRunning && (
+         <Box marginX={2} marginTop={1}>
+-          <GeminiRespondingSpinner />
++          <RespondingSpinner />
+         </Box>
+       )}
+     </Box>
+diff --git i/packages/cli/src/ui/components/agent-view/AgentComposer.tsx w/packages/cli/src/ui/components/agent-view/AgentComposer.tsx
+index e0fbef9fa..387ecb849 100644
+--- i/packages/cli/src/ui/components/agent-view/AgentComposer.tsx
++++ w/packages/cli/src/ui/components/agent-view/AgentComposer.tsx
+@@ -13,7 +13,7 @@
+  *  - Keyboard events are scoped — no conflict with the main InputPrompt
+  *
+  * Wraps its content in a local StreamingContext.Provider so reusable
+- * components like LoadingIndicator and GeminiRespondingSpinner read the
++ * components like LoadingIndicator and RespondingSpinner read the
+  * agent's derived streaming state instead of the main agent's.
+  */
+ 
+diff --git i/packages/cli/src/ui/components/messages/ToolMessage.test.tsx w/packages/cli/src/ui/components/messages/ToolMessage.test.tsx
+index 6a9baa3fc..6ccfb488f 100644
+--- i/packages/cli/src/ui/components/messages/ToolMessage.test.tsx
++++ w/packages/cli/src/ui/components/messages/ToolMessage.test.tsx
+@@ -58,8 +58,8 @@ vi.mock('../AnsiOutput.js', () => ({
+ }));
+ 
+ // Mock child components or utilities if they are complex or have side effects
+-vi.mock('../GeminiRespondingSpinner.js', () => ({
+-  GeminiRespondingSpinner: ({
++vi.mock('../RespondingSpinner.js', () => ({
++  RespondingSpinner: ({
+     nonRespondingDisplay,
+   }: {
+     nonRespondingDisplay?: string;
+diff --git i/packages/cli/src/ui/components/shared/ToolStatusIndicator.tsx w/packages/cli/src/ui/components/shared/ToolStatusIndicator.tsx
+index d1fcb33cf..8305243ca 100644
+--- i/packages/cli/src/ui/components/shared/ToolStatusIndicator.tsx
++++ w/packages/cli/src/ui/components/shared/ToolStatusIndicator.tsx
+@@ -7,7 +7,7 @@
+ import type React from 'react';
+ import { Box, Text } from 'ink';
+ import { ToolCallStatus } from '../../types.js';
+-import { GeminiRespondingSpinner } from '../GeminiRespondingSpinner.js';
++import { RespondingSpinner } from '../RespondingSpinner.js';
+ import {
+   TOOL_STATUS,
+   SHELL_COMMAND_NAME,
+@@ -35,7 +35,7 @@ export const ToolStatusIndicator: React.FC<ToolStatusIndicatorProps> = ({
+         <Text color={theme.status.success}>{TOOL_STATUS.PENDING}</Text>
+       )}
+       {status === ToolCallStatus.Executing && (
+-        <GeminiRespondingSpinner
++        <RespondingSpinner
+           spinnerType="toggle"
+           nonRespondingDisplay={TOOL_STATUS.EXECUTING}
+         />
+diff --git i/packages/cli/src/ui/contexts/AgentViewContext.tsx w/packages/cli/src/ui/contexts/AgentViewContext.tsx
+index 10e892227..fc389c7e6 100644
+--- i/packages/cli/src/ui/contexts/AgentViewContext.tsx
++++ w/packages/cli/src/ui/contexts/AgentViewContext.tsx
+@@ -27,7 +27,6 @@ import {
+   type ApprovalMode,
+   type Config,
+ } from '@claudex/core';
+-import { useArenaInProcess } from '../hooks/useArenaInProcess.js';
+ 
+ // ─── Types ──────────────────────────────────────────────────
+ 
+@@ -292,12 +291,6 @@ export function AgentViewProvider({
+     ],
+   );
+ 
+-  // ── Arena in-process bridge ──
+-  // Bridge arena manager events to agent registration. The hook is kept
+-  // in its own file for separation of concerns; it's called here so the
+-  // provider is the single owner of agent tab lifecycle.
+-  useArenaInProcess(config ?? null, actions);
+-
+   return (
+     <AgentViewStateContext.Provider value={state}>
+       <AgentViewActionsContext.Provider value={actions}>
+diff --git i/packages/cli/src/ui/contexts/UIActionsContext.tsx w/packages/cli/src/ui/contexts/UIActionsContext.tsx
+index eaf9b2d47..83228ac2d 100644
+--- i/packages/cli/src/ui/contexts/UIActionsContext.tsx
++++ w/packages/cli/src/ui/contexts/UIActionsContext.tsx
+@@ -7,7 +7,6 @@
+ import { createContext, useContext } from 'react';
+ import { type Key } from '../hooks/useKeypress.js';
+ import { type IdeIntegrationNudgeResult } from '../IdeIntegrationNudge.js';
+-import { type CommandMigrationNudgeResult } from '../CommandFormatMigrationNudge.js';
+ import { type FolderTrustChoice } from '../components/FolderTrustDialog.js';
+ import {
+   type AuthType,
+@@ -16,7 +15,6 @@ import {
+ } from '@claudex/core';
+ import { type SettingScope } from '../../config/settings.js';
+ import type { AuthState } from '../types.js';
+-import { type ArenaDialogType } from '../hooks/useArenaCommand.js';
+ // OpenAICredentials type (previously imported from OpenAIKeyPrompt)
+ export interface OpenAICredentials {
+   apiKey: string;
+@@ -53,16 +51,12 @@ export interface UIActions {
+   closeMemoryDialog: () => void;
+   closeModelDialog: () => void;
+   openModelDialog: (options?: { fastModelMode?: boolean }) => void;
+-  openArenaDialog: (type: Exclude<ArenaDialogType, null>) => void;
+-  closeArenaDialog: () => void;
+-  handleArenaModelsSelected?: (models: string[]) => void;
+   dismissCodingPlanUpdate: () => void;
+   closeTrustDialog: () => void;
+   closePermissionsDialog: () => void;
+   setShellModeActive: (value: boolean) => void;
+   vimHandleInput: (key: Key) => boolean;
+   handleIdePromptComplete: (result: IdeIntegrationNudgeResult) => void;
+-  handleCommandMigrationComplete: (result: CommandMigrationNudgeResult) => void;
+   handleFolderTrustSelect: (choice: FolderTrustChoice) => void;
+   setConstrainHeight: (value: boolean) => void;
+   onEscapePromptChange: (show: boolean) => void;
+diff --git i/packages/cli/src/ui/contexts/UIStateContext.tsx w/packages/cli/src/ui/contexts/UIStateContext.tsx
+index e25511ccc..e7a52fcc1 100644
+--- i/packages/cli/src/ui/contexts/UIStateContext.tsx
++++ w/packages/cli/src/ui/contexts/UIStateContext.tsx
+@@ -17,7 +17,7 @@ import type {
+   SettingInputRequest,
+   PluginChoiceRequest,
+ } from '../types.js';
+-import type { ClaudexAuthState } from '../hooks/useClaudexAuth.js';
++import type { ClaudexAuthState } from '../hooks/useQwenAuth.js';
+ import type { CommandContext, SlashCommand } from '../commands/types.js';
+ import type { TextBuffer } from '../components/shared/text-buffer.js';
+ import type {
+@@ -34,7 +34,6 @@ import type { UpdateObject } from '../utils/updateCheck.js';
+ import { type UseHistoryManagerReturn } from '../hooks/useHistoryManager.js';
+ import { type RestartReason } from '../hooks/useIdeTrustListener.js';
+ import { type CodingPlanUpdateRequest } from '../hooks/useCodingPlanUpdates.js';
+-import { type ArenaDialogType } from '../hooks/useArenaCommand.js';
+ 
+ export interface UIState {
+   history: HistoryItem[];
+@@ -57,7 +56,6 @@ export interface UIState {
+   isModelDialogOpen: boolean;
+   isFastModelMode: boolean;
+   isTrustDialogOpen: boolean;
+-  activeArenaDialog: ArenaDialogType;
+   isPermissionsDialogOpen: boolean;
+   isApprovalModeDialogOpen: boolean;
+   isResumeDialogOpen: boolean;
+@@ -83,8 +81,6 @@ export interface UIState {
+   suggestionsWidth: number;
+   isInputActive: boolean;
+   shouldShowIdePrompt: boolean;
+-  shouldShowCommandMigrationNudge: boolean;
+-  commandMigrationTomlFiles: string[];
+   isFolderTrustDialogOpen: boolean;
+   isTrustedFolder: boolean | undefined;
+   constrainHeight: boolean;
+diff --git i/packages/cli/src/ui/hooks/atCommandProcessor.ts w/packages/cli/src/ui/hooks/atCommandProcessor.ts
+index ec3a85da2..a66c5515f 100644
+--- i/packages/cli/src/ui/hooks/atCommandProcessor.ts
++++ w/packages/cli/src/ui/hooks/atCommandProcessor.ts
+@@ -6,7 +6,7 @@
+ 
+ import * as fs from 'node:fs/promises';
+ import * as path from 'node:path';
+-import type { PartListUnion } from '@google/genai';
++import type { PartListUnion } from '@claudex/core';
+ import type { Config } from '@claudex/core';
+ import {
+   getErrorMessage,
+diff --git i/packages/cli/src/ui/hooks/shellCommandProcessor.ts w/packages/cli/src/ui/hooks/shellCommandProcessor.ts
+index 6b3cabe67..24e61a338 100644
+--- i/packages/cli/src/ui/hooks/shellCommandProcessor.ts
++++ w/packages/cli/src/ui/hooks/shellCommandProcessor.ts
+@@ -21,7 +21,7 @@ import {
+   isBinary,
+   ShellExecutionService,
+ } from '@claudex/core';
+-import { type PartListUnion } from '@google/genai';
++import { type PartListUnion } from '@claudex/core';
+ import type { UseHistoryManagerReturn } from './useHistoryManager.js';
+ import { SHELL_COMMAND_NAME } from '../constants.js';
+ import { formatMemoryUsage } from '../utils/formatters.js';
+diff --git i/packages/cli/src/ui/hooks/slashCommandProcessor.ts w/packages/cli/src/ui/hooks/slashCommandProcessor.ts
+index 29c369552..c5c706090 100644
+--- i/packages/cli/src/ui/hooks/slashCommandProcessor.ts
++++ w/packages/cli/src/ui/hooks/slashCommandProcessor.ts
+@@ -12,9 +12,8 @@ import {
+   useState,
+   type MutableRefObject,
+ } from 'react';
+-import { type PartListUnion } from '@google/genai';
++import { type PartListUnion } from '@claudex/core';
+ import type { UseHistoryManagerReturn } from './useHistoryManager.js';
+-import type { ArenaDialogType } from './useArenaCommand.js';
+ import {
+   type Logger,
+   type Config,
+@@ -77,7 +76,6 @@ const SLASH_COMMANDS_SKIP_RECORDING = new Set([
+ 
+ interface SlashCommandProcessorActions {
+   openAuthDialog: () => void;
+-  openArenaDialog?: (type: Exclude<ArenaDialogType, null>) => void;
+   openThemeDialog: () => void;
+   openEditorDialog: () => void;
+   openMemoryDialog: () => void;
+@@ -504,18 +502,6 @@ export const useSlashCommandProcessor = (
+                   return { type: 'handled' };
+                 case 'dialog':
+                   switch (result.dialog) {
+-                    case 'arena_start':
+-                      actions.openArenaDialog?.('start');
+-                      return { type: 'handled' };
+-                    case 'arena_select':
+-                      actions.openArenaDialog?.('select');
+-                      return { type: 'handled' };
+-                    case 'arena_stop':
+-                      actions.openArenaDialog?.('stop');
+-                      return { type: 'handled' };
+-                    case 'arena_status':
+-                      actions.openArenaDialog?.('status');
+-                      return { type: 'handled' };
+                     case 'auth':
+                       actions.openAuthDialog();
+                       return { type: 'handled' };
+diff --git i/packages/cli/src/ui/hooks/useDialogClose.ts w/packages/cli/src/ui/hooks/useDialogClose.ts
+index 853088872..64fcb101f 100644
+--- i/packages/cli/src/ui/hooks/useDialogClose.ts
++++ w/packages/cli/src/ui/hooks/useDialogClose.ts
+@@ -7,7 +7,6 @@
+ import { useCallback } from 'react';
+ import { SettingScope } from '../../config/settings.js';
+ import type { AuthType, ApprovalMode } from '@claudex/core';
+-import type { ArenaDialogType } from './useArenaCommand.js';
+ // OpenAICredentials type (previously imported from OpenAIKeyPrompt)
+ interface OpenAICredentials {
+   apiKey: string;
+@@ -47,10 +46,6 @@ export interface DialogCloseOptions {
+   isMemoryDialogOpen: boolean;
+   closeMemoryDialog: () => void;
+ 
+-  // Arena dialogs
+-  activeArenaDialog: ArenaDialogType;
+-  closeArenaDialog: () => void;
+-
+   // Folder trust dialog
+   isFolderTrustDialogOpen: boolean;
+ 
+@@ -97,11 +92,6 @@ export function useDialogClose(options: DialogCloseOptions) {
+       return true;
+     }
+ 
+-    if (options.activeArenaDialog !== null) {
+-      options.closeArenaDialog();
+-      return true;
+-    }
+-
+     if (options.isFolderTrustDialogOpen) {
+       // FolderTrustDialog doesn't expose close function, but ESC would prevent exit
+       // We follow the same pattern - prevent exit behavior
+diff --git i/packages/cli/src/ui/hooks/useQwenAuth.test.ts w/packages/cli/src/ui/hooks/useQwenAuth.test.ts
+index 09a81f70f..07ada37d0 100644
+--- i/packages/cli/src/ui/hooks/useQwenAuth.test.ts
++++ w/packages/cli/src/ui/hooks/useQwenAuth.test.ts
+@@ -7,7 +7,7 @@
+ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+ import { renderHook, act } from '@testing-library/react';
+ import type { DeviceAuthorizationData } from '@claudex/core';
+-import { useClaudexAuth } from './useClaudexAuth.js';
++import { useClaudexAuth } from './useQwenAuth.js';
+ import {
+   AuthType,
+   claudexOAuth2Events,
+@@ -53,7 +53,7 @@ describe('useClaudexAuth', () => {
+ 
+   it('should initialize with default state when not Claudex auth', () => {
+     const { result } = renderHook(() =>
+-      useClaudexAuth(AuthType.USE_GEMINI, false),
++      useClaudexAuth(AuthType.USE_OPENAI, false),
+     );
+ 
+     expect(result.current.claudexAuthState).toEqual({
+@@ -249,7 +249,7 @@ describe('useClaudexAuth', () => {
+     );
+ 
+     // Change to non-Claudex auth
+-    rerender({ pendingAuthType: AuthType.USE_GEMINI, isAuthenticating: true });
++    rerender({ pendingAuthType: AuthType.USE_OPENAI, isAuthenticating: true });
+ 
+     expect(mockClaudexOAuth2Events.off).toHaveBeenCalledWith(
+       ClaudexOAuth2Event.AuthUri,
+@@ -328,7 +328,7 @@ describe('useClaudexAuth', () => {
+     expect(result.current.claudexAuthState.authStatus).toBe('polling');
+ 
+     // Switch to different auth type
+-    rerender({ pendingAuthType: AuthType.USE_GEMINI, isAuthenticating: true });
++    rerender({ pendingAuthType: AuthType.USE_OPENAI, isAuthenticating: true });
+ 
+     expect(result.current.claudexAuthState.deviceAuth).toBe(null);
+     expect(result.current.claudexAuthState.authStatus).toBe('idle');
+@@ -406,7 +406,7 @@ describe('useClaudexAuth', () => {
+ 
+     // Test with other auth types - should not set up event listeners
+     const { result: geminiResult } = renderHook(() =>
+-      useClaudexAuth(AuthType.USE_GEMINI, true),
++      useClaudexAuth(AuthType.USE_OPENAI, true),
+     );
+     expect(geminiResult.current.claudexAuthState.authStatus).toBe('idle');
+ 
+diff --git i/packages/cli/src/ui/hooks/useToolScheduler.test.ts w/packages/cli/src/ui/hooks/useToolScheduler.test.ts
+index 3482da27e..d9f892847 100644
+--- i/packages/cli/src/ui/hooks/useToolScheduler.test.ts
++++ w/packages/cli/src/ui/hooks/useToolScheduler.test.ts
+@@ -12,7 +12,7 @@ import {
+   useReactToolScheduler,
+   mapToDisplay,
+ } from './useReactToolScheduler.js';
+-import type { PartUnion, FunctionResponse } from '@google/genai';
++import type { PartUnion, FunctionResponse } from '@claudex/core';
+ import type {
+   Config,
+   ToolCallRequestInfo,
+diff --git i/packages/cli/src/ui/models/availableModels.test.ts w/packages/cli/src/ui/models/availableModels.test.ts
+index 0e80414ef..eaacf6728 100644
+--- i/packages/cli/src/ui/models/availableModels.test.ts
++++ w/packages/cli/src/ui/models/availableModels.test.ts
+@@ -179,7 +179,7 @@ describe('availableModels', () => {
+     });
+ 
+     it('should return empty array for other auth types', () => {
+-      const models = getAvailableModelsForAuthType(AuthType.USE_GEMINI);
++      const models = getAvailableModelsForAuthType(AuthType.USE_OPENAI);
+       expect(models).toEqual([]);
+     });
+   });
+diff --git i/packages/cli/src/ui/types.ts w/packages/cli/src/ui/types.ts
+index 795967ae6..69ddd2282 100644
+--- i/packages/cli/src/ui/types.ts
++++ w/packages/cli/src/ui/types.ts
+@@ -11,9 +11,8 @@ import type {
+   ToolCallConfirmationDetails,
+   ToolConfirmationOutcome,
+   ToolResultDisplay,
+-  AgentStatus,
+ } from '@claudex/core';
+-import type { PartListUnion } from '@google/genai';
++import type { PartListUnion } from '@claudex/core';
+ import { type ReactNode } from 'react';
+ 
+ export type { ThoughtSummary };
+@@ -338,37 +337,6 @@ export type HistoryItemContextUsage = HistoryItemBase & {
+   showDetails?: boolean;
+ };
+ 
+-/**
+- * Arena agent completion card data.
+- */
+-export interface ArenaAgentCardData {
+-  label: string;
+-  status: AgentStatus;
+-  durationMs: number;
+-  totalTokens: number;
+-  inputTokens: number;
+-  outputTokens: number;
+-  toolCalls: number;
+-  successfulToolCalls: number;
+-  failedToolCalls: number;
+-  rounds: number;
+-  error?: string;
+-  diff?: string;
+-}
+-
+-export type HistoryItemArenaAgentComplete = HistoryItemBase & {
+-  type: 'arena_agent_complete';
+-  agent: ArenaAgentCardData;
+-};
+-
+-export type HistoryItemArenaSessionComplete = HistoryItemBase & {
+-  type: 'arena_session_complete';
+-  sessionStatus: string;
+-  task: string;
+-  totalDurationMs: number;
+-  agents: ArenaAgentCardData[];
+-};
+-
+ /**
+  * Insight progress message.
+  */
+@@ -479,8 +447,6 @@ export type HistoryItemWithoutId =
+   | HistoryItemSkillsList
+   | HistoryItemMcpStatus
+   | HistoryItemContextUsage
+-  | HistoryItemArenaAgentComplete
+-  | HistoryItemArenaSessionComplete
+   | HistoryItemInsightProgress
+   | HistoryItemBtw
+   | HistoryItemMemorySaved
+@@ -513,8 +479,6 @@ export enum MessageType {
+   SKILLS_LIST = 'skills_list',
+   MCP_STATUS = 'mcp_status',
+   CONTEXT_USAGE = 'context_usage',
+-  ARENA_AGENT_COMPLETE = 'arena_agent_complete',
+-  ARENA_SESSION_COMPLETE = 'arena_session_complete',
+   INSIGHT_PROGRESS = 'insight_progress',
+   BTW = 'btw',
+ }
+@@ -616,7 +580,7 @@ export interface SubmitPromptResult {
+ }
+ 
+ /**
+- * Defines the result of the slash command processor for its consumer (useGeminiStream).
++ * Defines the result of the slash command processor for its consumer (useLLMStream).
+  */
+ export type SlashCommandProcessorResult =
+   | {
+diff --git i/packages/cli/src/ui/utils/displayUtils.ts w/packages/cli/src/ui/utils/displayUtils.ts
+index 40b2a11f2..a92d0877a 100644
+--- i/packages/cli/src/ui/utils/displayUtils.ts
++++ w/packages/cli/src/ui/utils/displayUtils.ts
+@@ -5,7 +5,6 @@
+  */
+ 
+ import { theme } from '../semantic-colors.js';
+-import { AgentStatus } from '@claudex/core';
+ 
+ // --- Status Labels ---
+ 
+@@ -15,25 +14,6 @@ export interface StatusLabel {
+   color: string;
+ }
+ 
+-export function getArenaStatusLabel(status: AgentStatus): StatusLabel {
+-  switch (status) {
+-    case AgentStatus.IDLE:
+-      return { icon: '✓', text: 'Idle', color: theme.status.success };
+-    case AgentStatus.COMPLETED:
+-      return { icon: '✓', text: 'Done', color: theme.status.success };
+-    case AgentStatus.CANCELLED:
+-      return { icon: '⊘', text: 'Cancelled', color: theme.status.warning };
+-    case AgentStatus.FAILED:
+-      return { icon: '✗', text: 'Failed', color: theme.status.error };
+-    case AgentStatus.RUNNING:
+-      return { icon: '○', text: 'Running', color: theme.text.secondary };
+-    case AgentStatus.INITIALIZING:
+-      return { icon: '○', text: 'Initializing', color: theme.text.secondary };
+-    default:
+-      return { icon: '○', text: status, color: theme.text.secondary };
+-  }
+-}
+-
+ // --- Thresholds ---
+ export const TOOL_SUCCESS_RATE_HIGH = 95;
+ export const TOOL_SUCCESS_RATE_MEDIUM = 85;
+diff --git i/packages/cli/src/ui/utils/export/collect.ts w/packages/cli/src/ui/utils/export/collect.ts
+index 8c7e5fdbd..4ecf9d09a 100644
+--- i/packages/cli/src/ui/utils/export/collect.ts
++++ w/packages/cli/src/ui/utils/export/collect.ts
+@@ -6,7 +6,7 @@
+ 
+ import { randomUUID } from 'node:crypto';
+ import type { Config, ChatRecord } from '@claudex/core';
+-import type { GenerateContentResponseUsageMetadata } from '@google/genai';
++import type { GenerateContentResponseUsageMetadata } from '@claudex/core';
+ import type { SessionContext } from '../../../acp-integration/session/types.js';
+ import type { SessionUpdate, ToolCall } from '@agentclientprotocol/sdk';
+ import { HistoryReplayer } from '../../../acp-integration/session/HistoryReplayer.js';
+diff --git i/packages/cli/src/ui/utils/export/normalize.ts w/packages/cli/src/ui/utils/export/normalize.ts
+index 9f7ac37d4..e78ebc584 100644
+--- i/packages/cli/src/ui/utils/export/normalize.ts
++++ w/packages/cli/src/ui/utils/export/normalize.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { Part } from '@google/genai';
++import type { Part } from '@claudex/core';
+ import { ToolNames } from '@claudex/core';
+ import type { ChatRecord, Config, Kind } from '@claudex/core';
+ import type { ExportMessage, ExportSessionData } from './types.js';
+diff --git i/packages/cli/src/ui/utils/export/types.ts w/packages/cli/src/ui/utils/export/types.ts
+index 2dc6969b9..b824c07d7 100644
+--- i/packages/cli/src/ui/utils/export/types.ts
++++ w/packages/cli/src/ui/utils/export/types.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { GenerateContentResponseUsageMetadata } from '@google/genai';
++import type { GenerateContentResponseUsageMetadata } from '@claudex/core';
+ 
+ /**
+  * Universal export message format - SSOT for all export formats.
+diff --git i/packages/cli/src/ui/utils/resumeHistoryUtils.test.ts w/packages/cli/src/ui/utils/resumeHistoryUtils.test.ts
+index 68a603e75..c9078e604 100644
+--- i/packages/cli/src/ui/utils/resumeHistoryUtils.test.ts
++++ w/packages/cli/src/ui/utils/resumeHistoryUtils.test.ts
+@@ -13,7 +13,7 @@ import type {
+   ConversationRecord,
+   ResumedSessionData,
+ } from '@claudex/core';
+-import type { Part } from '@google/genai';
++import type { Part } from '@claudex/core';
+ 
+ const makeConfig = (tools: Record<string, AnyDeclarativeTool>) =>
+   ({
+diff --git i/packages/cli/src/ui/utils/resumeHistoryUtils.ts w/packages/cli/src/ui/utils/resumeHistoryUtils.ts
+index a689305a4..0ba2ab1ee 100644
+--- i/packages/cli/src/ui/utils/resumeHistoryUtils.ts
++++ w/packages/cli/src/ui/utils/resumeHistoryUtils.ts
+@@ -5,7 +5,7 @@
+  */
+ 
+ import * as path from 'node:path';
+-import type { Part, FunctionCall } from '@google/genai';
++import type { Part, FunctionCall } from '@claudex/core';
+ import type {
+   ResumedSessionData,
+   ConversationRecord,
+diff --git i/packages/cli/src/utils/modelConfigUtils.test.ts w/packages/cli/src/utils/modelConfigUtils.test.ts
+index 6f5c40b1e..45f228af7 100644
+--- i/packages/cli/src/utils/modelConfigUtils.test.ts
++++ w/packages/cli/src/utils/modelConfigUtils.test.ts
+@@ -73,7 +73,7 @@ describe('modelConfigUtils', () => {
+       process.env['GEMINI_API_KEY'] = 'test-key';
+       process.env['GEMINI_MODEL'] = 'gemini-pro';
+ 
+-      expect(getAuthTypeFromEnv()).toBe(AuthType.USE_GEMINI);
++      expect(getAuthTypeFromEnv()).toBe(AuthType.USE_OPENAI);
+     });
+ 
+     it('should return undefined when Gemini env vars are incomplete', () => {
+@@ -87,7 +87,7 @@ describe('modelConfigUtils', () => {
+       process.env['GOOGLE_API_KEY'] = 'test-key';
+       process.env['GOOGLE_MODEL'] = 'vertex-model';
+ 
+-      expect(getAuthTypeFromEnv()).toBe(AuthType.USE_VERTEX_AI);
++      expect(getAuthTypeFromEnv()).toBe(AuthType.USE_OPENAI);
+     });
+ 
+     it('should return undefined when Google env vars are incomplete', () => {
+diff --git i/packages/cli/src/utils/nonInteractiveHelpers.test.ts w/packages/cli/src/utils/nonInteractiveHelpers.test.ts
+index c78cf14cd..ba8a60a74 100644
+--- i/packages/cli/src/utils/nonInteractiveHelpers.test.ts
++++ w/packages/cli/src/utils/nonInteractiveHelpers.test.ts
+@@ -17,7 +17,7 @@ import {
+   getMCPServerStatus,
+   OutputFormat,
+ } from '@claudex/core';
+-import type { Part } from '@google/genai';
++import type { Part } from '@claudex/core';
+ import type {
+   CLIUserMessage,
+   PermissionMode,
+diff --git i/packages/cli/src/utils/nonInteractiveHelpers.ts w/packages/cli/src/utils/nonInteractiveHelpers.ts
+index 045def216..511344d32 100644
+--- i/packages/cli/src/utils/nonInteractiveHelpers.ts
++++ w/packages/cli/src/utils/nonInteractiveHelpers.ts
+@@ -20,7 +20,7 @@ import {
+   createDebugLogger,
+   getMCPServerStatus,
+ } from '@claudex/core';
+-import type { Part, PartListUnion } from '@google/genai';
++import type { Part, PartListUnion } from '@claudex/core';
+ import type {
+   CLIUserMessage,
+   Usage,
+diff --git i/packages/core/src/agents/backends/types.ts w/packages/core/src/agents/backends/types.ts
+index c5333b6b3..bb3f88b13 100644
+--- i/packages/core/src/agents/backends/types.ts
++++ w/packages/core/src/agents/backends/types.ts
+@@ -11,7 +11,7 @@
+  * These types are used across different agent orchestration modes.
+  */
+ 
+-import type { Content } from '@google/genai';
++import type { Content } from '../../types/llm-types.js';
+ import type { AnsiOutput } from '../../utils/terminalSerializer.js';
+ import type {
+   PromptConfig,
+diff --git i/packages/core/src/agents/index.ts w/packages/core/src/agents/index.ts
+index 942d93a8a..2471b96e8 100644
+--- i/packages/core/src/agents/index.ts
++++ w/packages/core/src/agents/index.ts
+@@ -4,16 +4,6 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-/**
+- * @fileoverview Multi-agent infrastructure shared across Arena, Team, and Swarm modes.
+- *
+- * This module provides the common building blocks for managing multiple concurrent
+- * agent subprocesses:
+- * - Backend: Display abstraction (tmux, iTerm2)
+- * - Shared types for agent spawning and lifecycle
+- */
+-
+ export * from './backends/index.js';
+-export * from './arena/index.js';
+ export * from './runtime/index.js';
+ export * from './background-tasks.js';
+diff --git i/packages/core/src/agents/runtime/agent-core.ts w/packages/core/src/agents/runtime/agent-core.ts
+index 7774802fa..60377ee2e 100644
+--- i/packages/core/src/agents/runtime/agent-core.ts
++++ w/packages/core/src/agents/runtime/agent-core.ts
+@@ -38,7 +38,7 @@ import type {
+   GenerateContentConfig,
+   FunctionDeclaration,
+   GenerateContentResponseUsageMetadata,
+-} from '@google/genai';
++} from '../../types/llm-types.js';
+ import { GeminiChat } from '../../core/geminiChat.js';
+ import type {
+   PromptConfig,
+diff --git i/packages/core/src/agents/runtime/agent-events.ts w/packages/core/src/agents/runtime/agent-events.ts
+index 369a6a2a5..bfde6390a 100644
+--- i/packages/core/src/agents/runtime/agent-events.ts
++++ w/packages/core/src/agents/runtime/agent-events.ts
+@@ -19,7 +19,7 @@ import type {
+   ToolConfirmationOutcome,
+   ToolResultDisplay,
+ } from '../../tools/tools.js';
+-import type { Part, GenerateContentResponseUsageMetadata } from '@google/genai';
++import type { Part, GenerateContentResponseUsageMetadata } from '../../types/llm-types.js';
+ import type { AgentStatus } from './agent-types.js';
+ 
+ // ─── Event Types ────────────────────────────────────────────
+diff --git i/packages/core/src/agents/runtime/agent-headless.test.ts w/packages/core/src/agents/runtime/agent-headless.test.ts
+index f684209d7..2a7dfedf2 100644
+--- i/packages/core/src/agents/runtime/agent-headless.test.ts
++++ w/packages/core/src/agents/runtime/agent-headless.test.ts
+@@ -10,8 +10,8 @@ import type {
+   FunctionDeclaration,
+   GenerateContentConfig,
+   Part,
+-} from '@google/genai';
+-import { Type } from '@google/genai';
++} from '../../types/llm-types.js';
++import { Type } from '../../types/llm-types.js';
+ import {
+   afterEach,
+   beforeEach,
+@@ -65,12 +65,12 @@ vi.mock('../../core/contentGenerator.js', async (importOriginal) => {
+     }),
+     createContentGeneratorConfig: vi.fn().mockReturnValue({
+       model: DEFAULT_CLAUDEX_MODEL,
+-      authType: actual.AuthType.USE_GEMINI,
++      authType: actual.AuthType.USE_OPENAI,
+     }),
+     resolveContentGeneratorConfigWithSources: vi.fn().mockReturnValue({
+       config: {
+         model: DEFAULT_CLAUDEX_MODEL,
+-        authType: actual.AuthType.USE_GEMINI,
++        authType: actual.AuthType.USE_OPENAI,
+         apiKey: 'test-api-key',
+       },
+       sources: {},
+@@ -130,7 +130,7 @@ async function createMockConfig(
+   };
+   const config = new Config(configParams);
+   await config.initialize();
+-  await config.refreshAuth(AuthType.USE_GEMINI);
++  await config.refreshAuth(AuthType.USE_OPENAI);
+ 
+   // Mock ToolRegistry
+   const mockToolRegistryBase = {
+@@ -151,7 +151,7 @@ async function createMockConfig(
+   // Mock getContentGeneratorConfig to return a valid config
+   vi.spyOn(config, 'getContentGeneratorConfig').mockReturnValue({
+     model: DEFAULT_CLAUDEX_MODEL,
+-    authType: AuthType.USE_GEMINI,
++    authType: AuthType.USE_OPENAI,
+   });
+ 
+   // Mock setModel method
+@@ -257,7 +257,7 @@ describe('subagent.ts', () => {
+       vi.mocked(resolveContentGeneratorConfigWithSources).mockReturnValue({
+         config: {
+           model: DEFAULT_CLAUDEX_MODEL,
+-          authType: AuthType.USE_GEMINI,
++          authType: AuthType.USE_OPENAI,
+           apiKey: 'test-api-key',
+         },
+         sources: {},
+diff --git i/packages/core/src/agents/runtime/agent-interactive.ts w/packages/core/src/agents/runtime/agent-interactive.ts
+index ae3d74936..4b29dac97 100644
+--- i/packages/core/src/agents/runtime/agent-interactive.ts
++++ w/packages/core/src/agents/runtime/agent-interactive.ts
+@@ -24,7 +24,7 @@ import type { AgentStatsSummary } from './agent-statistics.js';
+ import type { AgentCore } from './agent-core.js';
+ import type { ContextState } from './agent-headless.js';
+ import type { GeminiChat } from '../../core/geminiChat.js';
+-import type { FunctionDeclaration } from '@google/genai';
++import type { FunctionDeclaration } from '../../types/llm-types.js';
+ import {
+   ToolConfirmationOutcome,
+   type ToolCallConfirmationDetails,
+diff --git i/packages/core/src/agents/runtime/agent-types.ts w/packages/core/src/agents/runtime/agent-types.ts
+index 80d1867c3..2a6a31b78 100644
+--- i/packages/core/src/agents/runtime/agent-types.ts
++++ w/packages/core/src/agents/runtime/agent-types.ts
+@@ -11,7 +11,7 @@
+  * run, tool), termination modes, and interactive agent types.
+  */
+ 
+-import type { Content, FunctionDeclaration } from '@google/genai';
++import type { Content, FunctionDeclaration } from '../../types/llm-types.js';
+ 
+ // ─── Agent Configuration ─────────────────────────────────────
+ 
+diff --git i/packages/core/src/config/config.test.ts w/packages/core/src/config/config.test.ts
+index 951f0aa21..4c6579874 100644
+--- i/packages/core/src/config/config.test.ts
++++ w/packages/core/src/config/config.test.ts
+@@ -380,7 +380,7 @@ describe('Server Config (config.ts)', () => {
+   describe('refreshAuth', () => {
+     it('should refresh auth and update config', async () => {
+       const config = new Config(baseParams);
+-      const authType = AuthType.USE_GEMINI;
++      const authType = AuthType.USE_OPENAI;
+       const mockContentConfig = {
+         apiKey: 'test-key',
+         model: 'claudex3-coder-plus',
+@@ -417,7 +417,7 @@ describe('Server Config (config.ts)', () => {
+       // Set messageBus using the setter
+       config.setMessageBus(mockMessageBus as unknown as MessageBus);
+ 
+-      const authType = AuthType.USE_GEMINI;
++      const authType = AuthType.USE_OPENAI;
+       const mockContentConfig = {
+         apiKey: 'test-key',
+         model: 'claudex3-coder-plus',
+@@ -445,7 +445,7 @@ describe('Server Config (config.ts)', () => {
+         ...baseParams,
+         disableAllHooks: true,
+       });
+-      const authType = AuthType.USE_GEMINI;
++      const authType = AuthType.USE_OPENAI;
+       const mockContentConfig = {
+         apiKey: 'test-key',
+         model: 'claudex3-coder-plus',
+@@ -474,9 +474,9 @@ describe('Server Config (config.ts)', () => {
+           ({ authType }) as unknown as ContentGeneratorConfig,
+       );
+ 
+-      await config.refreshAuth(AuthType.USE_VERTEX_AI);
++      await config.refreshAuth(AuthType.USE_OPENAI);
+ 
+-      await config.refreshAuth(AuthType.USE_GEMINI);
++      await config.refreshAuth(AuthType.USE_OPENAI);
+ 
+       expect(
+         config.getGeminiClient().stripThoughtsFromHistory,
+@@ -1667,7 +1667,7 @@ describe('BaseLlmClient Lifecycle', () => {
+ 
+   it('should successfully initialize BaseLlmClient after refreshAuth is called', async () => {
+     const config = new Config(baseParams);
+-    const authType = AuthType.USE_GEMINI;
++    const authType = AuthType.USE_OPENAI;
+     const mockContentConfig = { model: 'gemini-flash', apiKey: 'test-key' };
+ 
+     vi.mocked(resolveContentGeneratorConfigWithSources).mockReturnValue({
+@@ -1797,7 +1797,7 @@ describe('Model Switching and Config Updates', () => {
+     // Switch to different auth type (should trigger full refresh)
+     const newConfig: ContentGeneratorConfig = {
+       ['model']: 'gemini-flash',
+-      ['authType']: AuthType.USE_GEMINI,
++      ['authType']: AuthType.USE_OPENAI,
+       ['apiKey']: 'gemini-key',
+       ['contextWindowSize']: 32_000,
+     };
+@@ -1822,10 +1822,10 @@ describe('Model Switching and Config Updates', () => {
+           requiresRefresh: boolean,
+         ) => Promise<void>;
+       }
+-    ).handleModelChange(AuthType.USE_GEMINI, true);
++    ).handleModelChange(AuthType.USE_OPENAI, true);
+ 
+     // Verify refreshAuth was called (full refresh path)
+-    expect(refreshAuthSpy).toHaveBeenCalledWith(AuthType.USE_GEMINI);
++    expect(refreshAuthSpy).toHaveBeenCalledWith(AuthType.USE_OPENAI);
+   });
+ 
+   it('should handle model switch when contextWindowSize is undefined', async () => {
+diff --git i/packages/core/src/config/config.ts w/packages/core/src/config/config.ts
+index ceab897fc..68eb9a8b9 100644
+--- i/packages/core/src/config/config.ts
++++ w/packages/core/src/config/config.ts
+@@ -22,8 +22,6 @@ import type { ContentGeneratorConfigSources } from '../core/contentGenerator.js'
+ import type { MCPOAuthConfig } from '../mcp/oauth-provider.js';
+ import type { ShellExecutionConfig } from '../services/shellExecutionService.js';
+ import type { AnyToolInvocation } from '../tools/tools.js';
+-import type { ArenaManager } from '../agents/arena/ArenaManager.js';
+-import { ArenaAgentClient } from '../agents/arena/ArenaAgentClient.js';
+ 
+ // Core
+ import { BaseLlmClient } from '../core/baseLlmClient.js';
+@@ -273,11 +271,6 @@ export class MCPServerConfig {
+     // OAuth configuration
+     readonly oauth?: MCPOAuthConfig,
+     readonly authProviderType?: AuthProviderType,
+-    // Service Account Configuration
+-    /* targetAudience format: CLIENT_ID.apps.googleusercontent.com */
+-    readonly targetAudience?: string,
+-    /* targetServiceAccount format: <service-account-name>@<project-num>.iam.gserviceaccount.com */
+-    readonly targetServiceAccount?: string,
+     // SDK MCP server type - 'sdk' indicates server runs in SDK process
+     readonly type?: 'sdk',
+   ) {}
+@@ -292,8 +285,6 @@ export function isSdkMcpServerConfig(config: MCPServerConfig): boolean {
+ 
+ export enum AuthProviderType {
+   DYNAMIC_DISCOVERY = 'dynamic_discovery',
+-  GOOGLE_CREDENTIALS = 'google_credentials',
+-  SERVICE_ACCOUNT_IMPERSONATION = 'service_account_impersonation',
+ }
+ 
+ export interface SandboxConfig {
+@@ -302,23 +293,11 @@ export interface SandboxConfig {
+ }
+ 
+ /**
+- * Settings shared across multi-agent collaboration features
+- * (Arena, Team, Swarm).
++ * Settings shared across multi-agent collaboration features.
+  */
+ export interface AgentsCollabSettings {
+   /** Display mode for multi-agent sessions ('in-process' | 'tmux' | 'iterm2') */
+   displayMode?: string;
+-  /** Arena-specific settings */
+-  arena?: {
+-    /** Custom base directory for Arena worktrees (default: ~/.claudex/arena) */
+-    worktreeBaseDir?: string;
+-    /** Preserve worktrees and state files after session ends */
+-    preserveArtifacts?: boolean;
+-    /** Maximum rounds (turns) per agent. No limit if unset. */
+-    maxRoundsPerAgent?: number;
+-    /** Total timeout in seconds for the Arena session. No limit if unset. */
+-    timeoutSeconds?: number;
+-  };
+ }
+ 
+ export interface ConfigParameters {
+@@ -406,7 +385,7 @@ export interface ConfigParameters {
+   // Web search providers
+   webSearch?: {
+     provider: Array<{
+-      type: 'tavily' | 'google' | 'dashscope';
++      type: 'tavily' | 'google';
+       apiKey?: string;
+       searchEngineId?: string;
+     }>;
+@@ -640,7 +619,7 @@ export class Config {
+   private readonly importFormat: 'tree' | 'flat';
+   private readonly webSearch?: {
+     provider: Array<{
+-      type: 'tavily' | 'google' | 'dashscope';
++      type: 'tavily' | 'google';
+       apiKey?: string;
+       searchEngineId?: string;
+     }>;
+@@ -654,11 +633,6 @@ export class Config {
+   private readonly shouldUseNodePtyShell: boolean;
+   private readonly skipNextSpeakerCheck: boolean;
+   private shellExecutionConfig: ShellExecutionConfig;
+-  private arenaManager: ArenaManager | null = null;
+-  private arenaManagerChangeCallback:
+-    | ((manager: ArenaManager | null) => void)
+-    | null = null;
+-  private readonly arenaAgentClient: ArenaAgentClient | null;
+   private readonly agentsSettings: AgentsCollabSettings;
+   private readonly skipLoopDetection: boolean;
+   private readonly skipStartupContext: boolean;
+@@ -838,7 +812,6 @@ export class Config {
+     this.inputFormat = params.inputFormat ?? InputFormat.TEXT;
+     this.fileExclusions = new FileExclusions(this);
+     this.eventEmitter = params.eventEmitter;
+-    this.arenaAgentClient = ArenaAgentClient.create();
+     this.agentsSettings = params.agents ?? {};
+     if (params.contextFileName) {
+       setGeminiMdFilename(params.contextFileName);
+@@ -1599,8 +1572,6 @@ export class Config {
+       }
+ 
+       this.backgroundTaskRegistry.abortAll();
+-
+-      await this.cleanupArenaRuntime();
+     } catch (error) {
+       // Log but don't throw - cleanup should be best-effort
+       this.debugLogger.error('Error during Config shutdown:', error);
+@@ -1812,50 +1783,10 @@ export class Config {
+     this.geminiMdFileCount = count;
+   }
+ 
+-  getArenaManager(): ArenaManager | null {
+-    return this.arenaManager;
+-  }
+-
+-  setArenaManager(manager: ArenaManager | null): void {
+-    this.arenaManager = manager;
+-    this.arenaManagerChangeCallback?.(manager);
+-  }
+-
+-  /**
+-   * Register a callback invoked whenever the arena manager changes.
+-   * Pass `null` to unsubscribe. Only one subscriber is supported.
+-   */
+-  onArenaManagerChange(
+-    cb: ((manager: ArenaManager | null) => void) | null,
+-  ): void {
+-    this.arenaManagerChangeCallback = cb;
+-  }
+-
+-  getArenaAgentClient(): ArenaAgentClient | null {
+-    return this.arenaAgentClient;
+-  }
+-
+   getAgentsSettings(): AgentsCollabSettings {
+     return this.agentsSettings;
+   }
+ 
+-  /**
+-   * Clean up Arena runtime. When `force` is true (e.g., /arena select --discard),
+-   * always removes worktrees regardless of preserveArtifacts.
+-   */
+-  async cleanupArenaRuntime(force?: boolean): Promise<void> {
+-    const manager = this.arenaManager;
+-    if (!manager) {
+-      return;
+-    }
+-    if (!force && this.agentsSettings.arena?.preserveArtifacts) {
+-      await manager.cleanupRuntime();
+-    } else {
+-      await manager.cleanup();
+-    }
+-    this.setArenaManager(null);
+-  }
+-
+   getApprovalMode(): ApprovalMode {
+     return this.approvalMode;
+   }
+diff --git i/packages/core/src/config/storage.ts w/packages/core/src/config/storage.ts
+index e591a48d8..5e7ab3314 100644
+--- i/packages/core/src/config/storage.ts
++++ w/packages/core/src/config/storage.ts
+@@ -11,8 +11,6 @@ import { AsyncLocalStorage } from 'node:async_hooks';
+ import { getProjectHash, sanitizeCwd } from '../utils/paths.js';
+ 
+ export const CLAUDEX_DIR = '.claudex';
+-/** @deprecated Use CLAUDEX_DIR */
+-export const CLAUDEX_DIR = CLAUDEX_DIR;
+ export const GOOGLE_ACCOUNTS_FILENAME = 'google_accounts.json';
+ export const OAUTH_FILE = 'oauth_creds.json';
+ export const SKILL_PROVIDER_CONFIG_DIRS = ['.claudex', '.agents'];
+@@ -22,7 +20,6 @@ const PROJECT_DIR_NAME = 'projects';
+ const IDE_DIR_NAME = 'ide';
+ const PLANS_DIR_NAME = 'plans';
+ const DEBUG_DIR_NAME = 'debug';
+-const ARENA_DIR_NAME = 'arena';
+ 
+ export class Storage {
+   private readonly targetDir: string;
+@@ -129,11 +126,6 @@ export class Storage {
+     return path.join(homeDir, CLAUDEX_DIR);
+   }
+ 
+-  /** @deprecated Use getGlobalClaudexDir() */
+-  static getGlobalClaudexDir(): string {
+-    return Storage.getGlobalClaudexDir();
+-  }
+-
+   static getMcpOAuthTokensPath(): string {
+     return path.join(Storage.getGlobalClaudexDir(), 'mcp-oauth-tokens.json');
+   }
+@@ -186,19 +178,10 @@ export class Storage {
+     return path.join(Storage.getGlobalClaudexDir(), BIN_DIR_NAME);
+   }
+ 
+-  static getGlobalArenaDir(): string {
+-    return path.join(Storage.getGlobalClaudexDir(), ARENA_DIR_NAME);
+-  }
+-
+   getClaudexDir(): string {
+     return path.join(this.targetDir, CLAUDEX_DIR);
+   }
+ 
+-  /** @deprecated Use getClaudexDir() */
+-  getClaudexDir(): string {
+-    return this.getClaudexDir();
+-  }
+-
+   getProjectDir(): string {
+     const projectId = sanitizeCwd(this.getProjectRoot());
+     const projectsDir = path.join(
+diff --git i/packages/core/src/confirmation-bus/types.ts w/packages/core/src/confirmation-bus/types.ts
+index e44fb8d94..508e1ab28 100644
+--- i/packages/core/src/confirmation-bus/types.ts
++++ w/packages/core/src/confirmation-bus/types.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import { type FunctionCall } from '@google/genai';
++import { type FunctionCall } from '../types/llm-types.js';
+ import type {
+   ToolConfirmationOutcome,
+   ToolConfirmationPayload,
+diff --git i/packages/core/src/core/anthropicContentGenerator/anthropicContentGenerator.test.ts w/packages/core/src/core/anthropicContentGenerator/anthropicContentGenerator.test.ts
+index 9fe4523de..a01401212 100644
+--- i/packages/core/src/core/anthropicContentGenerator/anthropicContentGenerator.test.ts
++++ w/packages/core/src/core/anthropicContentGenerator/anthropicContentGenerator.test.ts
+@@ -8,8 +8,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+ import type {
+   CountTokensParameters,
+   GenerateContentParameters,
+-} from '@google/genai';
+-import { FinishReason, GenerateContentResponse } from '@google/genai';
++} from '../../types/llm-types.js';
++import { FinishReason, GenerateContentResponse } from '../../types/llm-types.js';
+ import type { ContentGeneratorConfig } from '../contentGenerator.js';
+ 
+ // Mock the request tokenizer module BEFORE importing the class that uses it.
+diff --git i/packages/core/src/core/anthropicContentGenerator/anthropicContentGenerator.ts w/packages/core/src/core/anthropicContentGenerator/anthropicContentGenerator.ts
+index 4c5d8296b..9eb3a6d7f 100644
+--- i/packages/core/src/core/anthropicContentGenerator/anthropicContentGenerator.ts
++++ w/packages/core/src/core/anthropicContentGenerator/anthropicContentGenerator.ts
+@@ -13,8 +13,8 @@ import type {
+   GenerateContentParameters,
+   GenerateContentResponseUsageMetadata,
+   Part,
+-} from '@google/genai';
+-import { GenerateContentResponse } from '@google/genai';
++} from '../../types/llm-types.js';
++import { GenerateContentResponse } from '../../types/llm-types.js';
+ import type { Config } from '../../config/config.js';
+ import type {
+   ContentGenerator,
+diff --git i/packages/core/src/core/anthropicContentGenerator/converter.test.ts w/packages/core/src/core/anthropicContentGenerator/converter.test.ts
+index 519a5596e..745bccd52 100644
+--- i/packages/core/src/core/anthropicContentGenerator/converter.test.ts
++++ w/packages/core/src/core/anthropicContentGenerator/converter.test.ts
+@@ -5,8 +5,8 @@
+  */
+ 
+ import { beforeEach, describe, expect, it, vi } from 'vitest';
+-import type { CallableTool, Content, Tool } from '@google/genai';
+-import { FinishReason } from '@google/genai';
++import type { CallableTool, Content, Tool } from '../../types/llm-types.js';
++import { FinishReason } from '../../types/llm-types.js';
+ import type Anthropic from '@anthropic-ai/sdk';
+ 
+ // Mock schema conversion so we can force edge-cases (e.g. missing `type`).
+diff --git i/packages/core/src/core/anthropicContentGenerator/converter.ts w/packages/core/src/core/anthropicContentGenerator/converter.ts
+index cc81778c7..445ede57a 100644
+--- i/packages/core/src/core/anthropicContentGenerator/converter.ts
++++ w/packages/core/src/core/anthropicContentGenerator/converter.ts
+@@ -16,8 +16,8 @@ import type {
+   PartUnion,
+   Tool,
+   ToolListUnion,
+-} from '@google/genai';
+-import { FinishReason, GenerateContentResponse } from '@google/genai';
++} from '../../types/llm-types.js';
++import { FinishReason, GenerateContentResponse } from '../../types/llm-types.js';
+ import type Anthropic from '@anthropic-ai/sdk';
+ import { safeJsonParse } from '../../utils/safeJsonParse.js';
+ import {
+diff --git i/packages/core/src/core/baseLlmClient.test.ts w/packages/core/src/core/baseLlmClient.test.ts
+index df8d82cf9..99bf6eb35 100644
+--- i/packages/core/src/core/baseLlmClient.test.ts
++++ w/packages/core/src/core/baseLlmClient.test.ts
+@@ -14,7 +14,7 @@ import {
+   type Mocked,
+ } from 'vitest';
+ 
+-import type { GenerateContentResponse } from '@google/genai';
++import type { GenerateContentResponse } from '../types/llm-types.js';
+ import { BaseLlmClient, type GenerateJsonOptions } from './baseLlmClient.js';
+ import type { ContentGenerator } from './contentGenerator.js';
+ import type { Config } from '../config/config.js';
+@@ -53,7 +53,7 @@ const mockConfig = {
+   getSessionId: vi.fn().mockReturnValue('test-session-id'),
+   getContentGeneratorConfig: vi
+     .fn()
+-    .mockReturnValue({ authType: AuthType.USE_GEMINI }),
++    .mockReturnValue({ authType: AuthType.USE_OPENAI }),
+   getEmbeddingModel: vi.fn().mockReturnValue('test-embedding-model'),
+ } as unknown as Mocked<Config>;
+ 
+diff --git i/packages/core/src/core/baseLlmClient.ts w/packages/core/src/core/baseLlmClient.ts
+index 53df44fa5..05af6651d 100644
+--- i/packages/core/src/core/baseLlmClient.ts
++++ w/packages/core/src/core/baseLlmClient.ts
+@@ -12,7 +12,7 @@ import type {
+   FunctionDeclaration,
+   Tool,
+   Schema,
+-} from '@google/genai';
++} from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import type { ContentGenerator } from './contentGenerator.js';
+ import { reportError } from '../utils/errorReporting.js';
+diff --git i/packages/core/src/core/client.test.ts w/packages/core/src/core/client.test.ts
+index b0b2aef4a..6b586af33 100644
+--- i/packages/core/src/core/client.test.ts
++++ w/packages/core/src/core/client.test.ts
+@@ -14,7 +14,7 @@ import {
+   type Mock,
+ } from 'vitest';
+ 
+-import type { Content, GenerateContentResponse, Part } from '@google/genai';
++import type { Content, GenerateContentResponse, Part } from '../types/llm-types.js';
+ import { GeminiClient, SendMessageType } from './client.js';
+ import { findCompressSplitPoint } from '../services/chatCompressionService.js';
+ import {
+@@ -320,8 +320,8 @@ describe('Gemini Client (client.ts)', () => {
+     const contentGeneratorConfig: ContentGeneratorConfig = {
+       model: 'test-model',
+       apiKey: 'test-key',
+-      vertexai: false,
+-      authType: AuthType.USE_GEMINI,
++      
++      authType: AuthType.USE_OPENAI,
+     };
+     const mockSubagentManager = {
+       listSubagents: vi.fn().mockResolvedValue([]),
+@@ -731,8 +731,8 @@ describe('Gemini Client (client.ts)', () => {
+           {
+             model: 'test-model',
+             apiKey: 'test-key',
+-            vertexai: false,
+-            authType: AuthType.USE_GEMINI,
++            
++            authType: AuthType.USE_OPENAI,
+             contextWindowSize: 100, // Set to same as originalTokenCount to ensure threshold is exceeded
+           },
+         );
+@@ -784,8 +784,8 @@ describe('Gemini Client (client.ts)', () => {
+           {
+             model: 'test-model',
+             apiKey: 'test-key',
+-            vertexai: false,
+-            authType: AuthType.USE_GEMINI,
++            
++            authType: AuthType.USE_OPENAI,
+             contextWindowSize: 100, // Set to same as originalTokenCount to ensure threshold is exceeded
+           },
+         );
+@@ -810,8 +810,8 @@ describe('Gemini Client (client.ts)', () => {
+       vi.spyOn(client['config'], 'getContentGeneratorConfig').mockReturnValue({
+         model: 'test-model',
+         apiKey: 'test-key',
+-        vertexai: false,
+-        authType: AuthType.USE_GEMINI,
++        
++        authType: AuthType.USE_OPENAI,
+         contextWindowSize: MOCKED_TOKEN_LIMIT,
+       });
+       mockGetHistory.mockReturnValue([
+@@ -843,8 +843,8 @@ describe('Gemini Client (client.ts)', () => {
+       vi.spyOn(client['config'], 'getContentGeneratorConfig').mockReturnValue({
+         model: 'test-model',
+         apiKey: 'test-key',
+-        vertexai: false,
+-        authType: AuthType.USE_GEMINI,
++        
++        authType: AuthType.USE_OPENAI,
+         contextWindowSize: MOCKED_TOKEN_LIMIT,
+       });
+       vi.spyOn(client['config'], 'getChatCompression').mockReturnValue({
+@@ -923,8 +923,8 @@ describe('Gemini Client (client.ts)', () => {
+       vi.spyOn(client['config'], 'getContentGeneratorConfig').mockReturnValue({
+         model: 'test-model',
+         apiKey: 'test-key',
+-        vertexai: false,
+-        authType: AuthType.USE_GEMINI,
++        
++        authType: AuthType.USE_OPENAI,
+         contextWindowSize: MOCKED_TOKEN_LIMIT,
+       });
+       vi.spyOn(client['config'], 'getChatCompression').mockReturnValue({
+@@ -1008,8 +1008,8 @@ describe('Gemini Client (client.ts)', () => {
+       vi.spyOn(client['config'], 'getContentGeneratorConfig').mockReturnValue({
+         model: 'test-model',
+         apiKey: 'test-key',
+-        vertexai: false,
+-        authType: AuthType.USE_GEMINI,
++        
++        authType: AuthType.USE_OPENAI,
+         contextWindowSize: MOCKED_TOKEN_LIMIT,
+       });
+       const history: Content[] = [
+diff --git i/packages/core/src/core/client.ts w/packages/core/src/core/client.ts
+index 4f5ccf6c1..8e1a88914 100644
+--- i/packages/core/src/core/client.ts
++++ w/packages/core/src/core/client.ts
+@@ -11,7 +11,7 @@ import type {
+   GenerateContentResponse,
+   PartListUnion,
+   Tool,
+-} from '@google/genai';
++} from '../types/llm-types.js';
+ 
+ // Config
+ import { ApprovalMode, type Config } from '../config/config.js';
+@@ -24,7 +24,6 @@ const debugLogger = createDebugLogger('CLIENT');
+ import type { ContentGenerator } from './contentGenerator.js';
+ import { GeminiChat } from './geminiChat.js';
+ import {
+-  getArenaSystemReminder,
+   getCoreSystemPrompt,
+   getCustomSystemPrompt,
+   getPlanModeSystemReminder,
+@@ -808,19 +807,6 @@ export class GeminiClient {
+       this.forceFullIdeContext = false;
+     }
+ 
+-    // Check for arena control signal before starting a new turn
+-    const arenaAgentClient = this.config.getArenaAgentClient();
+-    if (arenaAgentClient) {
+-      const controlSignal = await arenaAgentClient.checkControlSignal();
+-      if (controlSignal) {
+-        debugLogger.info(
+-          `Arena control signal received: ${controlSignal.type} - ${controlSignal.reason}`,
+-        );
+-        await arenaAgentClient.reportCancelled();
+-        return new Turn(this.getChat(), prompt_id);
+-      }
+-    }
+-
+     const turn = new Turn(this.getChat(), prompt_id);
+ 
+     // Determine the model to use for this turn
+@@ -864,18 +850,6 @@ export class GeminiClient {
+         );
+       }
+ 
+-      // add arena system reminder if an arena session is active
+-      const arenaManager = this.config.getArenaManager();
+-      if (arenaManager) {
+-        try {
+-          const sessionDir = arenaManager.getArenaSessionDir();
+-          const configPath = `${sessionDir}/config.json`;
+-          systemReminders.push(getArenaSystemReminder(configPath));
+-        } catch {
+-          // Arena config not yet initialized — skip
+-        }
+-      }
+-
+       requestToSent = [...systemReminders, ...requestToSent];
+     }
+ 
+@@ -888,28 +862,13 @@ export class GeminiClient {
+             type: GeminiEventType.LoopDetected,
+             ...(loopType && { value: { loopType } }),
+           };
+-          if (arenaAgentClient) {
+-            await arenaAgentClient.reportError('Loop detected');
+-          }
+           this.lastApiCompletionTimestamp = Date.now();
+           return turn;
+         }
+       }
+-      // Update arena status on Finished events — stats are derived
+-      // automatically from uiTelemetryService by the reporter.
+-      if (arenaAgentClient && event.type === GeminiEventType.Finished) {
+-        await arenaAgentClient.updateStatus();
+-      }
+-
++      // Update arena status on Finished events.
+       yield event;
+       if (event.type === GeminiEventType.Error) {
+-        if (arenaAgentClient) {
+-          const errorMsg =
+-            event.value instanceof Error
+-              ? event.value.message
+-              : 'Unknown error';
+-          await arenaAgentClient.reportError(errorMsg);
+-        }
+         this.lastApiCompletionTimestamp = Date.now();
+         return turn;
+       }
+@@ -1050,10 +1009,6 @@ export class GeminiClient {
+ 
+       if (this.config.getSkipNextSpeakerCheck()) {
+         this.runManagedAutoMemoryBackgroundTasks(messageType);
+-        // Report completed before returning — agent has no more work to do
+-        if (arenaAgentClient) {
+-          await arenaAgentClient.reportCompleted();
+-        }
+         return turn;
+       }
+ 
+@@ -1085,16 +1040,6 @@ export class GeminiClient {
+       }
+ 
+       this.runManagedAutoMemoryBackgroundTasks(messageType);
+-
+-      if (arenaAgentClient) {
+-        // No continuation needed — agent completed its task
+-        await arenaAgentClient.reportCompleted();
+-      }
+-    }
+-
+-    // Report cancelled to arena when user cancelled mid-stream
+-    if (signal?.aborted && arenaAgentClient) {
+-      await arenaAgentClient.reportCancelled();
+     }
+ 
+     return turn;
+diff --git i/packages/core/src/core/contentGenerator.test.ts w/packages/core/src/core/contentGenerator.test.ts
+index 4bdd6fba5..4489d8ba9 100644
+--- i/packages/core/src/core/contentGenerator.test.ts
++++ w/packages/core/src/core/contentGenerator.test.ts
+@@ -10,7 +10,7 @@ import {
+   createContentGeneratorConfig,
+   AuthType,
+ } from './contentGenerator.js';
+-import { GoogleGenAI } from '@google/genai';
++import { GoogleGenAI } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import { LoggingContentGenerator } from './loggingContentGenerator/index.js';
+ 
+@@ -32,7 +32,7 @@ describe('createContentGenerator', () => {
+       {
+         model: 'test-model',
+         apiKey: 'test-api-key',
+-        authType: AuthType.USE_GEMINI,
++        authType: AuthType.USE_OPENAI,
+       },
+       mockConfig,
+     );
+@@ -66,7 +66,7 @@ describe('createContentGenerator', () => {
+       {
+         model: 'test-model',
+         apiKey: 'test-api-key',
+-        authType: AuthType.USE_GEMINI,
++        authType: AuthType.USE_OPENAI,
+       },
+       mockConfig,
+     );
+diff --git i/packages/core/src/core/contentGenerator.ts w/packages/core/src/core/contentGenerator.ts
+index 07e534718..7e90c6ed4 100644
+--- i/packages/core/src/core/contentGenerator.ts
++++ w/packages/core/src/core/contentGenerator.ts
+@@ -11,7 +11,7 @@ import type {
+   EmbedContentResponse,
+   GenerateContentParameters,
+   GenerateContentResponse,
+-} from '@google/genai';
++} from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import { LoggingContentGenerator } from './loggingContentGenerator/index.js';
+ import type {
+@@ -55,12 +55,8 @@ export interface ContentGenerator {
+ export enum AuthType {
+   USE_OPENAI = 'openai',
+   USE_ANTHROPIC = 'anthropic',
+-  /** @deprecated Dead-letter value — never selected at runtime. */
++  /** @deprecated OAuth discontinued 2026-04-15. Remove in Phase 8. */
+   CLAUDEX_OAUTH = 'claudex-oauth',
+-  /** @deprecated Dead-letter value — never selected at runtime. */
+-  USE_GEMINI = '_removed_use_gemini',
+-  /** @deprecated Dead-letter value — never selected at runtime. */
+-  USE_VERTEX_AI = '_removed_use_vertex_ai',
+ }
+ 
+ /**
+@@ -79,14 +75,13 @@ export type ContentGeneratorConfig = {
+   apiKey?: string;
+   apiKeyEnvKey?: string;
+   baseUrl?: string;
+-  vertexai?: boolean;
+   authType?: AuthType | undefined;
+   enableOpenAILogging?: boolean;
+   openAILoggingDir?: string;
+   timeout?: number; // Timeout configuration in milliseconds
+   maxRetries?: number; // Maximum retries for rate-limit errors
+   retryErrorCodes?: number[]; // Additional error codes that trigger rate-limit retry
+-  enableCacheControl?: boolean; // Enable cache control for DashScope providers
++  enableCacheControl?: boolean; // Enable cache control (Anthropic prompt caching)
+   samplingParams?: {
+     top_p?: number;
+     top_k?: number;
+diff --git i/packages/core/src/core/coreToolScheduler.test.ts w/packages/core/src/core/coreToolScheduler.test.ts
+index 80ed8b4f2..ed26e940f 100644
+--- i/packages/core/src/core/coreToolScheduler.test.ts
++++ w/packages/core/src/core/coreToolScheduler.test.ts
+@@ -31,7 +31,7 @@ import {
+   CoreToolScheduler,
+   convertToFunctionResponse,
+ } from './coreToolScheduler.js';
+-import type { Part, PartListUnion } from '@google/genai';
++import type { Part, PartListUnion } from '../types/llm-types.js';
+ import {
+   MockModifiableTool,
+   MockTool,
+diff --git i/packages/core/src/core/coreToolScheduler.ts w/packages/core/src/core/coreToolScheduler.ts
+index e38692dab..706827ab7 100644
+--- i/packages/core/src/core/coreToolScheduler.ts
++++ w/packages/core/src/core/coreToolScheduler.ts
+@@ -46,7 +46,7 @@ import type {
+   FunctionResponsePart,
+   Part,
+   PartListUnion,
+-} from '@google/genai';
++} from '../types/llm-types.js';
+ import { ToolNames } from '../tools/tool-names.js';
+ import { CONCURRENCY_SAFE_KINDS } from '../tools/tools.js';
+ import { isShellCommandReadOnly } from '../utils/shellReadOnlyChecker.js';
+diff --git i/packages/core/src/core/geminiChat.test.ts w/packages/core/src/core/geminiChat.test.ts
+index 03f63d167..e8e9fb83a 100644
+--- i/packages/core/src/core/geminiChat.test.ts
++++ w/packages/core/src/core/geminiChat.test.ts
+@@ -9,8 +9,8 @@ import type {
+   Content,
+   GenerateContentConfig,
+   GenerateContentResponse,
+-} from '@google/genai';
+-import { ApiError } from '@google/genai';
++} from '../types/llm-types.js';
++import { ApiError } from '../types/llm-types.js';
+ import type { ContentGenerator } from '../core/contentGenerator.js';
+ import {
+   GeminiChat,
+diff --git i/packages/core/src/core/geminiChat.ts w/packages/core/src/core/geminiChat.ts
+index 2f4612f3b..2a1c36a4f 100644
+--- i/packages/core/src/core/geminiChat.ts
++++ w/packages/core/src/core/geminiChat.ts
+@@ -15,8 +15,8 @@ import type {
+   Part,
+   Tool,
+   GenerateContentResponseUsageMetadata,
+-} from '@google/genai';
+-import { createUserContent, FinishReason } from '@google/genai';
++} from '../types/llm-types.js';
++import { createUserContent, FinishReason } from '../types/llm-types.js';
+ import { retryWithBackoff } from '../utils/retry.js';
+ import { getErrorStatus } from '../utils/errors.js';
+ import { createDebugLogger } from '../utils/debugLogger.js';
+diff --git i/packages/core/src/core/geminiRequest.test.ts w/packages/core/src/core/geminiRequest.test.ts
+index fd298cb65..d8d5ff3b5 100644
+--- i/packages/core/src/core/geminiRequest.test.ts
++++ w/packages/core/src/core/geminiRequest.test.ts
+@@ -6,7 +6,7 @@
+ 
+ import { describe, it, expect } from 'vitest';
+ import { partListUnionToString } from './geminiRequest.js';
+-import { type Part } from '@google/genai';
++import { type Part } from '../types/llm-types.js';
+ 
+ describe('partListUnionToString', () => {
+   it('should return the string value if the input is a string', () => {
+diff --git i/packages/core/src/core/geminiRequest.ts w/packages/core/src/core/geminiRequest.ts
+index f3c52fbb6..3c1474ec0 100644
+--- i/packages/core/src/core/geminiRequest.ts
++++ w/packages/core/src/core/geminiRequest.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import { type PartListUnion } from '@google/genai';
++import { type PartListUnion } from '../types/llm-types.js';
+ import { partToString } from '../utils/partUtils.js';
+ 
+ /**
+diff --git i/packages/core/src/core/logger.test.ts w/packages/core/src/core/logger.test.ts
+index 4663e3a47..1150313be 100644
+--- i/packages/core/src/core/logger.test.ts
++++ w/packages/core/src/core/logger.test.ts
+@@ -24,7 +24,7 @@ import { Storage } from '../config/storage.js';
+ import { getProjectHash } from '../utils/paths.js';
+ import { promises as fs, existsSync } from 'node:fs';
+ import path from 'node:path';
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ 
+ import os from 'node:os';
+ 
+diff --git i/packages/core/src/core/logger.ts w/packages/core/src/core/logger.ts
+index d2775edcd..6fa843fca 100644
+--- i/packages/core/src/core/logger.ts
++++ w/packages/core/src/core/logger.ts
+@@ -6,7 +6,7 @@
+ 
+ import path from 'node:path';
+ import { promises as fs } from 'node:fs';
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ import type { Storage } from '../config/storage.js';
+ import { createDebugLogger, type DebugLogger } from '../utils/debugLogger.js';
+ 
+diff --git i/packages/core/src/core/loggingContentGenerator/loggingContentGenerator.test.ts w/packages/core/src/core/loggingContentGenerator/loggingContentGenerator.test.ts
+index b1f30308a..14c25c412 100644
+--- i/packages/core/src/core/loggingContentGenerator/loggingContentGenerator.test.ts
++++ w/packages/core/src/core/loggingContentGenerator/loggingContentGenerator.test.ts
+@@ -8,8 +8,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+ import type {
+   GenerateContentParameters,
+   GenerateContentResponseUsageMetadata,
+-} from '@google/genai';
+-import { GenerateContentResponse } from '@google/genai';
++} from '../../types/llm-types.js';
++import { GenerateContentResponse } from '../../types/llm-types.js';
+ import type { Config } from '../../config/config.js';
+ import type { ContentGenerator } from '../contentGenerator.js';
+ import { AuthType } from '../contentGenerator.js';
+diff --git i/packages/core/src/core/loggingContentGenerator/loggingContentGenerator.ts w/packages/core/src/core/loggingContentGenerator/loggingContentGenerator.ts
+index d6e2db4b9..3ab217da8 100644
+--- i/packages/core/src/core/loggingContentGenerator/loggingContentGenerator.ts
++++ w/packages/core/src/core/loggingContentGenerator/loggingContentGenerator.ts
+@@ -18,7 +18,7 @@ import {
+   type Part,
+   type PartUnion,
+   type FinishReason,
+-} from '@google/genai';
++} from '../../types/llm-types.js';
+ import type OpenAI from 'openai';
+ import {
+   ApiRequestEvent,
+diff --git i/packages/core/src/core/nonInteractiveToolExecutor.test.ts w/packages/core/src/core/nonInteractiveToolExecutor.test.ts
+index 413300fe2..622c83972 100644
+--- i/packages/core/src/core/nonInteractiveToolExecutor.test.ts
++++ w/packages/core/src/core/nonInteractiveToolExecutor.test.ts
+@@ -19,7 +19,7 @@ import {
+   ToolErrorType,
+   ApprovalMode,
+ } from '../index.js';
+-import type { Part } from '@google/genai';
++import type { Part } from '../types/llm-types.js';
+ import { MockTool } from '../test-utils/mock-tool.js';
+ 
+ describe('executeToolCall', () => {
+diff --git i/packages/core/src/core/openaiContentGenerator/converter.test.ts w/packages/core/src/core/openaiContentGenerator/converter.test.ts
+index be0894cb6..50c216ffc 100644
+--- i/packages/core/src/core/openaiContentGenerator/converter.test.ts
++++ w/packages/core/src/core/openaiContentGenerator/converter.test.ts
+@@ -15,7 +15,7 @@ import {
+   type Part,
+   type Tool,
+   type CallableTool,
+-} from '@google/genai';
++} from '../../types/llm-types.js';
+ import type OpenAI from 'openai';
+ import { convertToFunctionResponse } from '../coreToolScheduler.js';
+ 
+diff --git i/packages/core/src/core/openaiContentGenerator/converter.ts w/packages/core/src/core/openaiContentGenerator/converter.ts
+index 409990154..3122b10d9 100644
+--- i/packages/core/src/core/openaiContentGenerator/converter.ts
++++ w/packages/core/src/core/openaiContentGenerator/converter.ts
+@@ -16,8 +16,8 @@ import type {
+   ContentUnion,
+   PartUnion,
+   Candidate,
+-} from '@google/genai';
+-import { GenerateContentResponse, FinishReason } from '@google/genai';
++} from '../../types/llm-types.js';
++import { GenerateContentResponse, FinishReason } from '../../types/llm-types.js';
+ import type OpenAI from 'openai';
+ import { safeJsonParse } from '../../utils/safeJsonParse.js';
+ import { createDebugLogger } from '../../utils/debugLogger.js';
+diff --git i/packages/core/src/core/openaiContentGenerator/errorHandler.test.ts w/packages/core/src/core/openaiContentGenerator/errorHandler.test.ts
+index d052c7e90..4b27930de 100644
+--- i/packages/core/src/core/openaiContentGenerator/errorHandler.test.ts
++++ w/packages/core/src/core/openaiContentGenerator/errorHandler.test.ts
+@@ -5,7 +5,7 @@
+  */
+ 
+ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+-import type { GenerateContentParameters } from '@google/genai';
++import type { GenerateContentParameters } from '../../types/llm-types.js';
+ import { EnhancedErrorHandler } from './errorHandler.js';
+ import type { RequestContext } from './errorHandler.js';
+ 
+diff --git i/packages/core/src/core/openaiContentGenerator/errorHandler.ts w/packages/core/src/core/openaiContentGenerator/errorHandler.ts
+index fcb90430a..3d61074f7 100644
+--- i/packages/core/src/core/openaiContentGenerator/errorHandler.ts
++++ w/packages/core/src/core/openaiContentGenerator/errorHandler.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { GenerateContentParameters } from '@google/genai';
++import type { GenerateContentParameters } from '../../types/llm-types.js';
+ import { createDebugLogger } from '../../utils/debugLogger.js';
+ 
+ const debugLogger = createDebugLogger('OPENAI_ERROR');
+diff --git i/packages/core/src/core/openaiContentGenerator/index.ts w/packages/core/src/core/openaiContentGenerator/index.ts
+index d42f198f1..1947df8d8 100644
+--- i/packages/core/src/core/openaiContentGenerator/index.ts
++++ w/packages/core/src/core/openaiContentGenerator/index.ts
+@@ -11,10 +11,6 @@ import type {
+ import type { Config } from '../../config/config.js';
+ import { OpenAIContentGenerator } from './openaiContentGenerator.js';
+ import {
+-  DashScopeOpenAICompatibleProvider,
+-  DeepSeekOpenAICompatibleProvider,
+-  ModelScopeOpenAICompatibleProvider,
+-  OpenRouterOpenAICompatibleProvider,
+   type OpenAICompatibleProvider,
+   DefaultOpenAICompatibleProvider,
+ } from './provider/index.js';
+@@ -22,12 +18,7 @@ import {
+ export { OpenAIContentGenerator } from './openaiContentGenerator.js';
+ export { ContentGenerationPipeline, type PipelineConfig } from './pipeline.js';
+ 
+-export {
+-  type OpenAICompatibleProvider,
+-  DashScopeOpenAICompatibleProvider,
+-  DeepSeekOpenAICompatibleProvider,
+-  OpenRouterOpenAICompatibleProvider,
+-} from './provider/index.js';
++export { type OpenAICompatibleProvider } from './provider/index.js';
+ 
+ export { OpenAIContentConverter } from './converter.js';
+ 
+@@ -53,40 +44,6 @@ export function determineProvider(
+   contentGeneratorConfig: ContentGeneratorConfig,
+   cliConfig: Config,
+ ): OpenAICompatibleProvider {
+-  const config =
+-    contentGeneratorConfig || cliConfig.getContentGeneratorConfig();
+-
+-  // Check for DashScope provider
+-  if (DashScopeOpenAICompatibleProvider.isDashScopeProvider(config)) {
+-    return new DashScopeOpenAICompatibleProvider(
+-      contentGeneratorConfig,
+-      cliConfig,
+-    );
+-  }
+-
+-  if (DeepSeekOpenAICompatibleProvider.isDeepSeekProvider(config)) {
+-    return new DeepSeekOpenAICompatibleProvider(
+-      contentGeneratorConfig,
+-      cliConfig,
+-    );
+-  }
+-
+-  // Check for OpenRouter provider
+-  if (OpenRouterOpenAICompatibleProvider.isOpenRouterProvider(config)) {
+-    return new OpenRouterOpenAICompatibleProvider(
+-      contentGeneratorConfig,
+-      cliConfig,
+-    );
+-  }
+-
+-  // Check for ModelScope provider
+-  if (ModelScopeOpenAICompatibleProvider.isModelScopeProvider(config)) {
+-    return new ModelScopeOpenAICompatibleProvider(
+-      contentGeneratorConfig,
+-      cliConfig,
+-    );
+-  }
+-
+   // Default provider for standard OpenAI-compatible APIs
+   return new DefaultOpenAICompatibleProvider(contentGeneratorConfig, cliConfig);
+ }
+diff --git i/packages/core/src/core/openaiContentGenerator/openaiContentGenerator.test.ts w/packages/core/src/core/openaiContentGenerator/openaiContentGenerator.test.ts
+index 671b5cc7d..2a0558bb1 100644
+--- i/packages/core/src/core/openaiContentGenerator/openaiContentGenerator.test.ts
++++ w/packages/core/src/core/openaiContentGenerator/openaiContentGenerator.test.ts
+@@ -32,7 +32,7 @@ import { AuthType } from '../contentGenerator.js';
+ import type {
+   GenerateContentParameters,
+   CountTokensParameters,
+-} from '@google/genai';
++} from '../../types/llm-types.js';
+ import type { OpenAICompatibleProvider } from './provider/index.js';
+ import type OpenAI from 'openai';
+ 
+diff --git i/packages/core/src/core/openaiContentGenerator/openaiContentGenerator.ts w/packages/core/src/core/openaiContentGenerator/openaiContentGenerator.ts
+index 5c8479bc0..abc51b24a 100644
+--- i/packages/core/src/core/openaiContentGenerator/openaiContentGenerator.ts
++++ w/packages/core/src/core/openaiContentGenerator/openaiContentGenerator.ts
+@@ -8,7 +8,7 @@ import type {
+   EmbedContentResponse,
+   GenerateContentParameters,
+   GenerateContentResponse,
+-} from '@google/genai';
++} from '../../types/llm-types.js';
+ import type { PipelineConfig } from './pipeline.js';
+ import { ContentGenerationPipeline } from './pipeline.js';
+ import { EnhancedErrorHandler } from './errorHandler.js';
+diff --git i/packages/core/src/core/openaiContentGenerator/pipeline.test.ts w/packages/core/src/core/openaiContentGenerator/pipeline.test.ts
+index e233160c4..fac787bff 100644
+--- i/packages/core/src/core/openaiContentGenerator/pipeline.test.ts
++++ w/packages/core/src/core/openaiContentGenerator/pipeline.test.ts
+@@ -7,8 +7,8 @@
+ import type { Mock } from 'vitest';
+ import { describe, it, expect, beforeEach, vi } from 'vitest';
+ import type OpenAI from 'openai';
+-import type { GenerateContentParameters } from '@google/genai';
+-import { GenerateContentResponse, Type, FinishReason } from '@google/genai';
++import type { GenerateContentParameters } from '../../types/llm-types.js';
++import { GenerateContentResponse, Type, FinishReason } from '../../types/llm-types.js';
+ import type { PipelineConfig } from './pipeline.js';
+ import { ContentGenerationPipeline, StreamContentError } from './pipeline.js';
+ import { OpenAIContentConverter } from './converter.js';
+diff --git i/packages/core/src/core/openaiContentGenerator/pipeline.ts w/packages/core/src/core/openaiContentGenerator/pipeline.ts
+index 49e83adc9..8ce72a890 100644
+--- i/packages/core/src/core/openaiContentGenerator/pipeline.ts
++++ w/packages/core/src/core/openaiContentGenerator/pipeline.ts
+@@ -9,7 +9,7 @@ import type OpenAI from 'openai';
+ import {
+   type GenerateContentParameters,
+   GenerateContentResponse,
+-} from '@google/genai';
++} from '../../types/llm-types.js';
+ import type { Config } from '../../config/config.js';
+ import type { ContentGeneratorConfig } from '../contentGenerator.js';
+ import type { OpenAICompatibleProvider } from './provider/index.js';
+diff --git i/packages/core/src/core/openaiContentGenerator/provider/default.ts w/packages/core/src/core/openaiContentGenerator/provider/default.ts
+index 7fea4077a..37f0d5d6d 100644
+--- i/packages/core/src/core/openaiContentGenerator/provider/default.ts
++++ w/packages/core/src/core/openaiContentGenerator/provider/default.ts
+@@ -1,5 +1,5 @@
+ import OpenAI from 'openai';
+-import type { GenerateContentConfig } from '@google/genai';
++import type { GenerateContentConfig } from '../../../types/llm-types.js';
+ import type { Config } from '../../../config/config.js';
+ import type { ContentGeneratorConfig } from '../../contentGenerator.js';
+ import { DEFAULT_TIMEOUT, DEFAULT_MAX_RETRIES } from '../constants.js';
+diff --git i/packages/core/src/core/openaiContentGenerator/provider/index.ts w/packages/core/src/core/openaiContentGenerator/provider/index.ts
+index cb33834dd..aedf11817 100644
+--- i/packages/core/src/core/openaiContentGenerator/provider/index.ts
++++ w/packages/core/src/core/openaiContentGenerator/provider/index.ts
+@@ -1,11 +1,2 @@
+-export { ModelScopeOpenAICompatibleProvider } from './modelscope.js';
+-export { DashScopeOpenAICompatibleProvider } from './dashscope.js';
+-export { DeepSeekOpenAICompatibleProvider } from './deepseek.js';
+-export { OpenRouterOpenAICompatibleProvider } from './openrouter.js';
+ export { DefaultOpenAICompatibleProvider } from './default.js';
+-export type {
+-  OpenAICompatibleProvider,
+-  DashScopeRequestMetadata,
+-  ChatCompletionContentPartTextWithCache,
+-  ChatCompletionContentPartWithCache,
+-} from './types.js';
++export type { OpenAICompatibleProvider } from './types.js';
+diff --git i/packages/core/src/core/openaiContentGenerator/provider/types.ts w/packages/core/src/core/openaiContentGenerator/provider/types.ts
+index 6998cb5b7..3ef6c7944 100644
+--- i/packages/core/src/core/openaiContentGenerator/provider/types.ts
++++ w/packages/core/src/core/openaiContentGenerator/provider/types.ts
+@@ -1,21 +1,6 @@
+-import type { GenerateContentConfig } from '@google/genai';
++import type { GenerateContentConfig } from '../../../types/llm-types.js';
+ import type OpenAI from 'openai';
+ 
+-// Extended types to support cache_control for DashScope
+-export interface ChatCompletionContentPartTextWithCache
+-  extends OpenAI.Chat.ChatCompletionContentPartText {
+-  cache_control?: { type: 'ephemeral' };
+-}
+-
+-export type ChatCompletionContentPartWithCache =
+-  | ChatCompletionContentPartTextWithCache
+-  | OpenAI.Chat.ChatCompletionContentPartImage
+-  | OpenAI.Chat.ChatCompletionContentPartRefusal;
+-
+-export type ChatCompletionToolWithCache = OpenAI.Chat.ChatCompletionTool & {
+-  cache_control?: { type: 'ephemeral' };
+-};
+-
+ export interface OpenAICompatibleProvider {
+   buildHeaders(): Record<string, string | undefined>;
+   buildClient(): OpenAI;
+@@ -25,11 +10,3 @@ export interface OpenAICompatibleProvider {
+   ): OpenAI.Chat.ChatCompletionCreateParams;
+   getDefaultGenerationConfig(): GenerateContentConfig;
+ }
+-
+-export type DashScopeRequestMetadata = {
+-  metadata: {
+-    sessionId?: string;
+-    promptId: string;
+-    channel?: string;
+-  };
+-};
+diff --git i/packages/core/src/core/prompts.ts w/packages/core/src/core/prompts.ts
+index 58ee376b0..ed1f04cdf 100644
+--- i/packages/core/src/core/prompts.ts
++++ w/packages/core/src/core/prompts.ts
+@@ -11,7 +11,7 @@ import { ToolNames } from '../tools/tool-names.js';
+ import process from 'node:process';
+ import { isGitRepository } from '../utils/gitUtils.js';
+ import { CLAUDEX_CONFIG_DIR } from '../memory/const.js';
+-import type { GenerateContentConfig } from '@google/genai';
++import type { GenerateContentConfig } from '../types/llm-types.js';
+ import { createDebugLogger } from '../utils/debugLogger.js';
+ 
+ const debugLogger = createDebugLogger('PROMPTS');
+@@ -887,16 +887,6 @@ Plan mode is active. The user indicated that they do not want you to execute yet
+ </system-reminder>`;
+ }
+ 
+-/**
+- * Generates a system reminder about an active Arena session.
+- *
+- * @param configFilePath - Absolute path to the arena session's `config.json`
+- * @returns A formatted system reminder string wrapped in XML tags
+- */
+-export function getArenaSystemReminder(configFilePath: string): string {
+-  return `<system-reminder>An Arena session is active. For details, read: ${configFilePath}. This message is for internal use only. Do not mention this to user in your response.</system-reminder>`;
+-}
+-
+ // ============================================================================
+ // Insight Analysis Prompts
+ // ============================================================================
+diff --git i/packages/core/src/core/toolHookTriggers.ts w/packages/core/src/core/toolHookTriggers.ts
+index 7dcb09586..69317dc36 100644
+--- i/packages/core/src/core/toolHookTriggers.ts
++++ w/packages/core/src/core/toolHookTriggers.ts
+@@ -20,7 +20,7 @@ import {
+   type PermissionSuggestion,
+ } from '../hooks/types.js';
+ import { createDebugLogger } from '../utils/debugLogger.js';
+-import type { Part, PartListUnion } from '@google/genai';
++import type { Part, PartListUnion } from '../types/llm-types.js';
+ 
+ const debugLogger = createDebugLogger('TOOL_HOOKS');
+ 
+diff --git i/packages/core/src/core/turn.test.ts w/packages/core/src/core/turn.test.ts
+index 148a19d63..3151e9584 100644
+--- i/packages/core/src/core/turn.test.ts
++++ w/packages/core/src/core/turn.test.ts
+@@ -10,7 +10,7 @@ import type {
+   ServerGeminiErrorEvent,
+ } from './turn.js';
+ import { Turn, GeminiEventType } from './turn.js';
+-import type { GenerateContentResponse, Part, Content } from '@google/genai';
++import type { GenerateContentResponse, Part, Content } from '../types/llm-types.js';
+ import { reportError } from '../utils/errorReporting.js';
+ import type { GeminiChat } from './geminiChat.js';
+ import { StreamEventType } from './geminiChat.js';
+diff --git i/packages/core/src/core/turn.ts w/packages/core/src/core/turn.ts
+index 78e8dac24..71dcc3d2c 100644
+--- i/packages/core/src/core/turn.ts
++++ w/packages/core/src/core/turn.ts
+@@ -12,7 +12,7 @@ import {
+   type FunctionCall,
+   type FunctionDeclaration,
+   type GenerateContentResponseUsageMetadata,
+-} from '@google/genai';
++} from '../types/llm-types.js';
+ import type {
+   ToolCallConfirmationDetails,
+   ToolResult,
+diff --git i/packages/core/src/followup/speculation.test.ts w/packages/core/src/followup/speculation.test.ts
+index a5b07309c..14399019f 100644
+--- i/packages/core/src/followup/speculation.test.ts
++++ w/packages/core/src/followup/speculation.test.ts
+@@ -6,7 +6,7 @@
+ 
+ import { describe, it, expect } from 'vitest';
+ import { ensureToolResultPairing } from './speculation.js';
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ 
+ describe('ensureToolResultPairing', () => {
+   it('returns empty array unchanged', () => {
+diff --git i/packages/core/src/followup/speculation.ts w/packages/core/src/followup/speculation.ts
+index a99c5d84c..c44bbfa44 100644
+--- i/packages/core/src/followup/speculation.ts
++++ w/packages/core/src/followup/speculation.ts
+@@ -15,7 +15,7 @@
+  * 4. User types → abortSpeculation() cleans up
+  */
+ 
+-import type { Content, Part } from '@google/genai';
++import type { Content, Part } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import type { GeminiClient } from '../core/client.js';
+ import { StreamEventType } from '../core/geminiChat.js';
+diff --git i/packages/core/src/followup/suggestionGenerator.ts w/packages/core/src/followup/suggestionGenerator.ts
+index b7a2b19b8..e58034181 100644
+--- i/packages/core/src/followup/suggestionGenerator.ts
++++ w/packages/core/src/followup/suggestionGenerator.ts
+@@ -9,7 +9,7 @@
+  * type next (Next-step Suggestion / NES).
+  */
+ 
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import { getCacheSafeParams, runForkedAgent } from '../utils/forkedAgent.js';
+ import {
+diff --git i/packages/core/src/index.ts w/packages/core/src/index.ts
+index a29126f0e..1ec9001cf 100644
+--- i/packages/core/src/index.ts
++++ w/packages/core/src/index.ts
+@@ -4,6 +4,37 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
++// ============================================================================
++// LLM Types (centralised shim — do NOT import @google/genai directly)
++// Selective re-exports to avoid name clashes with local types.
++// ============================================================================
++export type {
++  CallableTool,
++  Candidate,
++  Content,
++  ContentListUnion,
++  ContentUnion,
++  CountTokensParameters,
++  CountTokensResponse,
++  EmbedContentParameters,
++  EmbedContentResponse,
++  FunctionCall,
++  FunctionDeclaration,
++  FunctionResponse,
++  FunctionResponsePart,
++  GenerateContentConfig,
++  GenerateContentParameters,
++  GenerateContentResponseUsageMetadata,
++  Part,
++  PartListUnion,
++  PartUnion,
++  Schema,
++  SendMessageParameters,
++  Tool,
++  ToolListUnion,
++} from './types/llm-types.js';
++export { FinishReason, GenerateContentResponse, createUserContent, mcpToTool } from './types/llm-types.js';
++
+ // ============================================================================
+ // Configuration & Models
+ // ============================================================================
+@@ -211,7 +242,6 @@ export type {
+ // Telemetry
+ // ============================================================================
+ 
+-export { ClaudexLogger } from './telemetry/claudex-logger/claudex-logger.js';
+ export * from './telemetry/index.js';
+ export {
+   logAuth,
+diff --git i/packages/core/src/memory/const.ts w/packages/core/src/memory/const.ts
+index 4983b85de..24aa3a45c 100644
+--- i/packages/core/src/memory/const.ts
++++ w/packages/core/src/memory/const.ts
+@@ -5,8 +5,6 @@
+  */
+ 
+ export const CLAUDEX_CONFIG_DIR = '.claudex';
+-/** @deprecated Use CLAUDEX_CONFIG_DIR */
+-export const CLAUDEX_CONFIG_DIR = CLAUDEX_CONFIG_DIR;
+ export const DEFAULT_CONTEXT_FILENAME = 'CLAUDEX.md';
+ export const AGENT_CONTEXT_FILENAME = 'AGENTS.md';
+ export const MEMORY_SECTION_HEADER = '## Claudex Added Memories';
+diff --git i/packages/core/src/memory/extract.ts w/packages/core/src/memory/extract.ts
+index e72283fae..1e7b8d622 100644
+--- i/packages/core/src/memory/extract.ts
++++ w/packages/core/src/memory/extract.ts
+@@ -5,7 +5,7 @@
+  */
+ 
+ import * as fs from 'node:fs/promises';
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import { createDebugLogger } from '../utils/debugLogger.js';
+ import { partToString } from '../utils/partUtils.js';
+diff --git i/packages/core/src/memory/extractionAgentPlanner.ts w/packages/core/src/memory/extractionAgentPlanner.ts
+index f8dd9d490..2d41fcc8d 100644
+--- i/packages/core/src/memory/extractionAgentPlanner.ts
++++ w/packages/core/src/memory/extractionAgentPlanner.ts
+@@ -7,7 +7,7 @@
+ import type { Config } from '../config/config.js';
+ import { runForkedAgent, getCacheSafeParams } from '../utils/forkedAgent.js';
+ import { buildFunctionResponseParts } from '../tools/agent/fork-subagent.js';
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ import type { PermissionManager } from '../permissions/permission-manager.js';
+ import type {
+   PermissionCheckContext,
+diff --git i/packages/core/src/memory/forget.ts w/packages/core/src/memory/forget.ts
+index 53d57898e..0abc27d8a 100644
+--- i/packages/core/src/memory/forget.ts
++++ w/packages/core/src/memory/forget.ts
+@@ -5,7 +5,7 @@
+  */
+ 
+ import * as fs from 'node:fs/promises';
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import { runSideQuery } from '../utils/sideQuery.js';
+ import {
+diff --git i/packages/core/src/memory/governance.ts w/packages/core/src/memory/governance.ts
+index 0ec0dc144..40b901ec8 100644
+--- i/packages/core/src/memory/governance.ts
++++ w/packages/core/src/memory/governance.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import { runSideQuery } from '../utils/sideQuery.js';
+ import { parseAutoMemoryEntries } from './entries.js';
+diff --git i/packages/core/src/memory/manager.ts w/packages/core/src/memory/manager.ts
+index 2d4a4b37f..6a0f07d7d 100644
+--- i/packages/core/src/memory/manager.ts
++++ w/packages/core/src/memory/manager.ts
+@@ -36,7 +36,7 @@
+ import * as fs from 'node:fs/promises';
+ import * as path from 'node:path';
+ import { randomUUID } from 'node:crypto';
+-import type { Content, Part } from '@google/genai';
++import type { Content, Part } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import { Storage } from '../config/storage.js';
+ import { logMemoryExtract, MemoryExtractEvent } from '../telemetry/index.js';
+diff --git i/packages/core/src/memory/relevanceSelector.ts w/packages/core/src/memory/relevanceSelector.ts
+index b457a965e..60b19c599 100644
+--- i/packages/core/src/memory/relevanceSelector.ts
++++ w/packages/core/src/memory/relevanceSelector.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import { runSideQuery } from '../utils/sideQuery.js';
+ import type { ScannedAutoMemoryDocument } from './scan.js';
+diff --git i/packages/core/src/models/modelRegistry.test.ts w/packages/core/src/models/modelRegistry.test.ts
+index 62a9010b2..cbf985a0d 100644
+--- i/packages/core/src/models/modelRegistry.test.ts
++++ w/packages/core/src/models/modelRegistry.test.ts
+@@ -93,7 +93,7 @@ describe('ModelRegistry', () => {
+     });
+ 
+     it('should return empty array for non-existent authType', () => {
+-      const models = registry.getModelsForAuthType(AuthType.USE_VERTEX_AI);
++      const models = registry.getModelsForAuthType(AuthType.USE_OPENAI);
+       expect(models.length).toBe(0);
+     });
+ 
+@@ -157,7 +157,7 @@ describe('ModelRegistry', () => {
+     });
+ 
+     it('should return undefined for non-existent authType', () => {
+-      const model = registry.getModel(AuthType.USE_VERTEX_AI, 'some-model');
++      const model = registry.getModel(AuthType.USE_OPENAI, 'some-model');
+       expect(model).toBeUndefined();
+     });
+   });
+@@ -182,7 +182,7 @@ describe('ModelRegistry', () => {
+     });
+ 
+     it('should return false for non-existent authType', () => {
+-      expect(registry.hasModel(AuthType.USE_VERTEX_AI, 'gpt-4')).toBe(false);
++      expect(registry.hasModel(AuthType.USE_OPENAI, 'gpt-4')).toBe(false);
+     });
+   });
+ 
+@@ -257,14 +257,14 @@ describe('ModelRegistry', () => {
+     it('should accept valid authType keys', () => {
+       const registry = new ModelRegistry({
+         openai: [{ id: 'gpt-4', name: 'GPT-4' }],
+-        gemini: [{ id: 'gemini-pro', name: 'Gemini Pro' }],
++        anthropic: [{ id: 'claude-3', name: 'Claude 3' }],
+       });
+ 
+       const openaiModels = registry.getModelsForAuthType(AuthType.USE_OPENAI);
+       expect(openaiModels.length).toBe(1);
+       expect(openaiModels[0].id).toBe('gpt-4');
+ 
+-      const geminiModels = registry.getModelsForAuthType(AuthType.USE_GEMINI);
++      const geminiModels = registry.getModelsForAuthType(AuthType.USE_ANTHROPIC);
+       expect(geminiModels.length).toBe(1);
+       expect(geminiModels[0].id).toBe('gemini-pro');
+     });
+@@ -287,19 +287,19 @@ describe('ModelRegistry', () => {
+       const registry = new ModelRegistry({
+         openai: [{ id: 'gpt-4', name: 'GPT-4' }],
+         'bad-key-1': [{ id: 'model-1', name: 'Model 1' }],
+-        gemini: [{ id: 'gemini-pro', name: 'Gemini Pro' }],
++        anthropic: [{ id: 'claude-3', name: 'Claude 3' }],
+         'bad-key-2': [{ id: 'model-2', name: 'Model 2' }],
+       } as unknown as ModelProvidersConfig);
+ 
+       // Valid keys should be registered
+       expect(registry.getModelsForAuthType(AuthType.USE_OPENAI).length).toBe(1);
+-      expect(registry.getModelsForAuthType(AuthType.USE_GEMINI).length).toBe(1);
++      expect(registry.getModelsForAuthType(AuthType.USE_ANTHROPIC).length).toBe(1);
+ 
+       // Invalid keys should be skipped
+       const openaiModels = registry.getModelsForAuthType(AuthType.USE_OPENAI);
+       expect(openaiModels.length).toBe(1);
+ 
+-      const geminiModels = registry.getModelsForAuthType(AuthType.USE_GEMINI);
++      const geminiModels = registry.getModelsForAuthType(AuthType.USE_ANTHROPIC);
+       expect(geminiModels.length).toBe(1);
+     });
+ 
+@@ -375,7 +375,7 @@ describe('ModelRegistry', () => {
+         'shared-model',
+       );
+       const geminiModel = registry.getModel(
+-        AuthType.USE_GEMINI,
++        AuthType.USE_ANTHROPIC,
+         'shared-model',
+       );
+ 
+@@ -429,17 +429,17 @@ describe('ModelRegistry', () => {
+     it('should clear user-configured models when reload with empty config', () => {
+       const registry = new ModelRegistry({
+         openai: [{ id: 'gpt-4', name: 'GPT-4' }],
+-        gemini: [{ id: 'gemini-pro', name: 'Gemini Pro' }],
++        anthropic: [{ id: 'claude-3', name: 'Claude 3' }],
+       });
+ 
+       expect(registry.getModelsForAuthType(AuthType.USE_OPENAI).length).toBe(1);
+-      expect(registry.getModelsForAuthType(AuthType.USE_GEMINI).length).toBe(1);
++      expect(registry.getModelsForAuthType(AuthType.USE_ANTHROPIC).length).toBe(1);
+ 
+       registry.reloadModels({});
+ 
+       // All user-configured models should be cleared
+       expect(registry.getModelsForAuthType(AuthType.USE_OPENAI).length).toBe(0);
+-      expect(registry.getModelsForAuthType(AuthType.USE_GEMINI).length).toBe(0);
++      expect(registry.getModelsForAuthType(AuthType.USE_ANTHROPIC).length).toBe(0);
+ 
+       // claudex-oauth models should still exist
+       expect(registry.getModelsForAuthType(AuthType.CLAUDEX_OAUTH).length).toBe(
+@@ -470,7 +470,7 @@ describe('ModelRegistry', () => {
+           { id: 'gpt-4', name: 'GPT-4 Updated' },
+           { id: 'gpt-3.5', name: 'GPT-3.5' },
+         ],
+-        gemini: [{ id: 'gemini-pro', name: 'Gemini Pro' }],
++        anthropic: [{ id: 'claude-3', name: 'Claude 3' }],
+       });
+ 
+       const openaiModels = registry.getModelsForAuthType(AuthType.USE_OPENAI);
+@@ -479,7 +479,7 @@ describe('ModelRegistry', () => {
+         'GPT-4 Updated',
+       );
+ 
+-      const geminiModels = registry.getModelsForAuthType(AuthType.USE_GEMINI);
++      const geminiModels = registry.getModelsForAuthType(AuthType.USE_ANTHROPIC);
+       expect(geminiModels.length).toBe(1);
+     });
+ 
+diff --git i/packages/core/src/models/modelsConfig.test.ts w/packages/core/src/models/modelsConfig.test.ts
+index 45115af07..2b8fd6955 100644
+--- i/packages/core/src/models/modelsConfig.test.ts
++++ w/packages/core/src/models/modelsConfig.test.ts
+@@ -794,7 +794,7 @@ describe('ModelsConfig', () => {
+ 
+       // Should include gemini models
+       const geminiModels = allModels.filter(
+-        (m) => m.authType === AuthType.USE_GEMINI,
++        (m) => m.authType === AuthType.USE_OPENAI,
+       );
+       expect(geminiModels.length).toBe(1);
+       expect(geminiModels[0].id).toBe('gemini-model-1');
+@@ -1622,11 +1622,11 @@ describe('ModelsConfig', () => {
+ 
+       // Test Gemini model without provider max_tokens
+       const geminiConfig = new ModelsConfig({
+-        initialAuthType: AuthType.USE_GEMINI,
++        initialAuthType: AuthType.USE_OPENAI,
+         modelProvidersConfig,
+       });
+ 
+-      await geminiConfig.switchModel(AuthType.USE_GEMINI, 'gemini-pro');
++      await geminiConfig.switchModel(AuthType.USE_OPENAI, 'gemini-pro');
+ 
+       gc = currentGenerationConfig(geminiConfig);
+       expect(gc.samplingParams).toBeUndefined();
+diff --git i/packages/core/src/services/chatCompressionService.test.ts w/packages/core/src/services/chatCompressionService.test.ts
+index 417988331..e575b2c64 100644
+--- i/packages/core/src/services/chatCompressionService.test.ts
++++ w/packages/core/src/services/chatCompressionService.test.ts
+@@ -9,7 +9,7 @@ import {
+   ChatCompressionService,
+   findCompressSplitPoint,
+ } from './chatCompressionService.js';
+-import type { Content, GenerateContentResponse } from '@google/genai';
++import type { Content, GenerateContentResponse } from '../types/llm-types.js';
+ import { CompressionStatus } from '../core/turn.js';
+ import { uiTelemetryService } from '../telemetry/uiTelemetry.js';
+ import { tokenLimit } from '../core/tokenLimits.js';
+diff --git i/packages/core/src/services/chatCompressionService.ts w/packages/core/src/services/chatCompressionService.ts
+index 94913d5e5..ca311e174 100644
+--- i/packages/core/src/services/chatCompressionService.ts
++++ w/packages/core/src/services/chatCompressionService.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import type { GeminiChat } from '../core/geminiChat.js';
+ import { type ChatCompressionInfo, CompressionStatus } from '../core/turn.js';
+diff --git i/packages/core/src/services/chatRecordingService.test.ts w/packages/core/src/services/chatRecordingService.test.ts
+index fff565198..89dfac2aa 100644
+--- i/packages/core/src/services/chatRecordingService.test.ts
++++ w/packages/core/src/services/chatRecordingService.test.ts
+@@ -16,7 +16,7 @@ import {
+   type AtCommandRecordPayload,
+ } from './chatRecordingService.js';
+ import * as jsonl from '../utils/jsonl-utils.js';
+-import type { Part } from '@google/genai';
++import type { Part } from '../types/llm-types.js';
+ 
+ vi.mock('node:path');
+ vi.mock('node:child_process');
+diff --git i/packages/core/src/services/chatRecordingService.ts w/packages/core/src/services/chatRecordingService.ts
+index 33a4eebac..ab4c096d7 100644
+--- i/packages/core/src/services/chatRecordingService.ts
++++ w/packages/core/src/services/chatRecordingService.ts
+@@ -14,7 +14,7 @@ import {
+   type GenerateContentResponseUsageMetadata,
+   createUserContent,
+   createModelContent,
+-} from '@google/genai';
++} from '../types/llm-types.js';
+ import * as jsonl from '../utils/jsonl-utils.js';
+ import { getGitBranch } from '../utils/gitUtils.js';
+ import { createDebugLogger } from '../utils/debugLogger.js';
+diff --git i/packages/core/src/services/microcompaction/microcompact.test.ts w/packages/core/src/services/microcompaction/microcompact.test.ts
+index 53b607b86..346cb8bc5 100644
+--- i/packages/core/src/services/microcompaction/microcompact.test.ts
++++ w/packages/core/src/services/microcompaction/microcompact.test.ts
+@@ -5,7 +5,7 @@
+  */
+ 
+ import { describe, expect, it, afterEach } from 'vitest';
+-import type { Content } from '@google/genai';
++import type { Content } from '../../types/llm-types.js';
+ import type { ClearContextOnIdleSettings } from '../../config/config.js';
+ 
+ import {
+diff --git i/packages/core/src/services/microcompaction/microcompact.ts w/packages/core/src/services/microcompaction/microcompact.ts
+index 66af9a3cd..46a464411 100644
+--- i/packages/core/src/services/microcompaction/microcompact.ts
++++ w/packages/core/src/services/microcompaction/microcompact.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { Content, Part } from '@google/genai';
++import type { Content, Part } from '../../types/llm-types.js';
+ 
+ import type { ClearContextOnIdleSettings } from '../../config/config.js';
+ import { ToolNames } from '../../tools/tool-names.js';
+diff --git i/packages/core/src/services/sessionRecap.ts w/packages/core/src/services/sessionRecap.ts
+index 2bebaa2c3..5e609d817 100644
+--- i/packages/core/src/services/sessionRecap.ts
++++ w/packages/core/src/services/sessionRecap.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import { createDebugLogger } from '../utils/debugLogger.js';
+ 
+diff --git i/packages/core/src/services/sessionService.ts w/packages/core/src/services/sessionService.ts
+index 0ea365c9b..dec149c63 100644
+--- i/packages/core/src/services/sessionService.ts
++++ w/packages/core/src/services/sessionService.ts
+@@ -9,7 +9,7 @@ import { getProjectHash } from '../utils/paths.js';
+ import path from 'node:path';
+ import fs from 'node:fs';
+ import readline from 'node:readline';
+-import type { Content, Part } from '@google/genai';
++import type { Content, Part } from '../types/llm-types.js';
+ import * as jsonl from '../utils/jsonl-utils.js';
+ import type {
+   ChatCompressionRecordPayload,
+diff --git i/packages/core/src/tools/agent/agent.test.ts w/packages/core/src/tools/agent/agent.test.ts
+index addb86450..750fc6b45 100644
+--- i/packages/core/src/tools/agent/agent.test.ts
++++ w/packages/core/src/tools/agent/agent.test.ts
+@@ -10,7 +10,7 @@ import {
+   type AgentParams,
+   resolveSubagentApprovalMode,
+ } from './agent.js';
+-import type { PartListUnion } from '@google/genai';
++import type { PartListUnion } from '../../types/llm-types.js';
+ import type { ToolResultDisplay, AgentResultDisplay } from '../tools.js';
+ import { ToolConfirmationOutcome } from '../tools.js';
+ import { type Config, ApprovalMode } from '../../config/config.js';
+diff --git i/packages/core/src/tools/agent/agent.ts w/packages/core/src/tools/agent/agent.ts
+index 508a51f3e..582696438 100644
+--- i/packages/core/src/tools/agent/agent.ts
++++ w/packages/core/src/tools/agent/agent.ts
+@@ -30,7 +30,7 @@ import {
+   AgentHeadless,
+   ContextState,
+ } from '../../agents/runtime/agent-headless.js';
+-import type { Content, FunctionDeclaration } from '@google/genai';
++import type { Content, FunctionDeclaration } from '../../types/llm-types.js';
+ import {
+   FORK_AGENT,
+   FORK_PLACEHOLDER_RESULT,
+diff --git i/packages/core/src/tools/agent/fork-subagent.ts w/packages/core/src/tools/agent/fork-subagent.ts
+index e442f727c..c423556a9 100644
+--- i/packages/core/src/tools/agent/fork-subagent.ts
++++ w/packages/core/src/tools/agent/fork-subagent.ts
+@@ -1,5 +1,5 @@
+ import { AsyncLocalStorage } from 'node:async_hooks';
+-import type { Content } from '@google/genai';
++import type { Content } from '../../types/llm-types.js';
+ 
+ export const FORK_SUBAGENT_TYPE = 'fork';
+ 
+diff --git i/packages/core/src/tools/askUserQuestion.ts w/packages/core/src/tools/askUserQuestion.ts
+index 553dd4aa4..102de65f6 100644
+--- i/packages/core/src/tools/askUserQuestion.ts
++++ w/packages/core/src/tools/askUserQuestion.ts
+@@ -16,7 +16,7 @@ import {
+   Kind,
+   ToolConfirmationOutcome,
+ } from './tools.js';
+-import type { FunctionDeclaration } from '@google/genai';
++import type { FunctionDeclaration } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import { ToolDisplayNames, ToolNames } from './tool-names.js';
+ import { createDebugLogger } from '../utils/debugLogger.js';
+diff --git i/packages/core/src/tools/exitPlanMode.ts w/packages/core/src/tools/exitPlanMode.ts
+index 1d064d591..476433385 100644
+--- i/packages/core/src/tools/exitPlanMode.ts
++++ w/packages/core/src/tools/exitPlanMode.ts
+@@ -12,7 +12,7 @@ import {
+   Kind,
+   ToolConfirmationOutcome,
+ } from './tools.js';
+-import type { FunctionDeclaration } from '@google/genai';
++import type { FunctionDeclaration } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import { ApprovalMode } from '../config/config.js';
+ import { ToolDisplayNames, ToolNames } from './tool-names.js';
+diff --git i/packages/core/src/tools/mcp-client.test.ts w/packages/core/src/tools/mcp-client.test.ts
+index cd287d0dc..784424e6c 100644
+--- i/packages/core/src/tools/mcp-client.test.ts
++++ w/packages/core/src/tools/mcp-client.test.ts
+@@ -4,14 +4,13 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import * as GenAiLib from '@google/genai';
++import * as GenAiLib from '../types/llm-types.js';
+ import * as ClientLib from '@modelcontextprotocol/sdk/client/index.js';
+ import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
+ import * as SdkClientStdioLib from '@modelcontextprotocol/sdk/client/stdio.js';
+ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+ import { afterEach, describe, expect, it, vi } from 'vitest';
+-import { AuthProviderType, type Config } from '../config/config.js';
+-import { GoogleCredentialProvider } from '../mcp/google-auth-provider.js';
++import { type Config } from '../config/config.js';
+ import type { PromptRegistry } from '../prompts/prompt-registry.js';
+ import type { WorkspaceContext } from '../utils/workspaceContext.js';
+ import {
+@@ -397,63 +396,6 @@ describe('mcp-client', () => {
+         "MCP server 'test-server': configured cwd does not exist: /nonexistent/path",
+       );
+     });
+-
+-    describe('useGoogleCredentialProvider', () => {
+-      it('should use GoogleCredentialProvider when specified', async () => {
+-        const transport = await createTransport(
+-          'test-server',
+-          {
+-            httpUrl: 'http://test.googleapis.com',
+-            authProviderType: AuthProviderType.GOOGLE_CREDENTIALS,
+-            oauth: {
+-              scopes: ['scope1'],
+-            },
+-          },
+-          false,
+-        );
+-
+-        expect(transport).toBeInstanceOf(StreamableHTTPClientTransport);
+-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+-        const authProvider = (transport as any)._authProvider;
+-        expect(authProvider).toBeInstanceOf(GoogleCredentialProvider);
+-      });
+-
+-      it('should use GoogleCredentialProvider with SSE transport', async () => {
+-        const transport = await createTransport(
+-          'test-server',
+-          {
+-            url: 'http://test.googleapis.com',
+-            authProviderType: AuthProviderType.GOOGLE_CREDENTIALS,
+-            oauth: {
+-              scopes: ['scope1'],
+-            },
+-          },
+-          false,
+-        );
+-
+-        expect(transport).toBeInstanceOf(SSEClientTransport);
+-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+-        const authProvider = (transport as any)._authProvider;
+-        expect(authProvider).toBeInstanceOf(GoogleCredentialProvider);
+-      });
+-
+-      it('should throw an error if no URL is provided with GoogleCredentialProvider', async () => {
+-        await expect(
+-          createTransport(
+-            'test-server',
+-            {
+-              authProviderType: AuthProviderType.GOOGLE_CREDENTIALS,
+-              oauth: {
+-                scopes: ['scope1'],
+-              },
+-            },
+-            false,
+-          ),
+-        ).rejects.toThrow(
+-          'URL must be provided in the config for Google Credentials provider',
+-        );
+-      });
+-    });
+   });
+   describe('isEnabled', () => {
+     const funcDecl = { name: 'myTool' };
+diff --git i/packages/core/src/tools/mcp-client.ts w/packages/core/src/tools/mcp-client.ts
+index 74ae45cdc..5b9f6303d 100644
+--- i/packages/core/src/tools/mcp-client.ts
++++ w/packages/core/src/tools/mcp-client.ts
+@@ -25,15 +25,13 @@ import {
+ } from '@modelcontextprotocol/sdk/types.js';
+ import { parse } from 'shell-quote';
+ import type { Config, MCPServerConfig } from '../config/config.js';
+-import { AuthProviderType, isSdkMcpServerConfig } from '../config/config.js';
+-import { GoogleCredentialProvider } from '../mcp/google-auth-provider.js';
+-import { ServiceAccountImpersonationProvider } from '../mcp/sa-impersonation-provider.js';
++import { isSdkMcpServerConfig } from '../config/config.js';
+ import { DiscoveredMCPTool } from './mcp-tool.js';
+ import type { McpToolAnnotations } from './mcp-tool.js';
+ import { SdkControlClientTransport } from './sdk-control-client-transport.js';
+ 
+-import type { FunctionDeclaration } from '@google/genai';
+-import { mcpToTool } from '@google/genai';
++import type { FunctionDeclaration } from '../types/llm-types.js';
++import { mcpToTool } from '../types/llm-types.js';
+ import { existsSync } from 'node:fs';
+ import { basename } from 'node:path';
+ import { pathToFileURL } from 'node:url';
+@@ -1264,57 +1262,6 @@ export async function createTransport(
+     });
+   }
+ 
+-  if (
+-    mcpServerConfig.authProviderType ===
+-    AuthProviderType.SERVICE_ACCOUNT_IMPERSONATION
+-  ) {
+-    const provider = new ServiceAccountImpersonationProvider(mcpServerConfig);
+-    const transportOptions:
+-      | StreamableHTTPClientTransportOptions
+-      | SSEClientTransportOptions = {
+-      authProvider: provider,
+-    };
+-
+-    if (mcpServerConfig.httpUrl) {
+-      return new StreamableHTTPClientTransport(
+-        new URL(mcpServerConfig.httpUrl),
+-        transportOptions,
+-      );
+-    } else if (mcpServerConfig.url) {
+-      // Default to SSE if only url is provided
+-      return new SSEClientTransport(
+-        new URL(mcpServerConfig.url),
+-        transportOptions,
+-      );
+-    }
+-    throw new Error(
+-      'No URL configured for ServiceAccountImpersonation MCP Server',
+-    );
+-  }
+-
+-  if (
+-    mcpServerConfig.authProviderType === AuthProviderType.GOOGLE_CREDENTIALS
+-  ) {
+-    const provider = new GoogleCredentialProvider(mcpServerConfig);
+-    const transportOptions:
+-      | StreamableHTTPClientTransportOptions
+-      | SSEClientTransportOptions = {
+-      authProvider: provider,
+-    };
+-    if (mcpServerConfig.httpUrl) {
+-      return new StreamableHTTPClientTransport(
+-        new URL(mcpServerConfig.httpUrl),
+-        transportOptions,
+-      );
+-    } else if (mcpServerConfig.url) {
+-      return new SSEClientTransport(
+-        new URL(mcpServerConfig.url),
+-        transportOptions,
+-      );
+-    }
+-    throw new Error('No URL configured for Google Credentials MCP server');
+-  }
+-
+   // Check if we have OAuth configuration or stored tokens
+   let accessToken: string | null = null;
+   let hasOAuthConfig = mcpServerConfig.oauth?.enabled;
+diff --git i/packages/core/src/tools/mcp-tool.test.ts w/packages/core/src/tools/mcp-tool.test.ts
+index 0873dfbd3..0e16d175b 100644
+--- i/packages/core/src/tools/mcp-tool.test.ts
++++ w/packages/core/src/tools/mcp-tool.test.ts
+@@ -15,7 +15,7 @@ import {
+ } from './mcp-tool.js';
+ import type { ToolResult } from './tools.js';
+ import { ToolConfirmationOutcome } from './tools.js';
+-import type { CallableTool, Part } from '@google/genai';
++import type { CallableTool, Part } from '../types/llm-types.js';
+ import { ToolErrorType } from './tool-error.js';
+ import { updateMCPServerStatus, MCPServerStatus } from './mcp-client.js';
+ 
+diff --git i/packages/core/src/tools/mcp-tool.ts w/packages/core/src/tools/mcp-tool.ts
+index cb6ba2877..a24759f2b 100644
+--- i/packages/core/src/tools/mcp-tool.ts
++++ w/packages/core/src/tools/mcp-tool.ts
+@@ -17,7 +17,7 @@ import type {
+ } from './tools.js';
+ import type { PermissionDecision } from '../permissions/types.js';
+ import { BaseDeclarativeTool, BaseToolInvocation, Kind } from './tools.js';
+-import type { CallableTool, FunctionCall, Part } from '@google/genai';
++import type { CallableTool, FunctionCall, Part } from '../types/llm-types.js';
+ import { ToolErrorType } from './tool-error.js';
+ import type { Config } from '../config/config.js';
+ import { truncateToolOutput } from '../utils/truncation.js';
+diff --git i/packages/core/src/tools/read-file.ts w/packages/core/src/tools/read-file.ts
+index 4a13bd3ea..8a54c2db8 100644
+--- i/packages/core/src/tools/read-file.ts
++++ w/packages/core/src/tools/read-file.ts
+@@ -12,7 +12,7 @@ import type { ToolInvocation, ToolLocation, ToolResult } from './tools.js';
+ import { BaseDeclarativeTool, BaseToolInvocation, Kind } from './tools.js';
+ import { ToolNames, ToolDisplayNames } from './tool-names.js';
+ 
+-import type { PartUnion } from '@google/genai';
++import type { PartUnion } from '../types/llm-types.js';
+ import type { PermissionDecision } from '../permissions/types.js';
+ import {
+   processSingleFileContent,
+diff --git i/packages/core/src/tools/skill.test.ts w/packages/core/src/tools/skill.test.ts
+index 9292521d3..692ab2e52 100644
+--- i/packages/core/src/tools/skill.test.ts
++++ w/packages/core/src/tools/skill.test.ts
+@@ -6,7 +6,7 @@
+ 
+ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+ import { SkillTool, type SkillParams } from './skill.js';
+-import type { PartListUnion } from '@google/genai';
++import type { PartListUnion } from '../types/llm-types.js';
+ import type { ToolResultDisplay } from './tools.js';
+ import type { Config } from '../config/config.js';
+ import { SkillManager } from '../skills/skill-manager.js';
+diff --git i/packages/core/src/tools/todoWrite.ts w/packages/core/src/tools/todoWrite.ts
+index bd689316b..403139d4f 100644
+--- i/packages/core/src/tools/todoWrite.ts
++++ w/packages/core/src/tools/todoWrite.ts
+@@ -6,7 +6,7 @@
+ 
+ import type { ToolResult } from './tools.js';
+ import { BaseDeclarativeTool, BaseToolInvocation, Kind } from './tools.js';
+-import type { FunctionDeclaration } from '@google/genai';
++import type { FunctionDeclaration } from '../types/llm-types.js';
+ import * as fs from 'fs/promises';
+ import * as fsSync from 'fs';
+ import * as path from 'path';
+diff --git i/packages/core/src/tools/tool-registry.test.ts w/packages/core/src/tools/tool-registry.test.ts
+index 02f412f46..6772b32e4 100644
+--- i/packages/core/src/tools/tool-registry.test.ts
++++ w/packages/core/src/tools/tool-registry.test.ts
+@@ -11,8 +11,8 @@ import type { ConfigParameters } from '../config/config.js';
+ import { Config, ApprovalMode } from '../config/config.js';
+ import { ToolRegistry, DiscoveredTool } from './tool-registry.js';
+ import { DiscoveredMCPTool } from './mcp-tool.js';
+-import type { FunctionDeclaration, CallableTool } from '@google/genai';
+-import { mcpToTool } from '@google/genai';
++import type { FunctionDeclaration, CallableTool } from '../types/llm-types.js';
++import { mcpToTool } from '../types/llm-types.js';
+ import { spawn } from 'node:child_process';
+ import fs from 'node:fs';
+ import { MockTool } from '../test-utils/mock-tool.js';
+diff --git i/packages/core/src/tools/tool-registry.ts w/packages/core/src/tools/tool-registry.ts
+index d7e419ef2..67e334211 100644
+--- i/packages/core/src/tools/tool-registry.ts
++++ w/packages/core/src/tools/tool-registry.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { FunctionDeclaration } from '@google/genai';
++import type { FunctionDeclaration } from '../types/llm-types.js';
+ import type {
+   AnyDeclarativeTool,
+   ToolResult,
+diff --git i/packages/core/src/tools/tools.ts w/packages/core/src/tools/tools.ts
+index dd8d68e9b..e96f0cad8 100644
+--- i/packages/core/src/tools/tools.ts
++++ w/packages/core/src/tools/tools.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { FunctionDeclaration, Part, PartListUnion } from '@google/genai';
++import type { FunctionDeclaration, Part, PartListUnion } from '../types/llm-types.js';
+ import { ToolErrorType } from './tool-error.js';
+ import type { ShellExecutionConfig } from '../services/shellExecutionService.js';
+ import { SchemaValidator } from '../utils/schemaValidator.js';
+diff --git i/packages/core/src/tools/web-search/index.ts w/packages/core/src/tools/web-search/index.ts
+index 5d7108bf7..ed904719f 100644
+--- i/packages/core/src/tools/web-search/index.ts
++++ w/packages/core/src/tools/web-search/index.ts
+@@ -23,14 +23,12 @@ import { createDebugLogger } from '../../utils/debugLogger.js';
+ import { buildContentWithSources } from './utils.js';
+ import { TavilyProvider } from './providers/tavily-provider.js';
+ import { GoogleProvider } from './providers/google-provider.js';
+-import { DashScopeProvider } from './providers/dashscope-provider.js';
+ import type {
+   WebSearchToolParams,
+   WebSearchToolResult,
+   WebSearchProvider,
+   WebSearchResultItem,
+   WebSearchProviderConfig,
+-  DashScopeProviderConfig,
+ } from './types.js';
+ import { ToolNames, ToolDisplayNames } from '../tool-names.js';
+ 
+@@ -96,15 +94,6 @@ class WebSearchToolInvocation extends BaseToolInvocation<
+         return new TavilyProvider(config);
+       case 'google':
+         return new GoogleProvider(config);
+-      case 'dashscope': {
+-        // Pass auth type to DashScope provider for availability check
+-        const authType = this.config.getAuthType();
+-        const dashscopeConfig: DashScopeProviderConfig = {
+-          ...config,
+-          authType: authType as string | undefined,
+-        };
+-        return new DashScopeProvider(dashscopeConfig);
+-      }
+       default:
+         throw new Error('Unknown provider type');
+     }
+diff --git i/packages/core/src/tools/web-search/types.ts w/packages/core/src/tools/web-search/types.ts
+index 8ef01745e..cceb59220 100644
+--- i/packages/core/src/tools/web-search/types.ts
++++ w/packages/core/src/tools/web-search/types.ts
+@@ -127,30 +127,8 @@ export interface GoogleProviderConfig {
+   country?: string;
+ }
+ 
+-/**
+- * Base configuration for DashScope provider.
+- */
+-export interface DashScopeProviderConfig {
+-  type: 'dashscope';
+-  apiKey?: string;
+-  uid?: string;
+-  appId?: string;
+-  maxResults?: number;
+-  scene?: string;
+-  timeout?: number;
+-  /**
+-   * Optional auth type to determine provider availability.
+-   * If set to 'claudex-oauth', the provider will be available.
+-   * If set to other values or undefined, the provider will check auth type dynamically.
+-   */
+-  authType?: string;
+-}
+-
+ /**
+  * Discriminated union type for web search provider configurations.
+  * This ensures type safety when working with different provider configs.
+  */
+-export type WebSearchProviderConfig =
+-  | TavilyProviderConfig
+-  | GoogleProviderConfig
+-  | DashScopeProviderConfig;
++export type WebSearchProviderConfig = TavilyProviderConfig | GoogleProviderConfig;
+diff --git i/packages/core/src/utils/environmentContext.test.ts w/packages/core/src/utils/environmentContext.test.ts
+index 3c7c53fb8..6f8ae7980 100644
+--- i/packages/core/src/utils/environmentContext.test.ts
++++ w/packages/core/src/utils/environmentContext.test.ts
+@@ -13,7 +13,7 @@ import {
+   afterEach,
+   type Mock,
+ } from 'vitest';
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ import {
+   getEnvironmentContext,
+   getDirectoryContextString,
+diff --git i/packages/core/src/utils/environmentContext.ts w/packages/core/src/utils/environmentContext.ts
+index fc4bb0039..0646aa504 100644
+--- i/packages/core/src/utils/environmentContext.ts
++++ w/packages/core/src/utils/environmentContext.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { Content, Part } from '@google/genai';
++import type { Content, Part } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import { getFolderStructure } from './getFolderStructure.js';
+ 
+diff --git i/packages/core/src/utils/errorParsing.test.ts w/packages/core/src/utils/errorParsing.test.ts
+index 8ae7395fb..9b57db3ae 100644
+--- i/packages/core/src/utils/errorParsing.test.ts
++++ w/packages/core/src/utils/errorParsing.test.ts
+@@ -34,7 +34,7 @@ describe('parseAndFormatApiError', () => {
+   it('should format a 429 API error with the vertex message', () => {
+     const errorMessage =
+       'got status: 429 Too Many Requests. {"error":{"code":429,"message":"Rate limit exceeded","status":"RESOURCE_EXHAUSTED"}}';
+-    const result = parseAndFormatApiError(errorMessage, AuthType.USE_VERTEX_AI);
++    const result = parseAndFormatApiError(errorMessage, AuthType.USE_OPENAI);
+     expect(result).toContain('[API Error: Rate limit exceeded');
+     expect(result).toContain(vertexMessage);
+   });
+@@ -86,7 +86,7 @@ describe('parseAndFormatApiError', () => {
+       },
+     });
+ 
+-    const result = parseAndFormatApiError(errorMessage, AuthType.USE_GEMINI);
++    const result = parseAndFormatApiError(errorMessage, AuthType.USE_OPENAI);
+     expect(result).toContain('Gemini 2.5 Pro Preview');
+     expect(result).toContain(geminiMessage);
+   });
+@@ -105,7 +105,7 @@ describe('parseAndFormatApiError', () => {
+       message: 'Rate limit exceeded',
+       status: 429,
+     };
+-    const result = parseAndFormatApiError(error, AuthType.USE_VERTEX_AI);
++    const result = parseAndFormatApiError(error, AuthType.USE_OPENAI);
+     expect(result).toContain('[API Error: Rate limit exceeded]');
+     expect(result).toContain(vertexMessage);
+   });
+diff --git i/packages/core/src/utils/errorParsing.ts w/packages/core/src/utils/errorParsing.ts
+index db849e57d..b613ff5cc 100644
+--- i/packages/core/src/utils/errorParsing.ts
++++ w/packages/core/src/utils/errorParsing.ts
+@@ -7,23 +7,11 @@
+ import { isApiError, isStructuredError } from './quotaErrorDetection.js';
+ import { AuthType } from '../core/contentGenerator.js';
+ 
+-// Free Tier message functions
+-const RATE_LIMIT_ERROR_MESSAGE_USE_GEMINI =
+-  '\nPlease wait and try again later. To increase your limits, request a quota increase through AI Studio, or switch to another /auth method';
+-const RATE_LIMIT_ERROR_MESSAGE_VERTEX =
+-  '\nPlease wait and try again later. To increase your limits, request a quota increase through Vertex, or switch to another /auth method';
+ const RATE_LIMIT_ERROR_MESSAGE_DEFAULT =
+   '\nPossible quota limitations in place or slow response times detected. Please wait and try again later.';
+ 
+-function getRateLimitMessage(authType?: AuthType): string {
+-  switch (authType) {
+-    case AuthType.USE_GEMINI:
+-      return RATE_LIMIT_ERROR_MESSAGE_USE_GEMINI;
+-    case AuthType.USE_VERTEX_AI:
+-      return RATE_LIMIT_ERROR_MESSAGE_VERTEX;
+-    default:
+-      return RATE_LIMIT_ERROR_MESSAGE_DEFAULT;
+-  }
++function getRateLimitMessage(_authType?: AuthType): string {
++  return RATE_LIMIT_ERROR_MESSAGE_DEFAULT;
+ }
+ 
+ export function parseAndFormatApiError(
+diff --git i/packages/core/src/utils/errorReporting.ts w/packages/core/src/utils/errorReporting.ts
+index fd162b5a6..f36b8e230 100644
+--- i/packages/core/src/utils/errorReporting.ts
++++ w/packages/core/src/utils/errorReporting.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ import { createDebugLogger } from './debugLogger.js';
+ 
+ const debugLogger = createDebugLogger('ERROR_REPORT');
+diff --git i/packages/core/src/utils/fileUtils.ts w/packages/core/src/utils/fileUtils.ts
+index 8428e4090..4d3230021 100644
+--- i/packages/core/src/utils/fileUtils.ts
++++ w/packages/core/src/utils/fileUtils.ts
+@@ -7,7 +7,7 @@
+ import fs from 'node:fs';
+ import fsPromises from 'node:fs/promises';
+ import path from 'node:path';
+-import type { PartUnion } from '@google/genai';
++import type { PartUnion } from '../types/llm-types.js';
+ import mime from 'mime/lite';
+ import {
+   iconvDecode,
+diff --git i/packages/core/src/utils/forkedAgent.cache.test.ts w/packages/core/src/utils/forkedAgent.cache.test.ts
+index c37ca6369..b289491b6 100644
+--- i/packages/core/src/utils/forkedAgent.cache.test.ts
++++ w/packages/core/src/utils/forkedAgent.cache.test.ts
+@@ -11,7 +11,7 @@ import {
+   clearCacheSafeParams,
+   runForkedAgent,
+ } from './forkedAgent.js';
+-import type { GenerateContentConfig } from '@google/genai';
++import type { GenerateContentConfig } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import { GeminiChat, StreamEventType } from '../core/geminiChat.js';
+ 
+diff --git i/packages/core/src/utils/forkedAgent.ts w/packages/core/src/utils/forkedAgent.ts
+index be273d86f..51f6b5de8 100644
+--- i/packages/core/src/utils/forkedAgent.ts
++++ w/packages/core/src/utils/forkedAgent.ts
+@@ -28,7 +28,7 @@ import type {
+   Content,
+   GenerateContentConfig,
+   GenerateContentResponseUsageMetadata,
+-} from '@google/genai';
++} from '../types/llm-types.js';
+ import { ApprovalMode, type Config } from '../config/config.js';
+ import { GeminiChat, StreamEventType } from '../core/geminiChat.js';
+ import {
+diff --git i/packages/core/src/utils/generateContentResponseUtilities.test.ts w/packages/core/src/utils/generateContentResponseUtilities.test.ts
+index 5f99fa8d4..02b37b297 100644
+--- i/packages/core/src/utils/generateContentResponseUtilities.test.ts
++++ w/packages/core/src/utils/generateContentResponseUtilities.test.ts
+@@ -18,8 +18,8 @@ import type {
+   GenerateContentResponse,
+   Part,
+   SafetyRating,
+-} from '@google/genai';
+-import { FinishReason } from '@google/genai';
++} from '../types/llm-types.js';
++import { FinishReason } from '../types/llm-types.js';
+ 
+ const mockTextPart = (text: string): Part => ({ text });
+ const mockFunctionCallPart = (
+diff --git i/packages/core/src/utils/generateContentResponseUtilities.ts w/packages/core/src/utils/generateContentResponseUtilities.ts
+index feeca91a7..ebfa848e1 100644
+--- i/packages/core/src/utils/generateContentResponseUtilities.ts
++++ w/packages/core/src/utils/generateContentResponseUtilities.ts
+@@ -8,7 +8,7 @@ import type {
+   GenerateContentResponse,
+   Part,
+   FunctionCall,
+-} from '@google/genai';
++} from '../types/llm-types.js';
+ import { getResponseText } from './partUtils.js';
+ 
+ export function getResponseTextFromParts(parts: Part[]): string | undefined {
+diff --git i/packages/core/src/utils/messageInspectors.ts w/packages/core/src/utils/messageInspectors.ts
+index 9a7709469..e313d865d 100644
+--- i/packages/core/src/utils/messageInspectors.ts
++++ w/packages/core/src/utils/messageInspectors.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ 
+ export function isFunctionResponse(content: Content): boolean {
+   return (
+diff --git i/packages/core/src/utils/nextSpeakerChecker.test.ts w/packages/core/src/utils/nextSpeakerChecker.test.ts
+index e7b7bfa30..77aa11d61 100644
+--- i/packages/core/src/utils/nextSpeakerChecker.test.ts
++++ w/packages/core/src/utils/nextSpeakerChecker.test.ts
+@@ -6,7 +6,7 @@
+ 
+ import type { Mock } from 'vitest';
+ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ import { BaseLlmClient } from '../core/baseLlmClient.js';
+ import type { ContentGenerator } from '../core/contentGenerator.js';
+ import type { Config } from '../config/config.js';
+diff --git i/packages/core/src/utils/nextSpeakerChecker.ts w/packages/core/src/utils/nextSpeakerChecker.ts
+index 8b431fac0..9f75566e3 100644
+--- i/packages/core/src/utils/nextSpeakerChecker.ts
++++ w/packages/core/src/utils/nextSpeakerChecker.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ import type { GeminiChat } from '../core/geminiChat.js';
+ import { isFunctionResponse } from './messageInspectors.js';
+ import type { Config } from '../config/config.js';
+diff --git i/packages/core/src/utils/openaiLogger.ts w/packages/core/src/utils/openaiLogger.ts
+index 43028de2c..64fdc2fd8 100644
+--- i/packages/core/src/utils/openaiLogger.ts
++++ w/packages/core/src/utils/openaiLogger.ts
+@@ -6,7 +6,7 @@
+ 
+ import * as path from 'node:path';
+ import { promises as fs } from 'node:fs';
+-import { v4 as uuidv4 } from 'uuid';
++import { randomUUID as uuidv4 } from 'node:crypto';
+ import * as os from 'os';
+ import { createDebugLogger } from './debugLogger.js';
+ 
+diff --git i/packages/core/src/utils/partUtils.test.ts w/packages/core/src/utils/partUtils.test.ts
+index d53010725..59e1db525 100644
+--- i/packages/core/src/utils/partUtils.test.ts
++++ w/packages/core/src/utils/partUtils.test.ts
+@@ -11,7 +11,7 @@ import {
+   flatMapTextParts,
+   appendToLastTextPart,
+ } from './partUtils.js';
+-import type { GenerateContentResponse, Part, PartUnion } from '@google/genai';
++import type { GenerateContentResponse, Part, PartUnion } from '../types/llm-types.js';
+ 
+ const mockResponse = (
+   parts?: Array<{ text?: string; functionCall?: unknown }>,
+diff --git i/packages/core/src/utils/partUtils.ts w/packages/core/src/utils/partUtils.ts
+index 5afa60d5b..ac7bf5f47 100644
+--- i/packages/core/src/utils/partUtils.ts
++++ w/packages/core/src/utils/partUtils.ts
+@@ -9,7 +9,7 @@ import type {
+   PartListUnion,
+   Part,
+   PartUnion,
+-} from '@google/genai';
++} from '../types/llm-types.js';
+ 
+ /**
+  * Converts a PartListUnion into a string.
+diff --git i/packages/core/src/utils/pathReader.ts w/packages/core/src/utils/pathReader.ts
+index 5e0345525..f33ef4d88 100644
+--- i/packages/core/src/utils/pathReader.ts
++++ w/packages/core/src/utils/pathReader.ts
+@@ -7,7 +7,7 @@
+ import { promises as fs } from 'node:fs';
+ import path from 'node:path';
+ import { glob } from 'glob';
+-import type { PartUnion } from '@google/genai';
++import type { PartUnion } from '../types/llm-types.js';
+ import { processSingleFileContent } from './fileUtils.js';
+ import type { Config } from '../config/config.js';
+ 
+diff --git i/packages/core/src/utils/readManyFiles.test.ts w/packages/core/src/utils/readManyFiles.test.ts
+index 588530b29..d4e446dfd 100644
+--- i/packages/core/src/utils/readManyFiles.test.ts
++++ w/packages/core/src/utils/readManyFiles.test.ts
+@@ -9,7 +9,7 @@ import fs from 'node:fs/promises';
+ import * as nodeFs from 'node:fs';
+ import path from 'node:path';
+ import os from 'node:os';
+-import type { PartListUnion } from '@google/genai';
++import type { PartListUnion } from '../types/llm-types.js';
+ import { readManyFiles } from './readManyFiles.js';
+ import { FileDiscoveryService } from '../services/fileDiscoveryService.js';
+ import { StandardFileSystemService } from '../services/fileSystemService.js';
+diff --git i/packages/core/src/utils/readManyFiles.ts w/packages/core/src/utils/readManyFiles.ts
+index 7ece66e1e..ea7d48270 100644
+--- i/packages/core/src/utils/readManyFiles.ts
++++ w/packages/core/src/utils/readManyFiles.ts
+@@ -6,7 +6,7 @@
+ 
+ import * as fs from 'node:fs';
+ import * as path from 'node:path';
+-import type { Part, PartListUnion } from '@google/genai';
++import type { Part, PartListUnion } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import { getErrorMessage } from './errors.js';
+ import { processSingleFileContent } from './fileUtils.js';
+diff --git i/packages/core/src/utils/request-tokenizer/requestTokenizer.test.ts w/packages/core/src/utils/request-tokenizer/requestTokenizer.test.ts
+index 8e04af975..f562dcce1 100644
+--- i/packages/core/src/utils/request-tokenizer/requestTokenizer.test.ts
++++ w/packages/core/src/utils/request-tokenizer/requestTokenizer.test.ts
+@@ -6,7 +6,7 @@
+ 
+ import { describe, it, expect, beforeEach } from 'vitest';
+ import { RequestTokenizer } from './requestTokenizer.js';
+-import type { CountTokensParameters } from '@google/genai';
++import type { CountTokensParameters } from '../../types/llm-types.js';
+ 
+ describe('RequestTokenEstimator', () => {
+   let tokenizer: RequestTokenizer;
+diff --git i/packages/core/src/utils/request-tokenizer/requestTokenizer.ts w/packages/core/src/utils/request-tokenizer/requestTokenizer.ts
+index d2dfb678e..2816508b0 100644
+--- i/packages/core/src/utils/request-tokenizer/requestTokenizer.ts
++++ w/packages/core/src/utils/request-tokenizer/requestTokenizer.ts
+@@ -9,7 +9,7 @@ import type {
+   Content,
+   Part,
+   PartUnion,
+-} from '@google/genai';
++} from '../../types/llm-types.js';
+ import type { TokenCalculationResult } from './types.js';
+ import { TextTokenizer } from './textTokenizer.js';
+ import { ImageTokenizer } from './imageTokenizer.js';
+diff --git i/packages/core/src/utils/retry.ts w/packages/core/src/utils/retry.ts
+index 864a399b3..3f8803fd6 100644
+--- i/packages/core/src/utils/retry.ts
++++ w/packages/core/src/utils/retry.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { GenerateContentResponse } from '@google/genai';
++import type { GenerateContentResponse } from '../types/llm-types.js';
+ import { AuthType } from '../core/contentGenerator.js';
+ import { isClaudexQuotaExceededError } from './quotaErrorDetection.js';
+ import { createDebugLogger } from './debugLogger.js';
+diff --git i/packages/core/src/utils/sideQuery.ts w/packages/core/src/utils/sideQuery.ts
+index e46098d7a..994c990c5 100644
+--- i/packages/core/src/utils/sideQuery.ts
++++ w/packages/core/src/utils/sideQuery.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { Content, GenerateContentConfig, Part } from '@google/genai';
++import type { Content, GenerateContentConfig, Part } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import { DEFAULT_CLAUDEX_MODEL } from '../config/models.js';
+ import { SchemaValidator } from './schemaValidator.js';
+diff --git i/packages/core/src/utils/subagentGenerator.ts w/packages/core/src/utils/subagentGenerator.ts
+index 080a5a93c..a68343a96 100644
+--- i/packages/core/src/utils/subagentGenerator.ts
++++ w/packages/core/src/utils/subagentGenerator.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { Content } from '@google/genai';
++import type { Content } from '../types/llm-types.js';
+ import type { Config } from '../config/config.js';
+ import { runSideQuery } from './sideQuery.js';
+ 
+diff --git i/packages/core/src/utils/thoughtUtils.ts w/packages/core/src/utils/thoughtUtils.ts
+index 116d57170..0cb2d393a 100644
+--- i/packages/core/src/utils/thoughtUtils.ts
++++ w/packages/core/src/utils/thoughtUtils.ts
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
+-import type { GenerateContentResponse } from '@google/genai';
++import type { GenerateContentResponse } from '../types/llm-types.js';
+ 
+ export type ThoughtSummary = {
+   subject: string;

@@ -12,7 +12,7 @@ import {
   useReactToolScheduler,
   mapToDisplay,
 } from './useReactToolScheduler.js';
-import type { PartUnion, FunctionResponse } from '@google/genai';
+import type { PartUnion, FunctionResponse } from '@claudex/core';
 import type {
   Config,
   ToolCallRequestInfo,

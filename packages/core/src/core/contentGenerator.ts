@@ -11,7 +11,7 @@ import type {
   EmbedContentResponse,
   GenerateContentParameters,
   GenerateContentResponse,
-} from '@google/genai';
+} from '../types/llm-types.js';
 import type { Config } from '../config/config.js';
 import { LoggingContentGenerator } from './loggingContentGenerator/index.js';
 import type {
@@ -55,12 +55,8 @@ export interface ContentGenerator {
 export enum AuthType {
   USE_OPENAI = 'openai',
   USE_ANTHROPIC = 'anthropic',
-  /** @deprecated Dead-letter value — never selected at runtime. */
+  /** @deprecated OAuth discontinued 2026-04-15. Remove in Phase 8. */
   CLAUDEX_OAUTH = 'claudex-oauth',
-  /** @deprecated Dead-letter value — never selected at runtime. */
-  USE_GEMINI = '_removed_use_gemini',
-  /** @deprecated Dead-letter value — never selected at runtime. */
-  USE_VERTEX_AI = '_removed_use_vertex_ai',
 }
 
 /**
@@ -79,14 +75,13 @@ export type ContentGeneratorConfig = {
   apiKey?: string;
   apiKeyEnvKey?: string;
   baseUrl?: string;
-  vertexai?: boolean;
   authType?: AuthType | undefined;
   enableOpenAILogging?: boolean;
   openAILoggingDir?: string;
   timeout?: number; // Timeout configuration in milliseconds
   maxRetries?: number; // Maximum retries for rate-limit errors
   retryErrorCodes?: number[]; // Additional error codes that trigger rate-limit retry
-  enableCacheControl?: boolean; // Enable cache control for DashScope providers
+  enableCacheControl?: boolean; // Enable cache control (Anthropic prompt caching)
   samplingParams?: {
     top_p?: number;
     top_k?: number;

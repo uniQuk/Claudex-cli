@@ -5,6 +5,37 @@
  */
 
 // ============================================================================
+// LLM Types (centralised shim — do NOT import @google/genai directly)
+// Selective re-exports to avoid name clashes with local types.
+// ============================================================================
+export type {
+  CallableTool,
+  Candidate,
+  Content,
+  ContentListUnion,
+  ContentUnion,
+  CountTokensParameters,
+  CountTokensResponse,
+  EmbedContentParameters,
+  EmbedContentResponse,
+  FunctionCall,
+  FunctionDeclaration,
+  FunctionResponse,
+  FunctionResponsePart,
+  GenerateContentConfig,
+  GenerateContentParameters,
+  GenerateContentResponseUsageMetadata,
+  Part,
+  PartListUnion,
+  PartUnion,
+  Schema,
+  SendMessageParameters,
+  Tool,
+  ToolListUnion,
+} from './types/llm-types.js';
+export { FinishReason, GenerateContentResponse, createUserContent, mcpToTool } from './types/llm-types.js';
+
+// ============================================================================
 // Configuration & Models
 // ============================================================================
 
@@ -211,7 +242,6 @@ export type {
 // Telemetry
 // ============================================================================
 
-export { ClaudexLogger } from './telemetry/claudex-logger/claudex-logger.js';
 export * from './telemetry/index.js';
 export {
   logAuth,

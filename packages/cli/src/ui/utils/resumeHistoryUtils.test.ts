@@ -13,7 +13,7 @@ import type {
   ConversationRecord,
   ResumedSessionData,
 } from '@claudex/core';
-import type { Part } from '@google/genai';
+import type { Part } from '@claudex/core';
 
 const makeConfig = (tools: Record<string, AnyDeclarativeTool>) =>
   ({

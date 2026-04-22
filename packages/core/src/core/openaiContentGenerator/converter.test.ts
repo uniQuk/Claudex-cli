@@ -15,7 +15,7 @@ import {
   type Part,
   type Tool,
   type CallableTool,
-} from '@google/genai';
+} from '../../types/llm-types.js';
 import type OpenAI from 'openai';
 import { convertToFunctionResponse } from '../coreToolScheduler.js';
 

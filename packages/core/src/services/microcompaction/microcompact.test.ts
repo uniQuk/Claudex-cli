@@ -5,7 +5,7 @@
  */
 
 import { describe, expect, it, afterEach } from 'vitest';
-import type { Content } from '@google/genai';
+import type { Content } from '../../types/llm-types.js';
 import type { ClearContextOnIdleSettings } from '../../config/config.js';
 
 import {

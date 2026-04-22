@@ -27,7 +27,6 @@ import {
   type ApprovalMode,
   type Config,
 } from '@claudex/core';
-import { useArenaInProcess } from '../hooks/useArenaInProcess.js';
 
 // ─── Types ──────────────────────────────────────────────────
 
@@ -291,12 +290,6 @@ export function AgentViewProvider({
       setAgentApprovalMode,
     ],
   );
-
-  // ── Arena in-process bridge ──
-  // Bridge arena manager events to agent registration. The hook is kept
-  // in its own file for separation of concerns; it's called here so the
-  // provider is the single owner of agent tab lifecycle.
-  useArenaInProcess(config ?? null, actions);
 
   return (
     <AgentViewStateContext.Provider value={state}>

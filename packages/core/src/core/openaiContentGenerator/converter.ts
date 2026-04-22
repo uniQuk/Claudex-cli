@@ -16,8 +16,8 @@ import type {
   ContentUnion,
   PartUnion,
   Candidate,
-} from '@google/genai';
-import { GenerateContentResponse, FinishReason } from '@google/genai';
+} from '../../types/llm-types.js';
+import { GenerateContentResponse, FinishReason } from '../../types/llm-types.js';
 import type OpenAI from 'openai';
 import { safeJsonParse } from '../../utils/safeJsonParse.js';
 import { createDebugLogger } from '../../utils/debugLogger.js';

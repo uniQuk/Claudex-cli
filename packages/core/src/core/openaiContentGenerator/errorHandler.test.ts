@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { GenerateContentParameters } from '@google/genai';
+import type { GenerateContentParameters } from '../../types/llm-types.js';
 import { EnhancedErrorHandler } from './errorHandler.js';
 import type { RequestContext } from './errorHandler.js';
 

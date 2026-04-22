@@ -19,7 +19,7 @@ import {
   ToolErrorType,
   ApprovalMode,
 } from '../index.js';
-import type { Part } from '@google/genai';
+import type { Part } from '../types/llm-types.js';
 import { MockTool } from '../test-utils/mock-tool.js';
 
 describe('executeToolCall', () => {
