@@ -1,85 +1,18 @@
 import { useState, useCallback, useEffect } from 'react';
-import * as fs from 'node:fs';
 import {
   type Config,
-  createDebugLogger,
   logUserFeedback,
   UserFeedbackEvent,
   type UserFeedbackRating,
-  isNodeError,
 } from '@claudex/core';
-import { StreamingState, MessageType, type HistoryItem } from '../types.js';
+import { StreamingState, type HistoryItem } from '../types.js';
 import {
   SettingScope,
   type LoadedSettings,
-  USER_SETTINGS_PATH,
 } from '../../config/settings.js';
 import type { SessionStatsState } from '../contexts/SessionContext.js';
 import { FEEDBACK_OPTIONS } from '../FeedbackDialog.js';
-import stripJsonComments from 'strip-json-comments';
 
-const FEEDBACK_SHOW_PROBABILITY = 0.25; // 25% probability of showing feedback dialog
-const MIN_TOOL_CALLS = 10; // Minimum tool calls to show feedback dialog
-const MIN_USER_MESSAGES = 5; // Minimum user messages to show feedback dialog
-
-// Fatigue mechanism constants
-const FEEDBACK_COOLDOWN_HOURS = 24; // Hours to wait before showing feedback dialog again
-const debugLogger = createDebugLogger('FEEDBACK_DIALOG');
-
-/**
- * Check if the last message in the conversation history is an AI response
- */
-const lastMessageIsAIResponse = (history: HistoryItem[]): boolean =>
-  history.length > 0 && history[history.length - 1].type === MessageType.GEMINI;
-
-/**
- * Read feedbackLastShownTimestamp directly from the user settings file
- */
-const getFeedbackLastShownTimestampFromFile = (): number => {
-  try {
-    if (fs.existsSync(USER_SETTINGS_PATH)) {
-      const content = fs.readFileSync(USER_SETTINGS_PATH, 'utf-8');
-      const settings = JSON.parse(stripJsonComments(content));
-      return settings?.ui?.feedbackLastShownTimestamp ?? 0;
-    }
-  } catch (error) {
-    if (isNodeError(error) && error.code !== 'ENOENT') {
-      debugLogger.warn(
-        'Failed to read feedbackLastShownTimestamp from settings file:',
-        error,
-      );
-    }
-  }
-  return 0;
-};
-
-/**
- * Check if we should show the feedback dialog based on fatigue mechanism
- */
-const shouldShowFeedbackBasedOnFatigue = (): boolean => {
-  const feedbackLastShownTimestamp = getFeedbackLastShownTimestampFromFile();
-
-  const now = Date.now();
-  const timeSinceLastShown = now - feedbackLastShownTimestamp;
-  const cooldownMs = FEEDBACK_COOLDOWN_HOURS * 60 * 60 * 1000;
-
-  return timeSinceLastShown >= cooldownMs;
-};
-
-/**
- * Check if the session meets the minimum requirements for showing feedback
- * Either tool calls > 10 OR user messages > 5
- */
-const meetsMinimumSessionRequirements = (
-  sessionStats: SessionStatsState,
-): boolean => {
-  const toolCallsCount = sessionStats.metrics.tools.totalCalls;
-  const userMessagesCount = sessionStats.promptCount;
-
-  return (
-    toolCallsCount > MIN_TOOL_CALLS || userMessagesCount > MIN_USER_MESSAGES
-  );
-};
 
 export interface UseFeedbackDialogProps {
   config: Config;
@@ -141,25 +74,6 @@ export const useFeedbackDialog = ({
     },
     [closeFeedbackDialog, sessionStats.sessionId, config, settings],
   );
-
-  useEffect(() => {
-    const checkAndShowFeedback = () => {
-      // Feedback dialog is disabled (was gated on CLAUDEX_OAUTH which is removed)
-      void streamingState;
-      void history;
-    };
-
-    checkAndShowFeedback();
-  }, [
-    streamingState,
-    history,
-    sessionStats,
-    isFeedbackDialogOpen,
-    isFeedbackDismissedTemporarily,
-    openFeedbackDialog,
-    settings.merged.ui?.enableUserFeedback,
-    config,
-  ]);
 
   // Reset temporary dismissal when a new AI response starts streaming
   useEffect(() => {

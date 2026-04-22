@@ -5,7 +5,6 @@
  */
 
 import {
-  AuthType,
   InputFormat,
   isDebugLoggingDegraded,
   isBareMode,

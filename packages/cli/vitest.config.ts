@@ -12,6 +12,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@claudex/core': path.resolve(__dirname, '../core/index.ts'),
+      ink: path.resolve(__dirname, 'node_modules/ink'),
     },
   },
   test: {
@@ -47,7 +48,7 @@ export default defineConfig({
     },
     server: {
       deps: {
-        inline: [/@claudex\/core/],
+        inline: [/@claudex\/core/, /ink-testing-library/],
       },
     },
   },

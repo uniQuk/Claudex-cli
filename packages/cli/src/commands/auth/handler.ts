@@ -341,26 +341,11 @@ export async function runInteractiveAuth() {
           'Paid · Up to 6,000 requests/5 hrs · All Alibaba Cloud Coding Plan Models',
         ),
       },
-      {
-        value: 'claudex-oauth' as const,
-        label: t('Claudex OAuth'),
-        description: t('Discontinued — switch to Coding Plan or API Key'),
-      },
     ],
     t('Select authentication method:'),
   );
 
-  let choice = await selector.select();
-
-  // If user selects discontinued Claudex OAuth, warn and re-prompt
-  while (choice === 'claudex-oauth') {
-    writeStdoutLine(
-      t(
-        '\n⚠ Claudex OAuth free tier was discontinued on 2026-04-15. Please select another option.\n',
-      ),
-    );
-    choice = await selector.select();
-  }
+  const choice = await selector.select();
 
   if (choice === 'coding-plan') {
     await handleClaudexAuth('coding-plan', {});
@@ -383,11 +368,6 @@ export async function showAuthStatus(): Promise<void> {
     if (!selectedType) {
       writeStdoutLine(t('⚠️  No authentication method configured.\n'));
       writeStdoutLine(t('Run one of the following commands to get started:\n'));
-      writeStdoutLine(
-        t(
-          '  claudex auth claudex-oauth     - Authenticate with Claudex OAuth (free tier)',
-        ),
-      );
       writeStdoutLine(
         t(
           '  claudex auth coding-plan      - Authenticate with Alibaba Cloud Coding Plan\n',

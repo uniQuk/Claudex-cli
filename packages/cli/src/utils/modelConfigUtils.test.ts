@@ -63,33 +63,6 @@ describe('modelConfigUtils', () => {
       expect(getAuthTypeFromEnv()).toBeUndefined();
     });
 
-    it('should return CLAUDEX_OAUTH when CLAUDEX_OAUTH is set', () => {
-      process.env['CLAUDEX_OAUTH'] = 'true';
-
-      expect(getAuthTypeFromEnv()).toBe(AuthType.CLAUDEX_OAUTH);
-    });
-
-    it('should return USE_GEMINI when Gemini env vars are set', () => {
-      process.env['GEMINI_API_KEY'] = 'test-key';
-      process.env['GEMINI_MODEL'] = 'gemini-pro';
-
-      expect(getAuthTypeFromEnv()).toBe(AuthType.USE_OPENAI);
-    });
-
-    it('should return undefined when Gemini env vars are incomplete', () => {
-      process.env['GEMINI_API_KEY'] = 'test-key';
-      // Missing GEMINI_MODEL
-
-      expect(getAuthTypeFromEnv()).toBeUndefined();
-    });
-
-    it('should return USE_VERTEX_AI when Google env vars are set', () => {
-      process.env['GOOGLE_API_KEY'] = 'test-key';
-      process.env['GOOGLE_MODEL'] = 'vertex-model';
-
-      expect(getAuthTypeFromEnv()).toBe(AuthType.USE_OPENAI);
-    });
-
     it('should return undefined when Google env vars are incomplete', () => {
       process.env['GOOGLE_API_KEY'] = 'test-key';
       // Missing GOOGLE_MODEL
@@ -111,16 +84,6 @@ describe('modelConfigUtils', () => {
       // Missing ANTHROPIC_BASE_URL
 
       expect(getAuthTypeFromEnv()).toBeUndefined();
-    });
-
-    it('should prioritize CLAUDEX_OAUTH over other auth types when explicitly set', () => {
-      process.env['CLAUDEX_OAUTH'] = 'true';
-      process.env['OPENAI_API_KEY'] = 'test-key';
-      process.env['OPENAI_MODEL'] = 'gpt-4';
-      process.env['OPENAI_BASE_URL'] = 'https://api.openai.com';
-
-      // CLAUDEX_OAUTH is checked first, so it should be returned even when other auth vars are set
-      expect(getAuthTypeFromEnv()).toBe(AuthType.CLAUDEX_OAUTH);
     });
 
     it('should return undefined when no auth env vars are set', () => {

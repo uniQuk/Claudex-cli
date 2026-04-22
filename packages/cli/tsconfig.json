@@ -76,7 +76,6 @@
     "src/ui/hooks/useFocus.test.ts",
     "src/ui/hooks/useFolderTrust.test.ts",
     "src/ui/hooks/useLLMStream.test.tsx",
-    "src/ui/hooks/useClaudexAuth.test.ts",
     "src/ui/components/ClaudexOAuthProgress.test.tsx",
     "src/ui/hooks/useKeypress.test.ts",
     "src/ui/hooks/usePhraseCycler.test.ts",

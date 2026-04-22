@@ -168,7 +168,6 @@ describe('Session', () => {
       expect(mockConfig.switchModel).toHaveBeenCalledWith(
         AuthType.USE_OPENAI,
         'claudex3-coder-plus',
-        undefined,
       );
     });
 

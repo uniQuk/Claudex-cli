@@ -57,35 +57,7 @@ describe('showAuthStatus', () => {
       expect.stringContaining('No authentication method configured'),
     );
     expect(writeStdoutLine).toHaveBeenCalledWith(
-      expect.stringContaining('claudex auth claudex-oauth'),
-    );
-    expect(writeStdoutLine).toHaveBeenCalledWith(
       expect.stringContaining('claudex auth coding-plan'),
-    );
-    expect(process.exit).toHaveBeenCalledWith(0);
-  });
-
-  it('should show Claudex OAuth status when configured', async () => {
-    vi.mocked(loadSettings).mockReturnValue(
-      createMockSettings({
-        security: {
-          auth: {
-            selectedType: AuthType.CLAUDEX_OAUTH,
-          },
-        },
-      }),
-    );
-
-    await showAuthStatus();
-
-    expect(writeStdoutLine).toHaveBeenCalledWith(
-      expect.stringContaining('Claudex OAuth'),
-    );
-    expect(writeStdoutLine).toHaveBeenCalledWith(
-      expect.stringContaining('Free tier (discontinued 2026-04-15)'),
-    );
-    expect(writeStdoutLine).toHaveBeenCalledWith(
-      expect.stringContaining('No longer available'),
     );
     expect(process.exit).toHaveBeenCalledWith(0);
   });
@@ -167,7 +139,7 @@ describe('showAuthStatus', () => {
     await showAuthStatus();
 
     expect(writeStdoutLine).toHaveBeenCalledWith(
-      expect.stringContaining('中国 (China)'),
+      expect.stringContaining('China - Alibaba Cloud Bailian'),
     );
   });
 

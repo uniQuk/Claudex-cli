@@ -108,7 +108,7 @@ describe('FileCommandLoader', () => {
     const userCommandsDir = Storage.getUserCommandsDir();
     mock({
       [userCommandsDir]: {
-        'test.toml': 'prompt = "This is a test prompt"',
+        'test.md': '---\ndescription: ""\n---\nThis is a test prompt',
       },
     });
 
@@ -150,7 +150,7 @@ describe('FileCommandLoader', () => {
       const realCommandsDir = '/real/commands';
       mock({
         [realCommandsDir]: {
-          'test.toml': 'prompt = "This is a test prompt"',
+          'test.md': '---\ndescription: ""\n---\nThis is a test prompt',
         },
         // Symlink the user commands directory to the real one
         [userCommandsDir]: mock.symlink({
@@ -180,7 +180,7 @@ describe('FileCommandLoader', () => {
           }),
         },
         [realNamespacedDir]: {
-          'my-test.toml': 'prompt = "This is a test prompt"',
+          'my-test.md': '---\ndescription: ""\n---\nThis is a test prompt',
         },
       });
 
@@ -198,8 +198,8 @@ describe('FileCommandLoader', () => {
     const userCommandsDir = Storage.getUserCommandsDir();
     mock({
       [userCommandsDir]: {
-        'test1.toml': 'prompt = "Prompt 1"',
-        'test2.toml': 'prompt = "Prompt 2"',
+        'test1.md': '---\ndescription: ""\n---\nPrompt 1',
+        'test2.md': '---\ndescription: ""\n---\nPrompt 2',
       },
     });
 
@@ -216,7 +216,7 @@ describe('FileCommandLoader', () => {
       [userCommandsDir]: {
         gcp: {
           pipelines: {
-            'run.toml': 'prompt = "run pipeline"',
+            'run.md': '---\ndescription: ""\n---\nrun pipeline',
           },
         },
       },
@@ -238,7 +238,7 @@ describe('FileCommandLoader', () => {
     mock({
       [userCommandsDir]: {
         git: {
-          'commit.toml': 'prompt = "git commit prompt"',
+          'commit.md': '---\ndescription: ""\n---\ngit commit prompt',
         },
       },
     });
@@ -259,10 +259,10 @@ describe('FileCommandLoader', () => {
     ).getProjectCommandsDir();
     mock({
       [userCommandsDir]: {
-        'test.toml': 'prompt = "User prompt"',
+        'test.md': '---\ndescription: ""\n---\nUser prompt',
       },
       [projectCommandsDir]: {
-        'test.toml': 'prompt = "Project prompt"',
+        'test.md': '---\ndescription: ""\n---\nProject prompt',
       },
     });
 
@@ -315,10 +315,10 @@ describe('FileCommandLoader', () => {
     ).getProjectCommandsDir();
     mock({
       [userCommandsDir]: {
-        'user.toml': 'prompt = "User prompt"',
+        'user.md': '---\ndescription: ""\n---\nUser prompt',
       },
       [projectCommandsDir]: {
-        'project.toml': 'prompt = "Project prompt"',
+        'project.md': '---\ndescription: ""\n---\nProject prompt',
       },
     });
 
@@ -335,43 +335,49 @@ describe('FileCommandLoader', () => {
     expect(commands).toEqual([]);
   });
 
-  it('ignores files with TOML syntax errors', async () => {
+  it('loads files with non-standard YAML frontmatter gracefully', async () => {
     const userCommandsDir = Storage.getUserCommandsDir();
     mock({
       [userCommandsDir]: {
-        'invalid.toml': 'this is not valid toml',
-        'good.toml': 'prompt = "This one is fine"',
+        // The lenient YAML parser handles non-standard content gracefully
+        'unusual.md': '---\ndescription: some value with: colons\n---\nsome prompt',
+        'good.md': '---\ndescription: ""\n---\nThis one is fine',
       },
     });
 
     const loader = new FileCommandLoader(null);
     const commands = await loader.loadCommands(signal);
 
-    expect(commands).toHaveLength(1);
-    expect(commands[0].name).toBe('good');
+    // Both files are loaded since the markdown parser is lenient
+    expect(commands).toHaveLength(2);
+    const names = commands.map((c) => c.name).sort();
+    expect(names).toEqual(['good', 'unusual']);
   });
 
-  it('ignores files that are semantically invalid (missing prompt)', async () => {
+  it('loads files with only frontmatter and no prompt body', async () => {
     const userCommandsDir = Storage.getUserCommandsDir();
     mock({
       [userCommandsDir]: {
-        'no_prompt.toml': 'description = "This file is missing a prompt"',
-        'good.toml': 'prompt = "This one is fine"',
+        // No body after frontmatter — prompt will be an empty string, still valid
+        'no_prompt.md': '---\ndescription: "This file has no body"\n---\n',
+        'good.md': '---\ndescription: ""\n---\nThis one is fine',
       },
     });
 
     const loader = new FileCommandLoader(null);
     const commands = await loader.loadCommands(signal);
 
-    expect(commands).toHaveLength(1);
-    expect(commands[0].name).toBe('good');
+    // Both files are loaded; the markdown schema accepts empty-string prompts
+    expect(commands).toHaveLength(2);
+    const names = commands.map((c) => c.name).sort();
+    expect(names).toEqual(['good', 'no_prompt']);
   });
 
   it('handles filename edge cases correctly', async () => {
     const userCommandsDir = Storage.getUserCommandsDir();
     mock({
       [userCommandsDir]: {
-        'test.v1.toml': 'prompt = "Test prompt"',
+        'test.v1.md': '---\ndescription: ""\n---\nTest prompt',
       },
     });
 
@@ -393,7 +399,7 @@ describe('FileCommandLoader', () => {
     const userCommandsDir = Storage.getUserCommandsDir();
     mock({
       [userCommandsDir]: {
-        'test.toml': 'prompt = "Test prompt"',
+        'test.md': '---\ndescription: ""\n---\nTest prompt',
       },
     });
 
@@ -401,14 +407,14 @@ describe('FileCommandLoader', () => {
     const commands = await loader.loadCommands(signal);
     const command = commands[0];
     expect(command).toBeDefined();
-    expect(command.description).toBe('Custom command from test.toml');
+    expect(command.description).toBe('Custom command from test.md');
   });
 
   it('uses the provided description', async () => {
     const userCommandsDir = Storage.getUserCommandsDir();
     mock({
       [userCommandsDir]: {
-        'test.toml': 'prompt = "Test prompt"\ndescription = "My test command"',
+        'test.md': '---\ndescription: "My test command"\n---\nTest prompt',
       },
     });
 
@@ -423,7 +429,7 @@ describe('FileCommandLoader', () => {
     const userCommandsDir = Storage.getUserCommandsDir();
     mock({
       [userCommandsDir]: {
-        'legacy:command.toml': 'prompt = "This is a legacy command"',
+        'legacy:command.md': '---\ndescription: ""\n---\nThis is a legacy command',
       },
     });
 
@@ -443,7 +449,7 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'simple.toml': `prompt = "Just a regular prompt"`,
+          'simple.md': '---\ndescription: ""\n---\nJust a regular prompt',
         },
       });
 
@@ -458,7 +464,7 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'args.toml': `prompt = "Prompt with {{args}}"`,
+          'args.md': '---\ndescription: ""\n---\nPrompt with {{args}}',
         },
       });
 
@@ -473,7 +479,7 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'shell.toml': `prompt = "Prompt with !{cmd}"`,
+          'shell.md': '---\ndescription: ""\n---\nPrompt with !{cmd}',
         },
       });
 
@@ -488,7 +494,7 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'both.toml': `prompt = "Prompt with {{args}} and !{cmd}"`,
+          'both.md': '---\ndescription: ""\n---\nPrompt with {{args}} and !{cmd}',
         },
       });
 
@@ -503,7 +509,7 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'at-file.toml': `prompt = "Context: @{./my-file.txt}"`,
+          'at-file.md': '---\ndescription: ""\n---\nContext: @{./my-file.txt}',
         },
       });
 
@@ -519,7 +525,7 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'shell-and-at.toml': `prompt = "Run !{cmd} with @{file.txt}"`,
+          'shell-and-at.md': '---\ndescription: ""\n---\nRun !{cmd} with @{file.txt}',
         },
       });
 
@@ -535,7 +541,7 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'args-and-at.toml': `prompt = "Run {{args}} with @{file.txt}"`,
+          'args-and-at.md': '---\ndescription: ""\n---\nRun {{args}} with @{file.txt}',
         },
       });
 
@@ -561,10 +567,10 @@ describe('FileCommandLoader', () => {
 
       mock({
         [userCommandsDir]: {
-          'user.toml': 'prompt = "User command"',
+          'user.md': '---\ndescription: ""\n---\nUser command',
         },
         [projectCommandsDir]: {
-          'project.toml': 'prompt = "Project command"',
+          'project.md': '---\ndescription: ""\n---\nProject command',
         },
         [extensionDir]: {
           'claudex-extension.json': JSON.stringify({
@@ -572,7 +578,7 @@ describe('FileCommandLoader', () => {
             version: '1.0.0',
           }),
           commands: {
-            'ext.toml': 'prompt = "Extension command"',
+            'ext.md': '---\ndescription: ""\n---\nExtension command',
           },
         },
       });
@@ -619,14 +625,14 @@ describe('FileCommandLoader', () => {
             version: '1.0.0',
           }),
           commands: {
-            'deploy.toml': 'prompt = "Extension deploy command"',
+            'deploy.md': '---\ndescription: ""\n---\nExtension deploy command',
           },
         },
         [userCommandsDir]: {
-          'deploy.toml': 'prompt = "User deploy command"',
+          'deploy.md': '---\ndescription: ""\n---\nUser deploy command',
         },
         [projectCommandsDir]: {
-          'deploy.toml': 'prompt = "Project deploy command"',
+          'deploy.md': '---\ndescription: ""\n---\nProject deploy command',
         },
       });
 
@@ -719,7 +725,7 @@ describe('FileCommandLoader', () => {
             version: '1.0.0',
           }),
           commands: {
-            'active.toml': 'prompt = "Active extension command"',
+            'active.md': '---\ndescription: ""\n---\nActive extension command',
           },
         },
         [extensionDir2]: {
@@ -728,7 +734,7 @@ describe('FileCommandLoader', () => {
             version: '1.0.0',
           }),
           commands: {
-            'inactive.toml': 'prompt = "Inactive extension command"',
+            'inactive.md': '---\ndescription: ""\n---\nInactive extension command',
           },
         },
       });
@@ -806,12 +812,12 @@ describe('FileCommandLoader', () => {
           }),
           commands: {
             b: {
-              'c.toml': 'prompt = "Nested command from extension a"',
+              'c.md': '---\ndescription: ""\n---\nNested command from extension a',
               d: {
-                'e.toml': 'prompt = "Deeply nested command"',
+                'e.md': '---\ndescription: ""\n---\nDeeply nested command',
               },
             },
-            'simple.toml': 'prompt = "Simple command"',
+            'simple.md': '---\ndescription: ""\n---\nSimple command',
           },
         },
       });
@@ -861,8 +867,7 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'shorthand.toml':
-            'prompt = "The user wants to: {{args}}"\ndescription = "Shorthand test"',
+          'shorthand.md': '---\ndescription: "Shorthand test"\n---\nThe user wants to: {{args}}',
         },
       });
 
@@ -895,8 +900,7 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'model_led.toml':
-            'prompt = "This is the instruction."\ndescription = "Default processor test"',
+          'model_led.md': '---\ndescription: "Default processor test"\n---\nThis is the instruction.',
         },
       });
 
@@ -929,7 +933,7 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'args_only.toml': `prompt = "Hello {{args}}"`,
+          'args_only.md': '---\ndescription: ""\n---\nHello {{args}}',
         },
       });
 
@@ -942,7 +946,7 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'shell.toml': `prompt = "Run this: ${SHELL_INJECTION_TRIGGER}echo hello}"`,
+          'shell.md': `---\ndescription: ""\n---\nRun this: ${SHELL_INJECTION_TRIGGER}echo hello}`,
         },
       });
 
@@ -956,7 +960,7 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'regular.toml': `prompt = "Just a regular prompt"`,
+          'regular.md': '---\ndescription: ""\n---\nJust a regular prompt',
         },
       });
 
@@ -970,7 +974,7 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'shell.toml': `prompt = "Run !{echo 'hello'}"`,
+          'shell.md': "---\ndescription: \"\"\n---\nRun !{echo 'hello'}",
         },
       });
       mockShellProcess.mockResolvedValue([{ text: 'Run hello' }]);
@@ -998,7 +1002,7 @@ describe('FileCommandLoader', () => {
       const rawInvocation = '/shell rm -rf /';
       mock({
         [userCommandsDir]: {
-          'shell.toml': `prompt = "Run !{rm -rf /}"`,
+          'shell.md': '---\ndescription: ""\n---\nRun !{rm -rf /}',
         },
       });
 
@@ -1031,7 +1035,7 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'shell.toml': `prompt = "Run !{something}"`,
+          'shell.md': '---\ndescription: ""\n---\nRun !{something}',
         },
       });
 
@@ -1057,9 +1061,7 @@ describe('FileCommandLoader', () => {
       mock({
         [userCommandsDir]: {
           // This prompt uses !{}, @{}, but NOT {{args}}, so all processors should be active.
-          'pipeline.toml': `
-              prompt = "Shell says: !{echo foo}. File says: @{./bar.txt}"
-            `,
+          'pipeline.md': '---\ndescription: ""\n---\nShell says: !{echo foo}. File says: @{./bar.txt}',
         },
         './bar.txt': 'bar content',
       });
@@ -1158,8 +1160,7 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'at-file.toml':
-            'prompt = "Context from file: @{./test.txt}"\ndescription = "@-file test"',
+          'at-file.md': '---\ndescription: "@-file test"\n---\nContext from file: @{./test.txt}',
         },
         './test.txt': 'file content',
       });
@@ -1222,8 +1223,8 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'test1.toml': 'prompt = "Prompt 1"',
-          'test2.toml': 'prompt = "Prompt 2"',
+          'test1.md': '---\ndescription: ""\n---\nPrompt 1',
+          'test2.md': '---\ndescription: ""\n---\nPrompt 2',
         },
       });
 
@@ -1243,8 +1244,8 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'test1.toml': 'prompt = "Prompt 1"',
-          'test2.toml': 'prompt = "Prompt 2"',
+          'test1.md': '---\ndescription: ""\n---\nPrompt 1',
+          'test2.md': '---\ndescription: ""\n---\nPrompt 2',
         },
       });
 
@@ -1260,8 +1261,8 @@ describe('FileCommandLoader', () => {
       const userCommandsDir = Storage.getUserCommandsDir();
       mock({
         [userCommandsDir]: {
-          'test1.toml': 'prompt = "Prompt 1"',
-          'test2.toml': 'prompt = "Prompt 2"',
+          'test1.md': '---\ndescription: ""\n---\nPrompt 1',
+          'test2.md': '---\ndescription: ""\n---\nPrompt 2',
         },
       });
 

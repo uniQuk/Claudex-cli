@@ -15,8 +15,6 @@ import type { Config } from '@claudex/core';
 import { AuthType, DEFAULT_CLAUDEX_MODEL } from '@claudex/core';
 import type { LoadedSettings } from '../../config/settings.js';
 import { SettingScope } from '../../config/settings.js';
-import { getFilteredClaudexModels } from '../models/availableModels.js';
-
 vi.mock('../hooks/useKeypress.js', () => ({
   useKeypress: vi.fn(),
 }));
@@ -26,14 +24,18 @@ vi.mock('./shared/DescriptiveRadioButtonSelect.js', () => ({
   DescriptiveRadioButtonSelect: vi.fn(() => null),
 }));
 
+const MOCK_OPENAI_MODELS = [
+  { id: DEFAULT_CLAUDEX_MODEL, label: 'Default Model', isVision: true },
+];
+
 // Helper to create getAvailableModelsForAuthType mock
 const createMockGetAvailableModelsForAuthType = () =>
   vi.fn((t: AuthType) => {
-    if (t === AuthType.CLAUDEX_OAUTH) {
-      return getFilteredClaudexModels().map((m) => ({
+    if (t === AuthType.USE_OPENAI) {
+      return MOCK_OPENAI_MODELS.map((m) => ({
         id: m.id,
         label: m.label,
-        authType: AuthType.CLAUDEX_OAUTH,
+        authType: AuthType.USE_OPENAI,
       }));
     }
     return [];
@@ -61,13 +63,13 @@ const renderComponent = (
     getModel: vi.fn(() => DEFAULT_CLAUDEX_MODEL),
     setModel: vi.fn().mockResolvedValue(undefined),
     switchModel: vi.fn().mockResolvedValue(undefined),
-    getAuthType: vi.fn(() => 'claudex-oauth'),
+    getAuthType: vi.fn(() => AuthType.USE_OPENAI),
     getAllConfiguredModels: vi.fn(() =>
-      getFilteredClaudexModels().map((m) => ({
+      MOCK_OPENAI_MODELS.map((m) => ({
         id: m.id,
         label: m.label,
-        description: m.description || '',
-        authType: AuthType.CLAUDEX_OAUTH,
+        description: '',
+        authType: AuthType.USE_OPENAI,
       })),
     ),
 
@@ -76,7 +78,7 @@ const renderComponent = (
     getSessionId: vi.fn(() => 'mock-session-id'),
     getDebugMode: vi.fn(() => false),
     getContentGeneratorConfig: vi.fn(() => ({
-      authType: AuthType.CLAUDEX_OAUTH,
+      authType: AuthType.USE_OPENAI,
       model: DEFAULT_CLAUDEX_MODEL,
     })),
     getUseModelRouter: vi.fn(() => false),
@@ -124,10 +126,9 @@ describe('<ModelDialog />', () => {
     expect(mockedSelect).toHaveBeenCalledTimes(1);
 
     const props = mockedSelect.mock.calls[0][0];
-    expect(props.items).toHaveLength(getFilteredClaudexModels().length);
-    // coder-model is the only model and it has vision capability
+    expect(props.items).toHaveLength(MOCK_OPENAI_MODELS.length);
     expect(props.items[0].value).toBe(
-      `${AuthType.CLAUDEX_OAUTH}::${DEFAULT_CLAUDEX_MODEL}`,
+      `${AuthType.USE_OPENAI}::${DEFAULT_CLAUDEX_MODEL}`,
     );
     expect(props.showNumbers).toBe(true);
   });
@@ -144,9 +145,7 @@ describe('<ModelDialog />', () => {
     );
 
     expect(mockGetModel).toHaveBeenCalled();
-    // Calculate expected index dynamically based on model list
-    const claudexModels = getFilteredClaudexModels();
-    const expectedIndex = claudexModels.findIndex(
+    const expectedIndex = MOCK_OPENAI_MODELS.findIndex(
       (m) => m.id === DEFAULT_CLAUDEX_MODEL,
     );
     expect(mockedSelect).toHaveBeenCalledWith(
@@ -192,47 +191,12 @@ describe('<ModelDialog />', () => {
     expect(mockedSelect).toHaveBeenCalledTimes(1);
   });
 
-  it('blocks claudex-oauth model selection with an error message (discontinued)', async () => {
-    const { props, mockConfig } = renderComponent(
-      {},
-      {
-        getAvailableModelsForAuthType: vi.fn((t: AuthType) => {
-          if (t === AuthType.CLAUDEX_OAUTH) {
-            return getFilteredClaudexModels().map((m) => ({
-              id: m.id,
-              label: m.label,
-              authType: AuthType.CLAUDEX_OAUTH,
-            }));
-          }
-          return [];
-        }),
-      },
-    );
-
-    const childOnSelect = mockedSelect.mock.calls[0][0].onSelect;
-    expect(childOnSelect).toBeDefined();
-
-    await childOnSelect(`${AuthType.CLAUDEX_OAUTH}::${DEFAULT_CLAUDEX_MODEL}`);
-
-    // claudex-oauth is discontinued — switchModel should NOT be called
-    expect(mockConfig?.switchModel).not.toHaveBeenCalled();
-    // Dialog should NOT close (user stays in the dialog to see the error)
-    expect(props.onClose).not.toHaveBeenCalled();
-  });
-
-  it('calls config.switchModel and onClose when selecting a non-OAuth model', async () => {
+  it('calls config.switchModel and onClose when selecting a model', async () => {
     const switchModel = vi.fn().mockResolvedValue(undefined);
     const getAuthType = vi.fn(() => AuthType.USE_OPENAI);
     const getAvailableModelsForAuthType = vi.fn((t: AuthType) => {
       if (t === AuthType.USE_OPENAI) {
         return [{ id: 'gpt-4', label: 'GPT-4', authType: t }];
-      }
-      if (t === AuthType.CLAUDEX_OAUTH) {
-        return getFilteredClaudexModels().map((m) => ({
-          id: m.id,
-          label: m.label,
-          authType: AuthType.CLAUDEX_OAUTH,
-        }));
       }
       return [];
     });
@@ -243,12 +207,6 @@ describe('<ModelDialog />', () => {
       switchModel,
       getAvailableModelsForAuthType,
       getAllConfiguredModels: vi.fn(() => [
-        ...getFilteredClaudexModels().map((m) => ({
-          id: m.id,
-          label: m.label,
-          description: m.description || '',
-          authType: AuthType.CLAUDEX_OAUTH,
-        })),
         {
           id: 'gpt-4',
           label: 'GPT-4',
@@ -271,7 +229,6 @@ describe('<ModelDialog />', () => {
     expect(switchModel).toHaveBeenCalledWith(
       AuthType.USE_OPENAI,
       'gpt-4',
-      undefined,
     );
     expect(mockSettings.setValue).toHaveBeenCalledWith(
       SettingScope.User,
@@ -284,48 +241,6 @@ describe('<ModelDialog />', () => {
       AuthType.USE_OPENAI,
     );
     expect(props.onClose).toHaveBeenCalledTimes(1);
-  });
-
-  it('blocks switching to claudex-oauth from another authType (discontinued)', async () => {
-    const switchModel = vi.fn().mockResolvedValue(undefined);
-    const getAuthType = vi.fn(() => AuthType.USE_OPENAI);
-    const getAvailableModelsForAuthType = vi.fn((t: AuthType) => {
-      if (t === AuthType.USE_OPENAI) {
-        return [{ id: 'gpt-4', label: 'GPT-4', authType: t }];
-      }
-      if (t === AuthType.CLAUDEX_OAUTH) {
-        return getFilteredClaudexModels().map((m) => ({
-          id: m.id,
-          label: m.label,
-          authType: AuthType.CLAUDEX_OAUTH,
-        }));
-      }
-      return [];
-    });
-
-    const mockConfigWithSwitchAuthType = {
-      getAuthType,
-      getModel: vi.fn(() => 'gpt-4'),
-      getContentGeneratorConfig: vi.fn(() => ({
-        authType: AuthType.USE_OPENAI,
-        model: 'gpt-4',
-      })),
-      switchModel,
-      getAvailableModelsForAuthType,
-    };
-
-    const { props } = renderComponent(
-      {},
-      mockConfigWithSwitchAuthType as unknown as Partial<Config>,
-    );
-
-    const childOnSelect = mockedSelect.mock.calls[0][0].onSelect;
-    await childOnSelect(`${AuthType.CLAUDEX_OAUTH}::${DEFAULT_CLAUDEX_MODEL}`);
-
-    // claudex-oauth is discontinued — switchModel should NOT be called
-    expect(switchModel).not.toHaveBeenCalled();
-    // Dialog should NOT close
-    expect(props.onClose).not.toHaveBeenCalled();
   });
 
   it('passes onHighlight to DescriptiveRadioButtonSelect', () => {
@@ -369,7 +284,7 @@ describe('<ModelDialog />', () => {
 
   it('updates initialIndex when config context changes', () => {
     const mockGetModel = vi.fn(() => DEFAULT_CLAUDEX_MODEL);
-    const mockGetAuthType = vi.fn(() => 'claudex-oauth');
+    const mockGetAuthType = vi.fn(() => AuthType.USE_OPENAI);
     const mockSettings = {
       isTrusted: true,
       user: { settings: {} },
@@ -386,11 +301,11 @@ describe('<ModelDialog />', () => {
               getAvailableModelsForAuthType:
                 createMockGetAvailableModelsForAuthType(),
               getAllConfiguredModels: vi.fn(() =>
-                getFilteredClaudexModels().map((m) => ({
+                MOCK_OPENAI_MODELS.map((m) => ({
                   id: m.id,
                   label: m.label,
-                  description: m.description || '',
-                  authType: AuthType.CLAUDEX_OAUTH,
+                  description: '',
+                  authType: AuthType.USE_OPENAI,
                 })),
               ),
             } as unknown as Config
@@ -401,7 +316,7 @@ describe('<ModelDialog />', () => {
       </SettingsContext.Provider>,
     );
 
-    // DEFAULT_CLAUDEX_MODEL (coder-model) is at index 0
+    // DEFAULT_CLAUDEX_MODEL is at index 0
     expect(mockedSelect.mock.calls[0][0].initialIndex).toBe(0);
 
     mockGetModel.mockReturnValue(DEFAULT_CLAUDEX_MODEL);
@@ -410,11 +325,11 @@ describe('<ModelDialog />', () => {
       getAuthType: mockGetAuthType,
       getAvailableModelsForAuthType: createMockGetAvailableModelsForAuthType(),
       getAllConfiguredModels: vi.fn(() =>
-        getFilteredClaudexModels().map((m) => ({
+        MOCK_OPENAI_MODELS.map((m) => ({
           id: m.id,
           label: m.label,
-          description: m.description || '',
-          authType: AuthType.CLAUDEX_OAUTH,
+          description: '',
+          authType: AuthType.USE_OPENAI,
         })),
       ),
     } as unknown as Config;
@@ -427,11 +342,8 @@ describe('<ModelDialog />', () => {
       </SettingsContext.Provider>,
     );
 
-    // Should be called at least twice: initial render + re-render after context change
     expect(mockedSelect).toHaveBeenCalledTimes(2);
-    // Calculate expected index for DEFAULT_CLAUDEX_MODEL dynamically
-    const claudexModels = getFilteredClaudexModels();
-    const expectedCoderIndex = claudexModels.findIndex(
+    const expectedCoderIndex = MOCK_OPENAI_MODELS.findIndex(
       (m) => m.id === DEFAULT_CLAUDEX_MODEL,
     );
     expect(mockedSelect.mock.calls[1][0].initialIndex).toBe(expectedCoderIndex);

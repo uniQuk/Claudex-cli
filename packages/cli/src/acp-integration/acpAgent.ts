@@ -483,20 +483,6 @@ class ClaudexAgent implements Agent {
     return authMethods;
   }
 
-  private extractErrorMessage(error?: unknown): string | undefined {
-    if (error instanceof Error) return error.message;
-    if (
-      typeof error === 'object' &&
-      error != null &&
-      'message' in error &&
-      typeof error.message === 'string'
-    ) {
-      return error.message;
-    }
-    if (typeof error === 'string') return error;
-    return undefined;
-  }
-
   private setupFileSystem(config: Config): void {
     if (!this.clientCapabilities?.fs) return;
 

@@ -108,16 +108,23 @@ describe('SessionStatsContext', () => {
       },
     };
 
+    const getMetricsSpy = vi
+      .spyOn(uiTelemetryService, 'getMetrics')
+      .mockReturnValue(newMetrics);
+    const getTokensSpy = vi
+      .spyOn(uiTelemetryService, 'getLastPromptTokenCount')
+      .mockReturnValue(100);
+
     act(() => {
-      uiTelemetryService.emit('update', {
-        metrics: newMetrics,
-        lastPromptTokenCount: 100,
-      });
+      uiTelemetryService.emit('update');
     });
 
     const stats = contextRef.current?.stats;
     expect(stats?.metrics).toEqual(newMetrics);
     expect(stats?.lastPromptTokenCount).toBe(100);
+
+    getMetricsSpy.mockRestore();
+    getTokensSpy.mockRestore();
   });
 
   it('should not update metrics if the data is the same', () => {
@@ -142,7 +149,7 @@ describe('SessionStatsContext', () => {
 
     const metrics: SessionMetrics = {
       models: {
-        'gemini-pro': {
+        'gpt-4': {
           api: { totalRequests: 1, totalErrors: 0, totalLatencyMs: 100 },
           tokens: {
             prompt: 10,
@@ -169,14 +176,21 @@ describe('SessionStatsContext', () => {
       },
     };
 
+    const getMetricsSpy = vi
+      .spyOn(uiTelemetryService, 'getMetrics')
+      .mockReturnValue(metrics);
+    const getTokensSpy = vi
+      .spyOn(uiTelemetryService, 'getLastPromptTokenCount')
+      .mockReturnValue(10);
+
     act(() => {
-      uiTelemetryService.emit('update', { metrics, lastPromptTokenCount: 10 });
+      uiTelemetryService.emit('update');
     });
 
     expect(renderCount).toBe(2);
 
     act(() => {
-      uiTelemetryService.emit('update', { metrics, lastPromptTokenCount: 10 });
+      uiTelemetryService.emit('update');
     });
 
     expect(renderCount).toBe(2);
@@ -184,7 +198,7 @@ describe('SessionStatsContext', () => {
     const newMetrics = {
       ...metrics,
       models: {
-        'gemini-pro': {
+        'gpt-4': {
           api: { totalRequests: 2, totalErrors: 0, totalLatencyMs: 200 },
           tokens: {
             prompt: 20,
@@ -198,14 +212,17 @@ describe('SessionStatsContext', () => {
         },
       },
     };
+    getMetricsSpy.mockReturnValue(newMetrics);
+    getTokensSpy.mockReturnValue(20);
+
     act(() => {
-      uiTelemetryService.emit('update', {
-        metrics: newMetrics,
-        lastPromptTokenCount: 20,
-      });
+      uiTelemetryService.emit('update');
     });
 
     expect(renderCount).toBe(3);
+
+    getMetricsSpy.mockRestore();
+    getTokensSpy.mockRestore();
   });
 
   it('should throw an error when useSessionStats is used outside of a provider', () => {

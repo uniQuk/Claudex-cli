@@ -173,9 +173,8 @@ describe('AuthDialog', () => {
 
       const { lastFrame } = renderAuthDialog(settings);
 
-      // Since the auth dialog shows API Key option now,
-      // it won't show GEMINI_API_KEY messages
-      expect(lastFrame()).toContain('API Key');
+      // Dialog shows provider selection — GEMINI_API_KEY env var has no effect
+      expect(lastFrame()).toContain('OpenAI-compatible API');
     });
 
     it('should not show the GEMINI_API_KEY message if CLAUDEX_DEFAULT_AUTH_TYPE is set to something else', () => {
@@ -261,57 +260,12 @@ describe('AuthDialog', () => {
 
       const { lastFrame } = renderAuthDialog(settings);
 
-      // Since the auth dialog shows API Key option now,
-      // it won't show GEMINI_API_KEY messages
-      expect(lastFrame()).toContain('API Key');
+      // Dialog shows provider selection — GEMINI_API_KEY env var has no effect
+      expect(lastFrame()).toContain('OpenAI-compatible API');
     });
   });
 
   describe('CLAUDEX_DEFAULT_AUTH_TYPE environment variable', () => {
-    it('should select the auth type specified by CLAUDEX_DEFAULT_AUTH_TYPE', () => {
-      // CLAUDEX_OAUTH is the only valid AuthType that can be selected via env var
-      // API-KEY is not an AuthType enum value, so it cannot be selected this way
-      process.env['CLAUDEX_DEFAULT_AUTH_TYPE'] = AuthType.CLAUDEX_OAUTH;
-
-      const settings: LoadedSettings = new LoadedSettings(
-        {
-          settings: {
-            security: { auth: { selectedType: undefined } },
-            ui: { customThemes: {} },
-            mcpServers: {},
-          },
-          originalSettings: {
-            security: { auth: { selectedType: undefined } },
-            ui: { customThemes: {} },
-            mcpServers: {},
-          },
-          path: '',
-        },
-        {
-          settings: {},
-          originalSettings: {},
-          path: '',
-        },
-        {
-          settings: { ui: { customThemes: {} }, mcpServers: {} },
-          originalSettings: { ui: { customThemes: {} }, mcpServers: {} },
-          path: '',
-        },
-        {
-          settings: { ui: { customThemes: {} }, mcpServers: {} },
-          originalSettings: { ui: { customThemes: {} }, mcpServers: {} },
-          path: '',
-        },
-        true,
-        new Set(),
-      );
-
-      const { lastFrame } = renderAuthDialog(settings);
-
-      // CLAUDEX_OAUTH is the first option, so it should be selected
-      expect(lastFrame()).toContain('Claudex OAuth');
-    });
-
     it('should fall back to default if CLAUDEX_DEFAULT_AUTH_TYPE is not set', () => {
       const settings: LoadedSettings = new LoadedSettings(
         {
@@ -348,8 +302,8 @@ describe('AuthDialog', () => {
 
       const { lastFrame } = renderAuthDialog(settings);
 
-      // Default is Coding Plan (first option); Claudex OAuth is last (discontinued)
-      expect(lastFrame()).toContain('Alibaba Cloud Coding Plan');
+      // Default first option is OpenAI-compatible API
+      expect(lastFrame()).toContain('OpenAI-compatible API');
     });
 
     it('should show an error and fall back to default if CLAUDEX_DEFAULT_AUTH_TYPE is invalid', () => {
@@ -390,9 +344,8 @@ describe('AuthDialog', () => {
 
       const { lastFrame } = renderAuthDialog(settings);
 
-      // Since the auth dialog doesn't show CLAUDEX_DEFAULT_AUTH_TYPE errors anymore,
-      // it will just show the default Claudex OAuth option
-      expect(lastFrame()).toContain('Claudex OAuth');
+      // Falls back to default provider selection — first option is OpenAI-compatible
+      expect(lastFrame()).toContain('OpenAI-compatible API');
     });
   });
 

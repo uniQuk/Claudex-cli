@@ -101,22 +101,14 @@ This is a test prompt from markdown.`;
     }
   });
 
-  it('should load both toml and markdown commands', async () => {
-    // Create both TOML and Markdown files
-    const tomlContent = `prompt = "TOML prompt"
-description = "TOML command"`;
-
+  it('should load markdown commands alongside other supported formats', async () => {
+    // TOML support was removed; only markdown and JSON are loaded now.
     const mdContent = `---
 description: Markdown command
 ---
 
 Markdown prompt`;
 
-    await fs.writeFile(
-      path.join(tempDir, 'toml-cmd.toml'),
-      tomlContent,
-      'utf-8',
-    );
     await fs.writeFile(path.join(tempDir, 'md-cmd.md'), mdContent, 'utf-8');
 
     const loader = new FileCommandLoader(null);
@@ -126,11 +118,7 @@ Markdown prompt`;
     try {
       const commands = await loader.loadCommands(new AbortController().signal);
 
-      const tomlCommand = commands.find((cmd) => cmd.name === 'toml-cmd');
       const mdCommand = commands.find((cmd) => cmd.name === 'md-cmd');
-
-      expect(tomlCommand).toBeDefined();
-      expect(tomlCommand?.description).toBe('TOML command');
 
       expect(mdCommand).toBeDefined();
       expect(mdCommand?.description).toBe('Markdown command');

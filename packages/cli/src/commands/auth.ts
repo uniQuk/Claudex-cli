@@ -13,14 +13,6 @@ import {
 import { t } from '../i18n/index.js';
 
 // Define subcommands separately
-const claudexOauthCommand = {
-  command: 'claudex-oauth',
-  describe: t('Authenticate using Claudex OAuth'),
-  handler: async () => {
-    await handleClaudexAuth('claudex-oauth', {});
-  },
-};
-
 const codePlanCommand = {
   command: 'coding-plan',
   describe: t('Authenticate using Alibaba Cloud Coding Plan'),
@@ -61,11 +53,10 @@ const statusCommand = {
 export const authCommand: CommandModule = {
   command: 'auth',
   describe: t(
-    'Configure Claudex authentication information with Claudex-OAuth or Alibaba Cloud Coding Plan',
+    'Configure Claudex authentication (Alibaba Cloud Coding Plan or API Key)',
   ),
   builder: (yargs: Argv) =>
     yargs
-      .command(claudexOauthCommand)
       .command(codePlanCommand)
       .command(statusCommand)
       .demandCommand(0) // Don't require a subcommand

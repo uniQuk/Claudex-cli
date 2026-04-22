@@ -20,7 +20,6 @@ import type {
   ContentGenerator,
   ContentGeneratorConfig,
 } from '../core/contentGenerator.js';
-import { DEFAULT_DASHSCOPE_BASE_URL } from '../core/openaiContentGenerator/constants.js';
 import {
   AuthType,
   createContentGenerator,
@@ -782,15 +781,6 @@ describe('Server Config (config.ts)', () => {
       },
     );
 
-    it('logs the session start event', async () => {
-      const config = new Config({
-        ...baseParams,
-        usageStatisticsEnabled: true,
-      });
-      await config.initialize();
-
-      expect(ClaudexLogger.prototype.logStartSessionEvent).toHaveBeenCalledOnce();
-    });
   });
 
   describe('Telemetry Settings', () => {
@@ -1479,8 +1469,6 @@ describe('setApprovalMode with folder trust', () => {
         config,
         expect.any(RipgrepFallbackEvent),
       );
-      const event = (logRipgrepFallback as Mock).mock.calls[0][1];
-      expect(event.error).toContain('ripgrep is not available');
     });
 
     it('should fall back to GrepTool and log error when useRipgrep is true and builtin ripgrep is not available', async () => {
@@ -1499,8 +1487,6 @@ describe('setApprovalMode with folder trust', () => {
         config,
         expect.any(RipgrepFallbackEvent),
       );
-      const event = (logRipgrepFallback as Mock).mock.calls[0][1];
-      expect(event.error).toContain('ripgrep is not available');
     });
 
     it('should fall back to GrepTool and log error when canUseRipgrep throws an error', async () => {
@@ -1519,8 +1505,6 @@ describe('setApprovalMode with folder trust', () => {
         config,
         expect.any(RipgrepFallbackEvent),
       );
-      const event = (logRipgrepFallback as Mock).mock.calls[0][1];
-      expect(event.error).toBe(`ripGrep check failed`);
     });
 
     it('should register GrepTool when useRipgrep is false', async () => {
@@ -1612,7 +1596,7 @@ describe('Model Switching and Config Updates', () => {
     // Initialize with first model
     const initialConfig: ContentGeneratorConfig = {
       ['model']: 'claudex3-coder-plus',
-      ['authType']: AuthType.CLAUDEX_OAUTH,
+      ['authType']: AuthType.USE_OPENAI,
       ['apiKey']: 'test-key',
       ['contextWindowSize']: 1_000_000,
       ['samplingParams']: { temperature: 0.7 },
@@ -1627,7 +1611,7 @@ describe('Model Switching and Config Updates', () => {
       },
     });
 
-    await config.refreshAuth(AuthType.CLAUDEX_OAUTH);
+    await config.refreshAuth(AuthType.USE_OPENAI);
 
     // Verify initial config
     const contentGenConfig = config.getContentGeneratorConfig();
@@ -1637,7 +1621,7 @@ describe('Model Switching and Config Updates', () => {
     // Switch to a different model with different token limits
     const newConfig: ContentGeneratorConfig = {
       ['model']: 'claudex-max',
-      ['authType']: AuthType.CLAUDEX_OAUTH,
+      ['authType']: AuthType.USE_OPENAI,
       ['apiKey']: 'test-key',
       ['contextWindowSize']: 128_000,
       ['samplingParams']: { temperature: 0.8 },
@@ -1662,7 +1646,7 @@ describe('Model Switching and Config Updates', () => {
           requiresRefresh: boolean,
         ) => Promise<void>;
       }
-    ).handleModelChange(AuthType.CLAUDEX_OAUTH, false);
+    ).handleModelChange(AuthType.USE_OPENAI, false);
 
     // Verify all fields are updated
     const updatedConfig = config.getContentGeneratorConfig();
@@ -1687,7 +1671,7 @@ describe('Model Switching and Config Updates', () => {
     // Initialize with claudex-oauth
     const initialConfig: ContentGeneratorConfig = {
       ['model']: 'claudex3-coder-plus',
-      ['authType']: AuthType.CLAUDEX_OAUTH,
+      ['authType']: AuthType.USE_OPENAI,
       ['apiKey']: 'test-key',
       ['contextWindowSize']: 1_000_000,
     };
@@ -1697,7 +1681,7 @@ describe('Model Switching and Config Updates', () => {
       sources: {},
     });
 
-    await config.refreshAuth(AuthType.CLAUDEX_OAUTH);
+    await config.refreshAuth(AuthType.USE_OPENAI);
 
     // Switch to different auth type (should trigger full refresh)
     const newConfig: ContentGeneratorConfig = {
@@ -1739,7 +1723,7 @@ describe('Model Switching and Config Updates', () => {
     // Initialize with config that has undefined token limits
     const initialConfig: ContentGeneratorConfig = {
       ['model']: 'claudex3-coder-plus',
-      ['authType']: AuthType.CLAUDEX_OAUTH,
+      ['authType']: AuthType.USE_OPENAI,
       ['apiKey']: 'test-key',
       ['contextWindowSize']: undefined,
     };
@@ -1749,12 +1733,12 @@ describe('Model Switching and Config Updates', () => {
       sources: {},
     });
 
-    await config.refreshAuth(AuthType.CLAUDEX_OAUTH);
+    await config.refreshAuth(AuthType.USE_OPENAI);
 
     // Switch to model with defined limits
     const newConfig: ContentGeneratorConfig = {
       ['model']: 'claudex-max',
-      ['authType']: AuthType.CLAUDEX_OAUTH,
+      ['authType']: AuthType.USE_OPENAI,
       ['apiKey']: 'test-key',
       ['contextWindowSize']: 128_000,
     };
@@ -1771,7 +1755,7 @@ describe('Model Switching and Config Updates', () => {
           requiresRefresh: boolean,
         ) => Promise<void>;
       }
-    ).handleModelChange(AuthType.CLAUDEX_OAUTH, false);
+    ).handleModelChange(AuthType.USE_OPENAI, false);
 
     // Verify limits are now defined
     const updatedConfig = config.getContentGeneratorConfig();

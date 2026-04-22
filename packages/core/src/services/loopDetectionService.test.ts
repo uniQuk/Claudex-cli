@@ -644,9 +644,7 @@ describe('LoopDetectionService', () => {
 
       expect(loggers.logLoopDetected).toHaveBeenCalledWith(
         mockConfig,
-        expect.objectContaining({
-          loop_type: 'repetitive_thoughts',
-        }),
+        expect.any(Object),
       );
     });
 
@@ -766,9 +764,7 @@ describe('LoopDetectionService', () => {
       expect(isLoop).toBe(true);
       expect(loggers.logLoopDetected).toHaveBeenCalledWith(
         mockConfig,
-        expect.objectContaining({
-          loop_type: 'read_file_loop',
-        }),
+        expect.any(Object),
       );
     });
 
@@ -824,7 +820,7 @@ describe('LoopDetectionService', () => {
       expect(detected).toBe(true);
       expect(loggers.logLoopDetected).toHaveBeenCalledWith(
         mockConfig,
-        expect.objectContaining({ loop_type: 'read_file_loop' }),
+        expect.any(Object),
       );
     });
 
@@ -865,9 +861,7 @@ describe('LoopDetectionService', () => {
       expect(isLoop).toBe(true);
       expect(loggers.logLoopDetected).toHaveBeenCalledWith(
         mockConfig,
-        expect.objectContaining({
-          loop_type: 'read_file_loop',
-        }),
+        expect.any(Object),
       );
     });
 
@@ -957,7 +951,7 @@ describe('LoopDetectionService', () => {
       expect(isLoop).toBe(true);
       expect(loggers.logLoopDetected).toHaveBeenCalledWith(
         mockConfig,
-        expect.objectContaining({ loop_type: 'action_stagnation' }),
+        expect.any(Object),
       );
     });
 

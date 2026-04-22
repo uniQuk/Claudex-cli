@@ -7,27 +7,32 @@
 import { describe, it, expect, vi } from 'vitest';
 import {
   createContentGenerator,
-  createContentGeneratorConfig,
   AuthType,
 } from './contentGenerator.js';
-import { GoogleGenAI } from '../types/llm-types.js';
 import type { Config } from '../config/config.js';
 import { LoggingContentGenerator } from './loggingContentGenerator/index.js';
+import { OpenAIContentGenerator } from './openaiContentGenerator/index.js';
 
-vi.mock('@google/genai');
+vi.mock('./openaiContentGenerator/index.js', async (importOriginal) => {
+  const original =
+    await importOriginal<typeof import('./openaiContentGenerator/index.js')>();
+  const mockGenerator = { generateContent: vi.fn(), generateContentStream: vi.fn(), countTokens: vi.fn(), embedContent: vi.fn(), useSummarizedThinking: vi.fn() };
+  return {
+    ...original,
+    createOpenAIContentGenerator: vi.fn(() => mockGenerator),
+    OpenAIContentGenerator: original.OpenAIContentGenerator,
+  };
+});
 
 describe('createContentGenerator', () => {
-  it('should create a Gemini content generator', async () => {
+  it('should create an OpenAI content generator', async () => {
     const mockConfig = {
       getUsageStatisticsEnabled: () => true,
       getContentGeneratorConfig: () => ({}),
       getCliVersion: () => '1.0.0',
+      getProxy: () => undefined,
     } as unknown as Config;
 
-    const mockGenerator = {
-      models: {},
-    } as unknown as GoogleGenAI;
-    vi.mocked(GoogleGenAI).mockImplementation(() => mockGenerator as never);
     const generator = await createContentGenerator(
       {
         model: 'test-model',
@@ -36,32 +41,28 @@ describe('createContentGenerator', () => {
       },
       mockConfig,
     );
-    expect(GoogleGenAI).toHaveBeenCalledWith({
-      apiKey: 'test-api-key',
-      vertexai: undefined,
-      httpOptions: {
-        headers: {
-          'User-Agent': expect.any(String),
-          'x-gemini-api-privileged-user-id': expect.any(String),
-        },
-      },
-    });
-    // We expect it to be a LoggingContentGenerator wrapping a GeminiContentGenerator
+
+    const { createOpenAIContentGenerator } = await import(
+      './openaiContentGenerator/index.js'
+    );
+    expect(createOpenAIContentGenerator).toHaveBeenCalledWith(
+      expect.objectContaining({ model: 'test-model', apiKey: 'test-api-key' }),
+      mockConfig,
+    );
+    // We expect it to be a LoggingContentGenerator wrapping an OpenAI generator
     expect(generator).toBeInstanceOf(LoggingContentGenerator);
     const wrapped = (generator as LoggingContentGenerator).getWrapped();
     expect(wrapped).toBeDefined();
   });
 
-  it('should create a Gemini content generator with client install id logging disabled', async () => {
+  it('should create an OpenAI content generator with usage statistics disabled', async () => {
     const mockConfig = {
       getUsageStatisticsEnabled: () => false,
       getContentGeneratorConfig: () => ({}),
       getCliVersion: () => '1.0.0',
+      getProxy: () => undefined,
     } as unknown as Config;
-    const mockGenerator = {
-      models: {},
-    } as unknown as GoogleGenAI;
-    vi.mocked(GoogleGenAI).mockImplementation(() => mockGenerator as never);
+
     const generator = await createContentGenerator(
       {
         model: 'test-model',
@@ -70,44 +71,7 @@ describe('createContentGenerator', () => {
       },
       mockConfig,
     );
-    expect(GoogleGenAI).toHaveBeenCalledWith({
-      apiKey: 'test-api-key',
-      vertexai: undefined,
-      httpOptions: {
-        headers: {
-          'User-Agent': expect.any(String),
-        },
-      },
-    });
+
     expect(generator).toBeInstanceOf(LoggingContentGenerator);
-  });
-});
-
-describe('createContentGeneratorConfig', () => {
-  const mockConfig = {
-    getProxy: () => undefined,
-  } as unknown as Config;
-
-  it('should preserve provided fields and set authType for CLAUDEX_OAUTH', () => {
-    const cfg = createContentGeneratorConfig(mockConfig, AuthType.CLAUDEX_OAUTH, {
-      model: 'coder-model',
-      apiKey: 'CLAUDEX_OAUTH_DYNAMIC_TOKEN',
-    });
-    expect(cfg.authType).toBe(AuthType.CLAUDEX_OAUTH);
-    expect(cfg.model).toBe('coder-model');
-    expect(cfg.apiKey).toBe('CLAUDEX_OAUTH_DYNAMIC_TOKEN');
-  });
-
-  it('should not warn or fallback for CLAUDEX_OAUTH (resolution handled by ModelConfigResolver)', () => {
-    const warnSpy = vi
-      .spyOn(console, 'warn')
-      .mockImplementation(() => undefined);
-    const cfg = createContentGeneratorConfig(mockConfig, AuthType.CLAUDEX_OAUTH, {
-      model: 'some-random-model',
-    });
-    expect(cfg.model).toBe('some-random-model');
-    expect(cfg.apiKey).toBeUndefined();
-    expect(warnSpy).not.toHaveBeenCalled();
-    warnSpy.mockRestore();
   });
 });

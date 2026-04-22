@@ -14,7 +14,7 @@ const useTerminalSizeMock = vi.mocked(useTerminalSize.useTerminalSize);
 
 const defaultProps = {
   version: '1.0.0',
-  authDisplayType: AuthDisplayType.CLAUDEX_OAUTH,
+  authDisplayType: AuthDisplayType.API_KEY,
   model: 'claudex-coder-plus',
   workingDirectory: '/home/user/projects/test',
 };
@@ -26,13 +26,13 @@ describe('<Header />', () => {
 
   it('renders the ASCII logo on wide terminal', () => {
     const { lastFrame } = render(<Header {...defaultProps} />);
-    expect(lastFrame()).toContain('██╔═══██╗');
+    expect(lastFrame()).toContain('██████╗');
   });
 
   it('hides the ASCII logo on narrow terminal', () => {
     useTerminalSizeMock.mockReturnValue({ columns: 60, rows: 24 });
     const { lastFrame } = render(<Header {...defaultProps} />);
-    expect(lastFrame()).not.toContain('██╔═══██╗');
+    expect(lastFrame()).not.toContain('██████╗');
     expect(lastFrame()).toContain('>_ Claudex');
   });
 
@@ -43,7 +43,7 @@ describe('<Header />', () => {
 
   it('displays auth type and model', () => {
     const { lastFrame } = render(<Header {...defaultProps} />);
-    expect(lastFrame()).toContain('Claudex OAuth');
+    expect(lastFrame()).toContain('API Key');
     expect(lastFrame()).toContain('claudex-coder-plus');
   });
 

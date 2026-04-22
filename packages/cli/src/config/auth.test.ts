@@ -75,43 +75,6 @@ describe('validateAuthMethod', () => {
     expect(result).toContain('CUSTOM_API_KEY');
   });
 
-  it('should return null for USE_GEMINI with custom envKey', () => {
-    vi.mocked(settings.loadSettings).mockReturnValue({
-      merged: {
-        model: { name: 'gemini-1.5-flash' },
-        modelProviders: {
-          gemini: [
-            { id: 'gemini-1.5-flash', envKey: 'GEMINI_API_KEY_ALTERED' },
-          ],
-        },
-      },
-    } as unknown as ReturnType<typeof settings.loadSettings>);
-    process.env['GEMINI_API_KEY_ALTERED'] = 'altered-key';
-
-    expect(validateAuthMethod(AuthType.USE_OPENAI)).toBeNull();
-  });
-
-  it('should return error with custom envKey for USE_GEMINI when env var is missing', () => {
-    vi.mocked(settings.loadSettings).mockReturnValue({
-      merged: {
-        model: { name: 'gemini-1.5-flash' },
-        modelProviders: {
-          gemini: [
-            { id: 'gemini-1.5-flash', envKey: 'GEMINI_API_KEY_ALTERED' },
-          ],
-        },
-      },
-    } as unknown as ReturnType<typeof settings.loadSettings>);
-
-    const result = validateAuthMethod(AuthType.USE_OPENAI);
-    expect(result).toContain('GEMINI_API_KEY_ALTERED');
-  });
-
-  it('should return an error for CLAUDEX_OAUTH (free tier discontinued)', () => {
-    const result = validateAuthMethod(AuthType.CLAUDEX_OAUTH);
-    expect(result).toContain('discontinued on 2026-04-15');
-  });
-
   it('should return an error message for an invalid auth method', () => {
     expect(validateAuthMethod('invalid-method')).toBe(
       'Invalid auth method selected.',
@@ -151,22 +114,6 @@ describe('validateAuthMethod', () => {
 
     const result = validateAuthMethod(AuthType.USE_ANTHROPIC);
     expect(result).toContain('modelProviders[].baseUrl');
-  });
-
-  it('should return null for USE_VERTEX_AI with custom envKey', () => {
-    vi.mocked(settings.loadSettings).mockReturnValue({
-      merged: {
-        model: { name: 'vertex-model' },
-        modelProviders: {
-          'vertex-ai': [
-            { id: 'vertex-model', envKey: 'GOOGLE_API_KEY_VERTEX' },
-          ],
-        },
-      },
-    } as unknown as ReturnType<typeof settings.loadSettings>);
-    process.env['GOOGLE_API_KEY_VERTEX'] = 'vertex-key';
-
-    expect(validateAuthMethod(AuthType.USE_OPENAI)).toBeNull();
   });
 
   it('should use config.getModelsConfig().getModel() when Config is provided', () => {

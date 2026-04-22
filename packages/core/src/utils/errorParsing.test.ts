@@ -10,8 +10,8 @@ import { AuthType } from '../core/contentGenerator.js';
 import type { StructuredError } from '../core/turn.js';
 
 describe('parseAndFormatApiError', () => {
-  const vertexMessage = 'request a quota increase through Vertex';
-  const geminiMessage = 'request a quota increase through AI Studio';
+  const genericRateLimitMessage =
+    'Possible quota limitations in place or slow response times detected. Please wait and try again later.';
 
   it('should format a valid API error JSON', () => {
     const errorMessage =
@@ -31,12 +31,12 @@ describe('parseAndFormatApiError', () => {
     );
   });
 
-  it('should format a 429 API error with the vertex message', () => {
+  it('should format a 429 API error with the generic rate limit message', () => {
     const errorMessage =
       'got status: 429 Too Many Requests. {"error":{"code":429,"message":"Rate limit exceeded","status":"RESOURCE_EXHAUSTED"}}';
     const result = parseAndFormatApiError(errorMessage, AuthType.USE_OPENAI);
     expect(result).toContain('[API Error: Rate limit exceeded');
-    expect(result).toContain(vertexMessage);
+    expect(result).toContain(genericRateLimitMessage);
   });
 
   it('should return the original message if it is not a JSON error', () => {
@@ -88,7 +88,7 @@ describe('parseAndFormatApiError', () => {
 
     const result = parseAndFormatApiError(errorMessage, AuthType.USE_OPENAI);
     expect(result).toContain('Gemini 2.5 Pro Preview');
-    expect(result).toContain(geminiMessage);
+    expect(result).toContain(genericRateLimitMessage);
   });
 
   it('should format a StructuredError', () => {
@@ -100,14 +100,14 @@ describe('parseAndFormatApiError', () => {
     expect(parseAndFormatApiError(error)).toBe(expected);
   });
 
-  it('should format a 429 StructuredError with the vertex message', () => {
+  it('should format a 429 StructuredError with the generic rate limit message', () => {
     const error: StructuredError = {
       message: 'Rate limit exceeded',
       status: 429,
     };
     const result = parseAndFormatApiError(error, AuthType.USE_OPENAI);
     expect(result).toContain('[API Error: Rate limit exceeded]');
-    expect(result).toContain(vertexMessage);
+    expect(result).toContain(genericRateLimitMessage);
   });
 
   it('should handle an unknown error type', () => {

@@ -14,8 +14,8 @@ import {
 
 describe('acpModelUtils', () => {
   it('formats modelId(authType)', () => {
-    expect(formatAcpModelId('claudex3', AuthType.CLAUDEX_OAUTH)).toBe(
-      `claudex3(${AuthType.CLAUDEX_OAUTH})`,
+    expect(formatAcpModelId('claudex3', AuthType.USE_OPENAI)).toBe(
+      `claudex3(${AuthType.USE_OPENAI})`,
     );
   });
 

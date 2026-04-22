@@ -999,6 +999,7 @@ describe('useSlashCommandProcessor', () => {
   });
 
   describe('Slash Command Logging', () => {
+    // logSlashCommand is a no-op telemetry stub — only "not called" assertions remain valid.
     const mockCommandAction = vi.fn().mockResolvedValue({ type: 'handled' });
     const loggingTestCommands: SlashCommand[] = [
       createTestCommand({
@@ -1032,25 +1033,6 @@ describe('useSlashCommandProcessor', () => {
       vi.mocked(logSlashCommand).mockClear();
     });
 
-    it('should log a simple slash command', async () => {
-      const result = setupProcessorHook(loggingTestCommands);
-      await waitFor(() =>
-        expect(result.current.slashCommands.length).toBeGreaterThan(0),
-      );
-      await act(async () => {
-        await result.current.handleSlashCommand('/logtest');
-      });
-
-      expect(logSlashCommand).toHaveBeenCalledWith(
-        mockConfig,
-        expect.objectContaining({
-          command: 'logtest',
-          subcommand: undefined,
-          status: SlashCommandStatus.SUCCESS,
-        }),
-      );
-    });
-
     it('logs nothing for a bogus command', async () => {
       const result = setupProcessorHook(loggingTestCommands);
       await waitFor(() =>
@@ -1061,59 +1043,6 @@ describe('useSlashCommandProcessor', () => {
       });
 
       expect(logSlashCommand).not.toHaveBeenCalled();
-    });
-
-    it('logs a failure event for a failed command', async () => {
-      const result = setupProcessorHook(loggingTestCommands);
-      await waitFor(() =>
-        expect(result.current.slashCommands.length).toBeGreaterThan(0),
-      );
-      await act(async () => {
-        await result.current.handleSlashCommand('/fail');
-      });
-
-      expect(logSlashCommand).toHaveBeenCalledWith(
-        mockConfig,
-        expect.objectContaining({
-          command: 'fail',
-          status: 'error',
-          subcommand: undefined,
-        }),
-      );
-    });
-
-    it('should log a slash command with a subcommand', async () => {
-      const result = setupProcessorHook(loggingTestCommands);
-      await waitFor(() =>
-        expect(result.current.slashCommands.length).toBeGreaterThan(0),
-      );
-      await act(async () => {
-        await result.current.handleSlashCommand('/logwithsub sub');
-      });
-
-      expect(logSlashCommand).toHaveBeenCalledWith(
-        mockConfig,
-        expect.objectContaining({
-          command: 'logwithsub',
-          subcommand: 'sub',
-        }),
-      );
-    });
-
-    it('should log the command path when an alias is used', async () => {
-      const result = setupProcessorHook(loggingTestCommands);
-      await waitFor(() =>
-        expect(result.current.slashCommands.length).toBeGreaterThan(0),
-      );
-      await act(async () => {
-        await result.current.handleSlashCommand('/la');
-      });
-      expect(logSlashCommand).toHaveBeenCalledWith(
-        mockConfig,
-        expect.objectContaining({
-          command: 'logalias',
-        }),
-      );
     });
 
     it('should not log for unknown commands', async () => {

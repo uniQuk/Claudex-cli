@@ -23,7 +23,6 @@ import type {
   MessageBus,
 } from '@claudex/core';
 import {
-  AuthType,
   ApprovalMode,
   convertToFunctionResponse,
   createDebugLogger,

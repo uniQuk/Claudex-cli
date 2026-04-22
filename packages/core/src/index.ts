@@ -33,7 +33,7 @@ export type {
   Tool,
   ToolListUnion,
 } from './types/llm-types.js';
-export { FinishReason, GenerateContentResponse, createUserContent, mcpToTool } from './types/llm-types.js';
+export { FinishReason, GenerateContentResponse, createUserContent, createPartFromText, mcpToTool } from './types/llm-types.js';
 
 // ============================================================================
 // Configuration & Models

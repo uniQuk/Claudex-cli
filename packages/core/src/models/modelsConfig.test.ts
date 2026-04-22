@@ -554,7 +554,7 @@ describe('ModelsConfig', () => {
       modelProvidersConfig,
       generationConfig: {},
     });
-    expect(config3.getModel()).toBe('coder-model'); // Falls back to DEFAULT_CLAUDEX_MODEL
+    expect(config3.getModel()).toBe('claudex3.5-plus'); // Falls back to DEFAULT_CLAUDEX_MODEL
     expect(config3.getGenerationConfig().model).toBeUndefined();
   });
 
@@ -1238,18 +1238,18 @@ describe('ModelsConfig', () => {
 
       const initialModels = modelsConfig.getAllConfiguredModels();
       expect(initialModels.some((m) => m.id === 'gpt-4')).toBe(true);
-      expect(initialModels.some((m) => m.id === 'gemini-pro')).toBe(false);
+      expect(initialModels.some((m) => m.id === 'claude-instant')).toBe(false);
 
       // Reload with different config
       modelsConfig.reloadModelProvidersConfig({
         openai: [{ id: 'gpt-3.5', name: 'GPT-3.5' }],
-        gemini: [{ id: 'gemini-pro', name: 'Gemini Pro' }],
+        anthropic: [{ id: 'claude-instant', name: 'Claude Instant' }],
       });
 
       const updatedModels = modelsConfig.getAllConfiguredModels();
       expect(updatedModels.some((m) => m.id === 'gpt-4')).toBe(false);
       expect(updatedModels.some((m) => m.id === 'gpt-3.5')).toBe(true);
-      expect(updatedModels.some((m) => m.id === 'gemini-pro')).toBe(true);
+      expect(updatedModels.some((m) => m.id === 'claude-instant')).toBe(true);
     });
 
     it('should handle reload with empty config', async () => {
@@ -1335,7 +1335,7 @@ describe('ModelsConfig', () => {
             { id: 'gpt-4', name: 'GPT-4' },
             { id: 'gpt-3.5', name: 'GPT-3.5' },
           ],
-          gemini: [{ id: 'gemini-pro', name: 'Gemini Pro' }],
+          anthropic: [{ id: 'claude-2', name: 'Claude 2' }],
         },
       });
 
@@ -1343,7 +1343,6 @@ describe('ModelsConfig', () => {
       modelsConfig.reloadModelProvidersConfig({
         openai: [{ id: 'new-openai', name: 'New OpenAI' }],
         anthropic: [{ id: 'claude', name: 'Claude' }],
-        gemini: [{ id: 'gemini-ultra', name: 'Gemini Ultra' }],
       });
 
       const allModels = modelsConfig.getAllConfiguredModels();
@@ -1351,12 +1350,11 @@ describe('ModelsConfig', () => {
       // Old models should be gone
       expect(allModels.some((m) => m.id === 'gpt-4')).toBe(false);
       expect(allModels.some((m) => m.id === 'gpt-3.5')).toBe(false);
-      expect(allModels.some((m) => m.id === 'gemini-pro')).toBe(false);
+      expect(allModels.some((m) => m.id === 'claude-2')).toBe(false);
 
       // New models should exist
       expect(allModels.some((m) => m.id === 'new-openai')).toBe(true);
       expect(allModels.some((m) => m.id === 'claude')).toBe(true);
-      expect(allModels.some((m) => m.id === 'gemini-ultra')).toBe(true);
     });
   });
 
@@ -1453,11 +1451,11 @@ describe('ModelsConfig', () => {
             baseUrl: 'https://api.anthropic.example.com/v1',
           },
         ],
-        gemini: [
+        openai: [
           {
-            id: 'gemini-pro',
-            name: 'Gemini Pro',
-            baseUrl: 'https://api.gemini.example.com/v1',
+            id: 'gpt-4-turbo',
+            name: 'GPT-4 Turbo',
+            baseUrl: 'https://api.openai.example.com/v1',
           },
         ],
       };
@@ -1473,15 +1471,15 @@ describe('ModelsConfig', () => {
       let gc = currentGenerationConfig(claudeConfig);
       expect(gc.samplingParams).toBeUndefined();
 
-      // Test Gemini model without provider max_tokens
-      const geminiConfig = new ModelsConfig({
+      // Test OpenAI model without provider max_tokens
+      const openaiConfig = new ModelsConfig({
         initialAuthType: AuthType.USE_OPENAI,
         modelProvidersConfig,
       });
 
-      await geminiConfig.switchModel(AuthType.USE_OPENAI, 'gemini-pro');
+      await openaiConfig.switchModel(AuthType.USE_OPENAI, 'gpt-4-turbo');
 
-      gc = currentGenerationConfig(geminiConfig);
+      gc = currentGenerationConfig(openaiConfig);
       expect(gc.samplingParams).toBeUndefined();
     });
   });

@@ -28,7 +28,7 @@ type ModelsConfig = ReturnType<Config['getModelsConfig']>;
 function createMockConfig(overrides?: Partial<Config>): Config {
   const baseModelsConfig = {
     getModel: vi.fn().mockReturnValue('default-model'),
-    getCurrentAuthType: vi.fn().mockReturnValue(AuthType.CLAUDEX_OAUTH),
+    getCurrentAuthType: vi.fn().mockReturnValue(AuthType.USE_OPENAI),
     getGenerationConfig: vi.fn().mockReturnValue({}),
   } as unknown as ModelsConfig;
   const baseConfig: Partial<Config> = {
@@ -48,7 +48,6 @@ describe('validateNonInterActiveAuth', () => {
   let originalEnvVertexAi: string | undefined;
   let originalEnvGcp: string | undefined;
   let originalEnvOpenAiApiKey: string | undefined;
-  let originalEnvClaudexOauth: string | undefined;
   let originalEnvGoogleApiKey: string | undefined;
   let originalEnvAnthropicApiKey: string | undefined;
   let processExitSpy: ReturnType<typeof vi.spyOn<[code?: number], never>>;
@@ -60,14 +59,12 @@ describe('validateNonInterActiveAuth', () => {
     originalEnvVertexAi = process.env['GOOGLE_GENAI_USE_VERTEXAI'];
     originalEnvGcp = process.env['GOOGLE_GENAI_USE_GCA'];
     originalEnvOpenAiApiKey = process.env['OPENAI_API_KEY'];
-    originalEnvClaudexOauth = process.env['CLAUDEX_OAUTH'];
     originalEnvGoogleApiKey = process.env['GOOGLE_API_KEY'];
     originalEnvAnthropicApiKey = process.env['ANTHROPIC_API_KEY'];
     delete process.env['GEMINI_API_KEY'];
     delete process.env['GOOGLE_GENAI_USE_VERTEXAI'];
     delete process.env['GOOGLE_GENAI_USE_GCA'];
     delete process.env['OPENAI_API_KEY'];
-    delete process.env['CLAUDEX_OAUTH'];
     delete process.env['GOOGLE_API_KEY'];
     delete process.env['ANTHROPIC_API_KEY'];
     mockWriteStderrLine.mockClear();
@@ -117,11 +114,6 @@ describe('validateNonInterActiveAuth', () => {
     } else {
       delete process.env['OPENAI_API_KEY'];
     }
-    if (originalEnvClaudexOauth !== undefined) {
-      process.env['CLAUDEX_OAUTH'] = originalEnvClaudexOauth;
-    } else {
-      delete process.env['CLAUDEX_OAUTH'];
-    }
     if (originalEnvGoogleApiKey !== undefined) {
       process.env['GOOGLE_API_KEY'] = originalEnvGoogleApiKey;
     } else {
@@ -144,7 +136,7 @@ describe('validateNonInterActiveAuth', () => {
       refreshAuth: refreshAuthMock,
       getModelsConfig: vi.fn().mockReturnValue({
         getModel: vi.fn().mockReturnValue('default-model'),
-        getCurrentAuthType: vi.fn().mockReturnValue(AuthType.CLAUDEX_OAUTH),
+        getCurrentAuthType: vi.fn().mockReturnValue(AuthType.USE_OPENAI),
       }),
     });
     try {
@@ -179,23 +171,6 @@ describe('validateNonInterActiveAuth', () => {
       mockSettings,
     );
     expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.USE_OPENAI);
-  });
-
-  it('exits with error for CLAUDEX_OAUTH (free tier discontinued)', async () => {
-    const nonInteractiveConfig = createMockConfig({
-      refreshAuth: refreshAuthMock,
-      getModelsConfig: vi.fn().mockReturnValue({
-        getModel: vi.fn().mockReturnValue('default-model'),
-        getCurrentAuthType: vi.fn().mockReturnValue(AuthType.CLAUDEX_OAUTH),
-        getGenerationConfig: vi.fn().mockReturnValue({}),
-      }),
-    });
-    await expect(
-      validateNonInteractiveAuth(undefined, nonInteractiveConfig, mockSettings),
-    ).rejects.toThrow('process.exit(1)');
-    expect(mockWriteStderrLine).toHaveBeenCalledWith(
-      expect.stringContaining('discontinued'),
-    );
   });
 
   it('exits if validateAuthMethod returns error', async () => {
@@ -239,7 +214,7 @@ describe('validateNonInterActiveAuth', () => {
     expect(mockWriteStderrLine).not.toHaveBeenCalled();
     expect(processExitSpy).not.toHaveBeenCalled();
     // refreshAuth is called with the authType from config.getModelsConfig().getCurrentAuthType()
-    expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.CLAUDEX_OAUTH);
+    expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.USE_OPENAI);
   });
 
   it('uses enforcedAuthType if provided', async () => {
@@ -264,7 +239,7 @@ describe('validateNonInterActiveAuth', () => {
   });
 
   it('exits if currentAuthType does not match enforcedAuthType', async () => {
-    mockSettings.merged.security!.auth!.enforcedType = AuthType.CLAUDEX_OAUTH;
+    mockSettings.merged.security!.auth!.enforcedType = AuthType.USE_ANTHROPIC;
     process.env['OPENAI_API_KEY'] = 'fake-key';
     const nonInteractiveConfig = createMockConfig({
       refreshAuth: refreshAuthMock,
@@ -285,7 +260,7 @@ describe('validateNonInterActiveAuth', () => {
       expect((e as Error).message).toContain('process.exit(1) called');
     }
     expect(mockWriteStderrLine).toHaveBeenCalledWith(
-      'The configured auth type is claudex-oauth, but the current auth type is openai. Please re-authenticate with the correct type.',
+      'The configured auth type is anthropic, but the current auth type is openai. Please re-authenticate with the correct type.',
     );
     expect(processExitSpy).toHaveBeenCalledWith(1);
   });
@@ -317,7 +292,7 @@ describe('validateNonInterActiveAuth', () => {
         getOutputFormat: vi.fn().mockReturnValue(OutputFormat.JSON),
         getModelsConfig: vi.fn().mockReturnValue({
           getModel: vi.fn().mockReturnValue('default-model'),
-          getCurrentAuthType: vi.fn().mockReturnValue(AuthType.CLAUDEX_OAUTH),
+          getCurrentAuthType: vi.fn().mockReturnValue(AuthType.USE_OPENAI),
         }),
       });
 
@@ -346,7 +321,7 @@ describe('validateNonInterActiveAuth', () => {
     });
 
     it('emits error result and exits when enforced auth mismatches current auth', async () => {
-      mockSettings.merged.security!.auth!.enforcedType = AuthType.CLAUDEX_OAUTH;
+      mockSettings.merged.security!.auth!.enforcedType = AuthType.USE_ANTHROPIC;
       process.env['OPENAI_API_KEY'] = 'fake-key';
 
       const nonInteractiveConfig = createMockConfig({
@@ -372,7 +347,7 @@ describe('validateNonInterActiveAuth', () => {
       expect(emitResultMock).toHaveBeenCalledWith({
         isError: true,
         errorMessage: expect.stringContaining(
-          'The configured auth type is claudex-oauth, but the current auth type is openai.',
+          'The configured auth type is anthropic, but the current auth type is openai.',
         ),
         durationMs: 0,
         apiDurationMs: 0,
@@ -453,7 +428,7 @@ describe('validateNonInterActiveAuth', () => {
         getIncludePartialMessages: vi.fn().mockReturnValue(false),
         getModelsConfig: vi.fn().mockReturnValue({
           getModel: vi.fn().mockReturnValue('default-model'),
-          getCurrentAuthType: vi.fn().mockReturnValue(AuthType.CLAUDEX_OAUTH),
+          getCurrentAuthType: vi.fn().mockReturnValue(AuthType.USE_OPENAI),
         }),
       });
 
@@ -482,7 +457,7 @@ describe('validateNonInterActiveAuth', () => {
     });
 
     it('emits error result and exits when enforced auth mismatches current auth', async () => {
-      mockSettings.merged.security!.auth!.enforcedType = AuthType.CLAUDEX_OAUTH;
+      mockSettings.merged.security!.auth!.enforcedType = AuthType.USE_ANTHROPIC;
       process.env['OPENAI_API_KEY'] = 'fake-key';
 
       const nonInteractiveConfig = createMockConfig({
@@ -509,7 +484,7 @@ describe('validateNonInterActiveAuth', () => {
       expect(emitResultMock).toHaveBeenCalledWith({
         isError: true,
         errorMessage: expect.stringContaining(
-          'The configured auth type is claudex-oauth, but the current auth type is openai.',
+          'The configured auth type is anthropic, but the current auth type is openai.',
         ),
         durationMs: 0,
         apiDurationMs: 0,
